@@ -1,0 +1,28 @@
+{
+  "name": "direct-messaging",
+  "version": "1.0.0",
+  "description": "Picarto Direct Messaging",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.maximilianmadl.de/picarto/direct-messaging.git"
+  },
+  "keywords": [
+    "uwebsocket.js",
+    "mongodb",
+    "redis"
+  ],
+  "author": "Diagonal.Software",
+  "license": "ISC",
+  "dependencies": {
+    "mime-types": "^2.1.34",
+    "mongodb": "^4.2.2",
+    "njwt": "^1.2.0",
+    "path": "^0.12.7",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.5.0",
+    "validatorjs": "^3.22.1"
+  }
+}
