@@ -12,7 +12,7 @@ services:
     restart: always
 
   ptv-dm:
-    image: node:16.13.0-alpine3.12
+    image: node:16-stretch
     environment:
       REDIS_HOST: ${REDIS_HOST}
       PORT: 9010
@@ -23,6 +23,8 @@ services:
     volumes:
       - ./:/app
     restart: always
+    ports:
+      - 3000:9001
     networks:
       - ptvdm
       - webapp
