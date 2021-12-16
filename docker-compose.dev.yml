@@ -15,6 +15,7 @@ services:
     image: node:16-stretch
     environment:
       REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
       MONGO_DB_HOST: ptv-mongo
     working_dir: /app
     command: npm start
