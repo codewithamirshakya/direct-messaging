@@ -15,7 +15,6 @@ services:
     image: node:16-stretch
     environment:
       REDIS_HOST: ${REDIS_HOST}
-      PORT: 9010
       MONGO_DB_HOST: ptv-mongo
     working_dir: /app
     command: npm start
@@ -23,8 +22,7 @@ services:
     volumes:
       - ./:/app
     restart: always
-    ports:
-      - 3000:9001
+
     networks:
       - ptvdm
       - webapp
