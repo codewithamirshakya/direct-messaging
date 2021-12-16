@@ -59,14 +59,8 @@ var socket = {
 
         // In case of Guest Mode, chat message should still appear
         if(typeof data.channelId !== "undefined" && data.channelId > 0) {
-            let senderId = data.channelId;      
-            let receiverId = data.userChannelId;   
 
-            let messageAdapter = config.exchange.messaging + "_" + senderId + "_" + receiverId;
-
-            if(senderId > receiverId) {
-                messageAdapter = config.exchange.messaging + "_" + receiverId + "_" + senderId;
-            } 
+            var messageAdapter = util.pubSubKey(data.channelId, data.userChannelId);
 
             // Socket Subscribe
             ws.subscribe(messageAdapter);

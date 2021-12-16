@@ -1,5 +1,6 @@
 const fs        = require('fs');
 const mime      = require('mime-types');
+const config    = require('../config/default.js');
 var mimeType;
 
 /**
@@ -98,10 +99,16 @@ function sortByProp(prop) {
   }  
 }
 
+function pubSubKey(senderId, receiverId)
+{
+    return config.exchange.messaging + "_" + (senderId > receiverId ? receiverId + "_" +  senderId: senderId + "_" + receiverId);  
+}
+
 module.exports = {
     mimeType,
     readfile,
     readJson,
     queryParamValue,
-    sortByProp
+    sortByProp,
+    pubSubKey
 };
