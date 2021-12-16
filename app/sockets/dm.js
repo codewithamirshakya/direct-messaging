@@ -9,6 +9,7 @@ const ma            = require('../actions/dm.js');
 let redisClient;
 let redisSub;
 let redisPub;
+let mongoConnection;
 
 var socket = {
     /* Options */
@@ -170,6 +171,7 @@ function getConnectedUser(ws) {
     var initialJSON     = {
         redis           : redisClient,
         redisPub        : redisPub,
+        mongoConnection : mongoConnection,
         channelId       : ws["c"],
         userChannelId   : ws["u"],
         routingKey      : ws["r"],
@@ -217,9 +219,18 @@ function setRedisSub(sub) {
     redisSub = sub;
 }
 
+/**
+ * 
+ * @param {*} conn 
+ */
+function setMongo(conn) {
+    mongoConnection = conn;
+}
+
 module.exports = {
     socket,
     setRedis,
     setRedisPub,
-    setRedisSub
+    setRedisSub,
+    setMongo
 }
