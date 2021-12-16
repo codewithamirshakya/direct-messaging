@@ -3,6 +3,7 @@ const validator     = require('../helpers/validator.js');
 const response      = require('../helpers/response.js');
 const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
+const model         = require('../models/dm.js');
 
 /**
  * 
@@ -16,13 +17,16 @@ const pub           = require('../publishers/redis.js');
         validator.validation(inputJSON, validator.rules.dm).then(function() {
             // Prepare Param
             param.dm(initialJSON, inputJSON).then(function(params) {
-                // Prepare Response
-                response.typeMessage(m.response.messaging.send, params).then(function(message) {
-                    // Publish Message
-                    pub.publish(initialJSON, message).then(function() {
-                        resolve(true);
-                    }).catch(function(e) {
-                        resolve(true);
+                // Save Model
+                model.save(initialJSON.mongoConnection, params).then(function() {
+                    // Prepare Response
+                    response.typeMessage(m.response.messaging.send, params).then(function(message) {
+                        // Publish Message
+                        pub.publish(initialJSON, message).then(function() {
+                            resolve(true);
+                        }).catch(function(e) {
+                            resolve(true);
+                        });
                     });
                 });
             }).catch(function(e) {
