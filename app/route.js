@@ -18,4 +18,16 @@ const dm            = require('./sockets/dm.js');
     res.end('Nothing to see here!');
 });
 
+app.setRedis = function(client) {
+    dm.setRedis(client);
+}
+
+app.setRedisSub = function(sub) {
+    dm.setRedisSub(sub);
+}
+
+app.setRedisPub = function(pub) {
+    dm.setRedisPub(pub);
+}
+
 module.exports = app;
