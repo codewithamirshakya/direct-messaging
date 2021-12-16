@@ -23,8 +23,6 @@ services:
     volumes:
       - ./:/app
     restart: always
-    ports:
-      - 3000:9001
     networks:
       - ptvdm
       - webapp
