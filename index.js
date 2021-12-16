@@ -1,8 +1,18 @@
 const os        = require('os');
 const cluster   = require('cluster');
+const redis     = require("redis");
 const app       = require('./app/route.js');
 const config    = require('./app/config/default.js');
-const numCPUs   = os.cpus().length;
+
+const numCPUs       = os.cpus().length;
+const client        = redis.createClient(config.redis);
+const redisSub      = redis.createClient(config.redisSub);
+const redisPub      = redis.createClient(config.redisPub);
+
+// Redis Adapter
+redisSub.on("message", function(channel, message) {
+    app.publish(channel, message);
+});
 
 /***
  * Worker Thread
@@ -19,6 +29,10 @@ const numCPUs   = os.cpus().length;
         console.log(`worker ${worker.process.pid} died`);
     });
 } else {
+    app.setRedis(client);
+    app.setRedisSub(redisSub);
+    app.setRedisPub(redisPub);
+
     app.listen(config.server.port, (listenSocket) => {
         if (listenSocket) {
             console.log(`Worker ${process.pid} started`);

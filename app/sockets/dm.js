@@ -6,6 +6,10 @@ const response      = require('../helpers/response.js');
 const util          = require('../utils/default.js');
 const ma            = require('../actions/dm.js');
 
+let redisClient;
+let redisSub;
+let redisPub;
+
 var socket = {
     /* Options */
     compression:        uWS.SHARED_COMPRESSOR,
@@ -59,7 +63,10 @@ var socket = {
 
         // In case of Guest Mode, chat message should still appear
         if(typeof data.channelId !== "undefined" && data.channelId > 0) {
-            var messageAdapter     = config.socket.prefix + data.channelId.toString();
+            var messageAdapter     = config.redis.dm + data.channelId.toString();
+
+            // Redis Subscribe
+            redisSub.subscribe(messageAdapter);
 
             // Socket Subscribe
             ws.subscribe(messageAdapter);
@@ -161,6 +168,8 @@ function storeConnectedUser(ws, info, adapter) {
  */
 function getConnectedUser(ws) {
     var initialJSON     = {
+        redis           : redisClient,
+        redisPub        : redisPub,
         channelId       : ws["c"],
         userChannelId   : ws["u"],
         routingKey      : ws["r"],
@@ -184,6 +193,33 @@ function getConnectedUser(ws) {
     return initialJSON;
 }
 
+/**
+ * 
+ * @param {*} connection 
+ */
+ function setRedis(client) {
+    redisClient = client;
+}
+
+/**
+ * 
+ * @param {*} sub 
+ */
+ function setRedisPub(pub) {
+    redisPub = pub;
+}
+
+/**
+ * 
+ * @param {*} sub 
+ */
+function setRedisSub(sub) {
+    redisSub = sub;
+}
+
 module.exports = {
-    socket
+    socket,
+    setRedis,
+    setRedisPub,
+    setRedisSub
 }
