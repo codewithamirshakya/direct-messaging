@@ -110,6 +110,3 @@ dist
 dump
 .DS_Store
 public
-Dockerfile
-docker-compose.yml
-yarn.lock
