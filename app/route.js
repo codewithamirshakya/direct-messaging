@@ -30,4 +30,8 @@ app.setRedisPub = function(pub) {
     dm.setRedisPub(pub);
 }
 
+app.setMongo = function(conn) {
+    dm.setMongo(conn);
+}
+
 module.exports = app;
