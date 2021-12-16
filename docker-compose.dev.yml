@@ -1,0 +1,43 @@
+version: "3"
+services:
+  ptv-mongo:
+    image: mongo:4.4
+    container_name: ptv-mongo
+    ports:
+      - 27017
+    networks:
+      - ptvdm
+    volumes:
+      - mongodump:/data/db
+    restart: always
+
+  ptv-dm:
+    image: node:16.13.0-alpine3.12
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      PORT: 9010
+      MONGO_DB_HOST: ptv-mongo
+    working_dir: /app
+    command: npm start
+    container_name: ptv-dm
+    volumes:
+      - ./:/app
+    restart: always
+    ports:
+      - 3000:9001
+    networks:
+      - ptvdm
+      - webapp
+    labels:
+      - traefik.backend=ptv-dm
+      - traefik.normal.frontend.rule=Host:ptvdm-dev.diagonal.solutions
+      - traefik.docker.network=webapp
+      - traefik.port=9001
+
+volumes:
+  mongodump:
+
+networks:
+  ptvdm:
+  webapp:
+    external: true

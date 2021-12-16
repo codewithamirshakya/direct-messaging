@@ -1,0 +1,42 @@
+stages:
+  - install-dependencies
+  - build
+  - deploy
+
+cache:
+  key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+
+install-dependencies:
+  stage: install-dependencies
+  image: node:16.13.0-alpine3.12
+  script:
+    - npm install
+  tags:
+    - ptvdm-node
+  only:
+    refs:
+      - develop
+
+  artifacts:
+    paths:
+      - node_modules
+    expire_in: 1 days
+    when: always
+  cache:
+    paths:
+      - node_modules
+
+deploy:
+  stage: deploy
+  dependencies:
+    - install-dependencies
+  script:
+    - docker-compose -f docker-compose.dev.yml down && docker-compose -f docker-compose.dev.yml up -d
+  environment:
+    name: development
+    url: ${PROJECT_URL}
+  tags:
+    - ptvdm-deploy
+  only:
+   refs:
+      - develop
