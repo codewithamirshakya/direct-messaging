@@ -14,11 +14,9 @@ const util          = require('../config/default.js');
  * @returns 
  */
  async function messaging(initialJSON, inputJSON, ws) {
-
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dm).then(function() {
-            
             // Prepare Param
             param.dm(initialJSON, inputJSON).then(function(params) {           
                 // Save Model                
@@ -34,11 +32,12 @@ const util          = require('../config/default.js');
 
                         resolve(message);
                     });
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.save));
                 });
             }).catch(function(e) {
                 reject(response.error(m.errorCode.messaging.validation));
             });
-            
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.validation));
         });

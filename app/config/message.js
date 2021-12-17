@@ -17,7 +17,8 @@ module.exports = {
     errorCode: {
         jwt:                "JWT_TOKEN",
         messaging:  {
-            validation:     "DIRECT_MESSAGING_VALIDATION"
+            validation:     "DIRECT_MESSAGING_VALIDATION",
+            save:           "DIRECT_MESSAGING_SAVE"
         }
     },
     successCode : {

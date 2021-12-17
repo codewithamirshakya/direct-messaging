@@ -99,9 +99,14 @@ function sortByProp(prop) {
   }  
 }
 
+/**
+ * 
+ * @param {*} channelId 
+ * @returns 
+ */
 function pubSubKey(channelId)
 {
-    return config.exchange.messaging + "_" + channelId;  
+    return config.socket.prefix + channelId;  
 }
 
 module.exports = {
