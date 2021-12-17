@@ -64,7 +64,7 @@ var socket = {
 
         // In case of Guest Mode, chat message should still appear
         if(typeof data.channelId !== "undefined" && data.channelId > 0) {
-            var messageAdapter     = util.pubSubKey(data.channelId, data.userChannelId);
+            var messageAdapter     = util.pubSubKey(data.channelId);
 
             // Redis Subscribe
             redisSub.subscribe(messageAdapter);

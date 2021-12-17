@@ -99,9 +99,9 @@ function sortByProp(prop) {
   }  
 }
 
-function pubSubKey(senderId, receiverId)
+function pubSubKey(channelId)
 {
-    return config.exchange.messaging + "_" + (senderId > receiverId ? receiverId + "_" +  senderId: senderId + "_" + receiverId);  
+    return config.exchange.messaging + "_" + channelId;  
 }
 
 module.exports = {

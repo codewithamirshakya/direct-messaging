@@ -15,7 +15,7 @@ const m             = require('../config/message.js');
         var param 	  	= { 
             t:      m.response.messaging.send,
             c:      initialJSON.channelId, 
-            u:      initialJSON.userChannelId,
+            u:      inputJSON.channelId,
             n:      typeof(initialJSON.displayName) === "undefined" ? "" : initialJSON.displayName,
             rn:     typeof(initialJSON.channelName) === "undefined" ? "" : initialJSON.channelName,
             i:      typeof(initialJSON.avatar) === "undefined" ? "" : initialJSON.avatar,
