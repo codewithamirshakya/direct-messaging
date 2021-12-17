@@ -8,6 +8,11 @@ const rules = {
         type: "required",
         message: "required",
         channelId: "required"
+    },
+    dh: {
+        type: "required",
+        channelId: "required",
+        page: "required"
     }
 }
 

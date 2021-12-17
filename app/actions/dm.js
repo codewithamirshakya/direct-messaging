@@ -19,6 +19,12 @@ const dm        = require('../services/dm.js');
                     resolve(message);
                 });
                 break;
+        case m.type.messaging.history:
+                // Message History Handler
+                dm.history(initialJSON, inputJSON, ws).then(function(message) {
+                    resolve(message);
+                });
+                break;
         }
     });
 }

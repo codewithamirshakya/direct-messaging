@@ -4,12 +4,14 @@ module.exports = {
 
         },
         messaging: {
-            send: "dm"
+            send: "dm",
+            history: "his"
         }
     },
     response: {
         messaging: {
-            send: "dm"
+            send: "dm",
+            history: "his"
         }
     },
     errorCode: {

@@ -39,5 +39,9 @@ module.exports = {
     },
     log: {
         level: process.env.LOG_LEVEL || "LEVEL_1", // ALL, WARNINGS, INFO, DEBUG, ERROR, LEVEL_1, LEVEL_2, LEVEL_3
+    },
+    chat: {
+        limit: 25, // number of message to be fetched at once
+        rateLimit: process.env.RATE_LIMIT || 10 // Rate Limit
     }
 };
