@@ -26,6 +26,13 @@ const dm        = require('../services/dm.js');
                     resolve(message);
                 });
                 break;
+            // Message channels list history
+            case m.type.messaging.channelList:
+                // Message channels list history Handler
+                dm.channelList(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                });
+                break;
         }
     });
 }
