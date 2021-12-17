@@ -9,10 +9,10 @@ const rules = {
         message: "required",
         channelId: "required"
     },
-    his: {
+    dh: {
         type: "required",
-        senderId: "required",
-        receiverId: "required"
+        channelId: "required",
+        page: "required"
     }
 }
 
