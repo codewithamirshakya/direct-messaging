@@ -13,6 +13,10 @@ const rules = {
         type: "required",
         channelId: "required",
         page: "required"
+    },
+    dcl: {
+        type: "required",
+        page: "required"
     }
 }
 

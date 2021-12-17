@@ -4,6 +4,8 @@ const response      = require('../helpers/response.js');
 const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
+const config        = require('../config/default.js');
+
 
 /**
  * 
@@ -68,7 +70,54 @@ async function history(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON
+ * @returns 
+ */
+async function channelList(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.dcl).then(function() {    
+            params = [
+                {"$match" : {u: initialJSON.userChannelId.toString()}},
+                {"$group" : {_id:"$c", rn: {$last:"$rn"}, n: {$last:"$n"},m:{$last:"$m"}, d:{$last:"$d"}, y:{$last:"$y"},i:{$last:"$i"}, id: {$last: "$_id"}}}
+            ];  
+            limit    = config.chat.limit;   
+            skip     = (inputJSON.page - 1) * config.chat.limit; 
+
+            // Fetch History
+            model.aggregate(initialJSON.mongoConnection, params, limit, skip).then(function(result) {
+
+                var res = [];
+                try {
+                    for(i=0; i< result.length; i++) {
+                        res[i] = result[i];
+                        res[i].c = result[i]._id;
+                        delete res[i]._id;
+                    }
+                } catch(e) {
+
+                }
+                console.log(res);
+
+
+                // Prepare Response
+                response.paginated(m.response.messaging.history, res, true).then(function(message) {
+                    resolve(message);
+                });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.history));
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.history));
+        });
+    });
+}
+
 module.exports = {
     messaging,
-    history
+    history,
+    channelList
 }

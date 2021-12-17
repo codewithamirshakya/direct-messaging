@@ -5,13 +5,15 @@ module.exports = {
         },
         messaging: {
             send: "dm",
-            history: "dh"
+            history: "dh",
+            channelList: "dcl"
         }
     },
     response: {
         messaging: {
             send: "dm",
-            history: "dh"
+            history: "dh",
+            channelList: "dcl"
         }
     },
     errorCode: {
