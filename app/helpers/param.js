@@ -29,6 +29,29 @@ const m             = require('../config/message.js');
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+function storeParam(initialJSON, inputJSON) {
+    var sparam 	  	= { 
+        send:           m.response.messaging.send,
+        receiverId:     initialJSON.channelId, 
+        senderId:       initialJSON.userChannelId,
+        senderName:     typeof(initialJSON.displayName) === "undefined" ? "" : initialJSON.displayName,
+        receiverName:   typeof(initialJSON.channelName) === "undefined" ? "" : initialJSON.channelName,
+        avatar:         typeof(initialJSON.avatar) === "undefined" ? "" : initialJSON.avatar,
+        accountType:    typeof(initialJSON.accountType) === "undefined" ? "" : initialJSON.accountType,
+        message:        inputJSON.message,
+        date:           Date.now(),
+        seenAt:         null
+    };
+
+    return sparam;
+}
+
 module.exports = {
-    dm
+    dm,
+    storeParam
 }
