@@ -5,20 +5,21 @@ module.exports = {
         },
         messaging: {
             send: "dm",
-            history: "his"
+            history: "dh"
         }
     },
     response: {
         messaging: {
             send: "dm",
-            history: "his"
+            history: "dh"
         }
     },
     errorCode: {
         jwt:                "JWT_TOKEN",
         messaging:  {
             validation:     "DIRECT_MESSAGING_VALIDATION",
-            save:           "DIRECT_MESSAGING_SAVE"
+            save:           "DIRECT_MESSAGING_SAVE",
+            history:        "DIRECT_MESSAGING_HISTORY"
         }
     },
     successCode : {

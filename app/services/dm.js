@@ -5,8 +5,6 @@ const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
 
-
-
 /**
  * 
  * @param {*} initialJSON 
@@ -44,20 +42,28 @@ const model         = require('../models/dm.js');
     });
 }
 
-async function history(initialJSON, inputJSON, ws) {
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON
+ * @returns 
+ */
+async function history(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dh).then(function() {              
-
+        validator.validation(inputJSON, validator.rules.dh).then(function() {     
+                     
+            // Fetch History
             model.history(initialJSON.mongoConnection, initialJSON, inputJSON).then(function(result) {
                 // Prepare Response
                 response.paginated(m.response.messaging.history, result, true).then(function(message) {
                     resolve(message);
                 });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.history));
             });
-            
         }).catch(function(e) {
-            reject(response.error(m.errorCode.messaging.validation));
+            reject(response.error(m.errorCode.messaging.history));
         });
     });
 }

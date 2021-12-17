@@ -61,7 +61,6 @@ async function paginated(type, result, paginated) {
     });
 }
 
-
 module.exports = {
     error,
     success,
