@@ -6,7 +6,8 @@ const config        = require('../config/default.js');
 const rules = {
     dm: {
         type: "required",
-        message: "required"
+        message: "required",
+        channelId: "required"
     }
 }
 

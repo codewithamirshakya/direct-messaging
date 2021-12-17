@@ -12,12 +12,14 @@ const model         = require('../models/dm.js');
  * @returns 
  */
  async function messaging(initialJSON, inputJSON, ws) {
+
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dm).then(function() {
+            
             // Prepare Param
-            param.dm(initialJSON, inputJSON).then(function(params) {
-                // Save Model
+            param.dm(initialJSON, inputJSON).then(function(params) {           
+                // Save Model                
                 model.save(initialJSON.mongoConnection, params).then(function() {
                     // Prepare Response
                     response.typeMessage(m.response.messaging.send, params).then(function(message) {
@@ -27,11 +29,14 @@ const model         = require('../models/dm.js');
                         }).catch(function(e) {
                             resolve(true);
                         });
+
+                        resolve(message);
                     });
                 });
             }).catch(function(e) {
                 reject(response.error(m.errorCode.messaging.validation));
             });
+            
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.validation));
         });
