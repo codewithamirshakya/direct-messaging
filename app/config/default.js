@@ -43,5 +43,8 @@ module.exports = {
     exchange: {
         messaging: process.env.CHAT_EXCHANGE || "messaging",
     },
-
+    chat: {
+        limit: 25, // number of message to be fetched at once
+        rateLimit: process.env.RATE_LIMIT || 10 // Rate Limit
+    }
 };

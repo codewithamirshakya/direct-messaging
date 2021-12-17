@@ -8,6 +8,11 @@ const rules = {
         type: "required",
         message: "required",
         channelId: "required"
+    },
+    his: {
+        type: "required",
+        senderId: "required",
+        receiverId: "required"
     }
 }
 

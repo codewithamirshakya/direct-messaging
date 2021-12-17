@@ -4,6 +4,8 @@ const response      = require('../helpers/response.js');
 const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
+const util          = require('../config/default.js');
+
 
 /**
  * 
@@ -43,6 +45,37 @@ const model         = require('../models/dm.js');
     });
 }
 
+async function history(initialJSON, inputJSON, ws) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.his).then(function() {
+            params = {
+                $or: [{
+                    c: inputJSON.senderId,
+                    u: inputJSON.receiverId.toString()
+                }, {
+                    u: inputJSON.receiverId.toString(),
+                    c: inputJSON.senderId
+                }]
+            };
+
+            limit = inputJSON.page * util.chat.limit;
+            skip = (inputJSON.page - 1) * limit;       
+
+            model.history(initialJSON.mongoConnection, params, skip, limit).then(function(result) {
+                // Prepare Response
+                response.paginated(m.response.messaging.history, result, true).then(function(message) {
+                    resolve(message);
+                });
+            });
+            
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.validation));
+        });
+    });
+}
+
 module.exports = {
-    messaging
+    messaging,
+    history
 }

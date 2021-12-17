@@ -45,8 +45,26 @@ function success(successCode) {
     });
 }
 
+/**
+ * 
+ * @param {*} result 
+ */
+async function paginated(type, result, paginated) {
+    return new Promise(async function (resolve, reject) {
+        var response = JSON.stringify({
+            p: paginated,
+            t: type, 
+            m: result
+        });
+
+        resolve(response);
+    });
+}
+
+
 module.exports = {
     error,
     success,
-    typeMessage
+    typeMessage,
+    paginated
 }
