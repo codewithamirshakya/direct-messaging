@@ -1,3 +1,5 @@
+const util          = require('../utils/default.js');
+
 /**
  * 
  * @param {*} initialJSON 
@@ -5,10 +7,10 @@
  * @param {*} notify 
  * @param {*} list 
  */
- async function publish(initialJSON, message, notify) {
+ async function publish(initialJSON, channelId, message, notify) {
     return new Promise(async function (resolve, reject) {
         try {
-            var routingKey = initialJSON.routingKey;
+            var routingKey = util.pubSubKey(channelId);
 
             // Message
             if(typeof message !== "undefined") {

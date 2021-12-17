@@ -24,7 +24,7 @@ const config        = require('../config/default.js');
                     // Prepare Response
                     response.typeMessage(m.response.messaging.send, params).then(function(message) {
                         // Publish Message
-                        pub.publish(initialJSON, message).then(function() {
+                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
                             resolve(true);
                         }).catch(function(e) {
                             resolve(true);
