@@ -21,7 +21,7 @@ const dm        = require('../services/dm.js');
                     reject(e);
                 });
                 break;
-            // Message History
+            // Channel Message History
             case m.type.messaging.history:
                 // Message History Handler
                 dm.history(initialJSON, inputJSON).then(function(message) {
@@ -30,10 +30,10 @@ const dm        = require('../services/dm.js');
                     reject(e);
                 });
                 break;
-            // Message channels list history
-            case m.type.messaging.channelList:
+            // Message list
+            case m.type.messaging.messageList:
                 // Message channels list history Handler
-                dm.channelList(initialJSON, inputJSON).then(function(message) {
+                dm.messageList(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
                 }).catch(function(e) {
                     reject(e);

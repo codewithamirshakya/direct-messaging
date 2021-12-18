@@ -63,6 +63,29 @@ async function paginated(type, result, paginated) {
 
 /**
  * 
+ * @param {*} result 
+ * @returns 
+ */
+async function formatMessageList(result) {
+    return new Promise(async function (resolve, reject) {
+        var res = [];
+        try {
+            for(i=0; i< result.length; i++) {
+                res[i]      = result[i];
+                res[i].c    = result[i]._id;
+
+                delete res[i]._id;
+            }
+        } catch(e) {
+
+        }
+
+        resolve(res);
+    });
+}
+
+/**
+ * 
  * @param {*} settings 
  */
  async function formatSettings(settings) {
@@ -109,5 +132,6 @@ module.exports = {
     success,
     typeMessage,
     paginated,
+    formatMessageList,
     formatSettings
 }

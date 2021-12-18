@@ -1,7 +1,4 @@
-const path          = require('path');
 const Validator     = require('validatorjs'); 
-const m             = require('../config/message.js');
-const config        = require('../config/default.js');
 
 const rules = {
     dm: {

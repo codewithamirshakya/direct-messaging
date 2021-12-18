@@ -35,24 +35,11 @@ async function save(connection, params) {
  * @param {*} inputJSON 
  * @returns 
  */
-async function history(connection, initialJSON, inputJSON) {
-    var params = {
-        $or: [{
-            c: inputJSON.channelId,
-            u: initialJSON.userChannelId.toString()
-        }, {
-            c: initialJSON.userChannelId.toString(),
-            u: inputJSON.channelId
-        }]
-    };
-
-    var limit   = inputJSON.page * config.chat.limit;
-    var skip    = (inputJSON.page - 1) * limit;     
-
+async function history(connection, q, limit, skip) {
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(DM_COLLECTION)
-                        .find(params)
+                        .find(q)
                         .sort({_id: -1})
                         .skip(skip)
                         .limit(limit)
@@ -78,7 +65,6 @@ async function history(connection, initialJSON, inputJSON) {
  * @returns 
  */
 async function aggregate(connection, params, limit, skip) { 
-
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(DM_COLLECTION)
