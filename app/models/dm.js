@@ -16,7 +16,11 @@ async function save(connection, params) {
                     console.log(err);
                 }
                 
-                resolve();
+                if(typeof res !== "undefined" && res.insertedId !== "undefined") {
+                    resolve(res.insertedId);
+                } else {
+                    resolve();
+                }
             });
         } catch(e) {
             resolve();

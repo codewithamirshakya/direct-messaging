@@ -34,4 +34,8 @@ app.setMongo = function(conn) {
     dm.setMongo(conn);
 }
 
+app.setMysql = function(conn) {
+    dm.setMysql(conn);
+}
+
 module.exports = app;

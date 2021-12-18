@@ -17,6 +17,8 @@ const dm        = require('../services/dm.js');
                 // Message Handler
                 dm.messaging(initialJSON, inputJSON, ws).then(function(message) {
                     resolve(message);
+                }).catch(function(e) {
+                    reject(e);
                 });
                 break;
             // Message History
@@ -24,6 +26,8 @@ const dm        = require('../services/dm.js');
                 // Message History Handler
                 dm.history(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
+                }).catch(function(e) {
+                    reject(e);
                 });
                 break;
             // Message channels list history
@@ -31,6 +35,8 @@ const dm        = require('../services/dm.js');
                 // Message channels list history Handler
                 dm.channelList(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
+                }).catch(function(e) {
+                    reject(e);
                 });
                 break;
         }

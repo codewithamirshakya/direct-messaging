@@ -10,6 +10,7 @@ let redisClient;
 let redisSub;
 let redisPub;
 let mongoConnection;
+let mysqlConnection;
 
 var socket = {
     /* Options */
@@ -172,6 +173,7 @@ function getConnectedUser(ws) {
         redis           : redisClient,
         redisPub        : redisPub,
         mongoConnection : mongoConnection,
+        mysqlConnection : mysqlConnection,
         channelId       : ws["c"],
         userChannelId   : ws["u"],
         routingKey      : ws["r"],
@@ -227,10 +229,19 @@ function setMongo(conn) {
     mongoConnection = conn;
 }
 
+/**
+ * 
+ * @param {*} conn 
+ */
+ function setMysql(conn) {
+    mysqlConnection = conn;
+}
+
 module.exports = {
     socket,
     setRedis,
     setRedisPub,
     setRedisSub,
-    setMongo
+    setMongo,
+    setMysql
 }

@@ -4,8 +4,10 @@ const redis     = require("redis");
 const app       = require('./app/route.js');
 const config    = require('./app/config/default.js');
 const mongo     = require('./app/config/mongo.js');
+const mysql     = require('./app/config/mysql.js');
 
 const numCPUs           = os.cpus().length;
+const dbConnection      = mysql.connect();
 const client            = redis.createClient(config.redis);
 const redisSub          = redis.createClient(config.redisSub);
 const redisPub          = redis.createClient(config.redisPub);
@@ -33,6 +35,7 @@ redisSub.on("message", function(channel, message) {
     app.setRedis(client);
     app.setRedisSub(redisSub);
     app.setRedisPub(redisPub);
+    app.setMysql(dbConnection);
 
     mongo.connect().then(function(connection) {
         app.setMongo(mongo.database(connection));
