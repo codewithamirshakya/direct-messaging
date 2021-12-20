@@ -22,8 +22,8 @@ services:
       REDIS_PUB_PORT: ${REDIS_PORT}
       MONGO_DB_HOST: ptv-mongo
       MYSQL_HOST: ${MYSQL_HOST}
-      MYSQL_USERNAME: ${MYSQL_USERNAME}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQ_USER: ${MYSQL_USERNAME}
+      MYSQL_PASS: ${MYSQL_PASSWORD}
       MYSQL_PORT: ${MYSQL_PORT}
     working_dir: /app
     command: npm start
