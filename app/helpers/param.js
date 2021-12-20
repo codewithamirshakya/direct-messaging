@@ -17,6 +17,7 @@ const m             = require('../config/message.js');
             u:      initialJSON.userChannelId,
             n:      typeof(initialJSON.displayName) === "undefined" ? "" : initialJSON.displayName,
             rn:     typeof(settings.d) === "undefined" ? "" : settings.d,
+            ri:     typeof(settings.i) === "undefined" ? "" : settings.i,
             i:      typeof(initialJSON.avatar) === "undefined" ? "" : initialJSON.avatar,
             y:      typeof(initialJSON.accountType) === "undefined" ? "" : initialJSON.accountType,
             m:      inputJSON.message,
