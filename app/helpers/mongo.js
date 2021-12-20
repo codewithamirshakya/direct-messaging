@@ -8,10 +8,10 @@ async function message(channelId, userChannelId) {
     return new Promise(function (resolve, reject) {
         var params = {
             $or: [{
-                c: channelId.toString(),
+                c: channelId,
                 u: userChannelId.toString()
             }, {
-                c: userChannelId.toString(),
+                c: userChannelId,
                 u: channelId.toString()
             }]
         };
