@@ -27,6 +27,7 @@ const em            = require('../models/emoji.js');
             n:      typeof(initialJSON.displayName) === "undefined" ? "" : initialJSON.displayName,
             rn:     typeof(settings.d) === "undefined" ? "" : settings.d,
             ri:     ri,
+            ry:     typeof(settings.y) === "undefined" ? "" : settings.y,
             i:      typeof(initialJSON.avatar) === "undefined" ? "" : initialJSON.avatar,
             y:      typeof(initialJSON.accountType) === "undefined" ? "" : initialJSON.accountType,
             m:      inputJSON.message,
