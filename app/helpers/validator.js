@@ -9,7 +9,7 @@ const rules = {
     dh: {
         type: "required",
         channelId: "required",
-        page: "required"
+        position: "required"
     },
     dcl: {
         type: "required",

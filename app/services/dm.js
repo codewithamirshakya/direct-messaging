@@ -62,13 +62,12 @@ async function history(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dh).then(function() {     
             // Mongo Query Param
-            mongo.message(inputJSON.channelId, initialJSON.userChannelId).then(function(q) {  
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) {  
                 // Limit Pagination
-                var limit   = config.chat.limit;
-                var skip    = (inputJSON.page - 1) * config.chat.limit;     
+                var limit   = config.chat.limit; 
 
                 // Fetch History
-                model.history(initialJSON.mongoConnection, q, limit, skip).then(function(result) {
+                model.history(initialJSON.mongoConnection, q, limit).then(function(result) {
                     // Prepare Response
                     response.paginated(m.response.messaging.history, result, true).then(function(message) {
                         resolve(message);

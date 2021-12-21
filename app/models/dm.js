@@ -1,4 +1,5 @@
 const config        = require('../config/default.js');
+const counter       = require('../models/counter.js');
 
 const DM_COLLECTION = 'dm';
 
@@ -11,17 +12,24 @@ const DM_COLLECTION = 'dm';
 async function save(connection, params) {
     return new Promise(function (resolve, reject) {
         try {
-            connection.collection(DM_COLLECTION).insertOne(params, function(err, res) {
-                if (err) {
-                    console.log(err);
-                }
-                
-                if(typeof res !== "undefined" && res.insertedId !== "undefined") {
-                    resolve(res.insertedId);
-                } else {
-                    resolve();
-                }
+            counter.getLatestCounterByType(connection,{type: 'dm'}).then(function(result) {
+                params.po = result.sequence_value;
+                connection.collection(DM_COLLECTION).insertOne(params, function(err, res) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    
+                    if(typeof res !== "undefined" && res.insertedId !== "undefined") {
+                        counter.updateLatestCounterByType(connection,{type: 'dm'},{$set: {sequence_value: result.sequence_value + 1 }}).then(function() {
+                            resolve(res.insertedId);
+                        });
+                        
+                    } else {
+                        resolve();
+                    }
+                });
             });
+            
         } catch(e) {
             resolve();
         }
@@ -35,13 +43,12 @@ async function save(connection, params) {
  * @param {*} inputJSON 
  * @returns 
  */
-async function history(connection, q, limit, skip) {
+async function history(connection, q, limit) {
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(DM_COLLECTION)
                         .find(q)
-                        .sort({_id: -1})
-                        .skip(skip)
+                        .sort({po: -1})
                         .limit(limit)
                         .toArray(function(err, result) {
                             if (err) {
