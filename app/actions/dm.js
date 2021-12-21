@@ -1,5 +1,6 @@
 const m         = require('../config/message.js');
 const dm        = require('../services/dm.js');
+const em        = require('../services/emoji.js');
 
 /**
  * 
@@ -21,6 +22,7 @@ const dm        = require('../services/dm.js');
                     reject(e);
                 });
                 break;
+
             // Channel Message History
             case m.type.messaging.history:
                 // Message History Handler
@@ -30,6 +32,7 @@ const dm        = require('../services/dm.js');
                     reject(e);
                 });
                 break;
+
             // Message list
             case m.type.messaging.messageList:
                 // Message channels list history Handler
@@ -39,9 +42,21 @@ const dm        = require('../services/dm.js');
                     reject(e);
                 });
                 break;
+
+            // User list
             case m.type.messaging.userList:
                 // Message user list Handler
                 dm.userList(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;
+
+            // Emoji List
+            case m.type.emotes.list:
+                // Emoji List Handler
+                em.list(initialJSON).then(function(message) {
                     resolve(message);
                 }).catch(function(e) {
                     reject(e);

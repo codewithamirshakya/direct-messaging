@@ -61,7 +61,7 @@ const channel       = require('../models/channel.js');
 async function history(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dh).then(function() {     
+        validator.validation(inputJSON, validator.rules.dch).then(function() {     
             // Mongo Query Param
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) {  
                 // Limit Pagination
@@ -94,7 +94,7 @@ async function history(initialJSON, inputJSON) {
 async function messageList(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dcl).then(function() {
+        validator.validation(inputJSON, validator.rules.dml).then(function() {
             // Mongo Query Param    
             mongo.list(initialJSON.userChannelId).then(function(q) {
                 // Limit Pagination

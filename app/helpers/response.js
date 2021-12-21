@@ -127,11 +127,42 @@ async function formatMessageList(result) {
     });
 }
 
+/**
+ * 
+ * @param {*} emojis 
+ */
+ async function formatEmojis(emojis) {
+    return new Promise(async function (resolve, reject) {
+        var emotes = [];
+        if(typeof emojis !== "undefined") {
+            emojis.forEach(emoji => {
+                var channelId   = emoji.channel_id.toString();
+                var emojiPath   = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.emojiAlias;
+                var url         = config.minio.bucket + "/" + emojiPath + "/" + emoji.alias + ".gif";
+                var emote = {
+                    c:      emoji.channel_id,
+                    a:      emoji.alias,
+                    u:      url
+                };
+
+                if(typeof emoji.name !== "undefined") {
+                    emote.n = emoji.name;
+                }
+
+                emotes.push(emote);
+            });
+        }
+
+        resolve(emotes);
+    });
+}
+
 module.exports = {
     error,
     success,
     typeMessage,
     paginated,
     formatMessageList,
-    formatSettings
+    formatSettings,
+    formatEmojis
 }

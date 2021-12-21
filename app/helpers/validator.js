@@ -6,12 +6,12 @@ const rules = {
         message: "required",
         channelId: "required"
     },
-    dh: {
+    dch: {
         type: "required",
         channelId: "required",
         position: "required"
     },
-    dcl: {
+    dml: {
         type: "required",
         page: "required"
     },
