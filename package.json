@@ -24,7 +24,7 @@
     "njwt": "^1.2.0",
     "path": "^0.12.7",
     "redis": "3.0.2",
-    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.5.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.5.0",
     "uuid": "^8.3.2",
     "validatorjs": "^3.22.1"
   }

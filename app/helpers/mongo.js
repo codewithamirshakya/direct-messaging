@@ -4,17 +4,21 @@
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
-async function message(channelId, userChannelId) {
+async function message(channelId, userChannelId, position) {
     return new Promise(function (resolve, reject) {
+
         var params = {
+            po: {
+                $lte: position
+            },
             $or: [{
-                c: channelId,
-                u: userChannelId.toString()
+                c: parseInt(channelId),
+                u: parseInt(userChannelId)
             }, {
-                c: userChannelId,
-                u: channelId.toString()
+                c: parseInt(userChannelId),
+                u: parseInt(channelId)
             }]
-        };
+        }
 
         resolve(params);
     });
@@ -30,7 +34,7 @@ async function list(userChannelId) {
         var  params = [
             {
                 "$match" : {
-                    u: userChannelId.toString()
+                    u: parseInt(userChannelId)
                 }
             },
             {
