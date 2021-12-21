@@ -94,7 +94,7 @@ function pubSubKey(channelId)
 
 function dateToUnixTimeStamp(date)
 {
-  return new Date('2012.08.10').getTime() / 1000;
+  return new Date(date).getTime() / 1000;
 }
 
 module.exports = {
