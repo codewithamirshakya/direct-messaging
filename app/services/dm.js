@@ -126,8 +126,42 @@ async function messageList(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON
+ * @returns 
+ */
+async function globalSearch(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.gs).then(function() {     
+            // Mongo Query Param
+            mongo.globalSearch(initialJSON.userChannelId, inputJSON.position, inputJSON.q).then(function(q) {  
+                // Limit Pagination
+                var limit   = config.chat.limit; 
+
+                // Fetch Message
+                model.history(initialJSON.mongoConnection, q, limit).then(function(result) {
+                    // Prepare Response
+                    response.paginated(m.response.messaging.globalSearch, result, true).then(function(message) {
+                        resolve(message);
+                    });
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.globalSearch));
+                });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.globalSearch));
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.globalSearch));
+        });
+    });
+}
+
 module.exports = {
     messaging,
     history,
-    messageList
+    messageList,
+    globalSearch
 }

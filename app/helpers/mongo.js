@@ -33,6 +33,36 @@ async function message(channelId, userChannelId, position, q) {
 
 /**
  * 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+async function globalSearch(userChannelId, position, q) {
+    return new Promise(function (resolve, reject) {
+
+        var params = {            
+            $or: [{
+                u: parseInt(userChannelId)
+            }, {
+                c: parseInt(userChannelId)
+            }]
+        };
+
+        if (typeof q !== 'undefined' && q != '') {
+            params.m =  {$regex: new RegExp(q, 'i')};
+        }
+
+        if(typeof position !== 'undefined' && position != '') {
+            params.po ={
+                $lte: position
+            };
+        }
+
+        resolve(params);
+    });
+}
+
+/**
+ * 
  * @param {*} userChannelId 
  * @returns 
  */
@@ -63,5 +93,6 @@ async function list(userChannelId) {
 
 module.exports = {
     message,
-    list
+    list,
+    globalSearch
 }
