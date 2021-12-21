@@ -1,21 +1,4 @@
-const fs        = require('fs');
-const mime      = require('mime-types');
 const config    = require('../config/default.js');
-var mimeType;
-
-/**
- * 
- * @param {*} filename 
- */
-function readfile(filename) {
-    var filepath    = 'public/' + filename;
-    mimeType        = mime.lookup(filepath) || 'application/octet-stream';
-
-    // Read file from file system.
-    let file = fs.readFileSync(filepath, function(err, data) {});
-
-    return file;
-}
 
 /**
  * 
@@ -110,8 +93,6 @@ function pubSubKey(channelId)
 }
 
 module.exports = {
-    mimeType,
-    readfile,
     readJson,
     queryParamValue,
     sortByProp,
