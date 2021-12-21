@@ -25,6 +25,7 @@ services:
       MYSQL_USER: ${MYSQL_USERNAME}
       MYSQL_PASS: ${MYSQL_PASSWORD}
       MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DB: "picarto_dev"
     working_dir: /app
     command: npm start
     container_name: ptv-dm
