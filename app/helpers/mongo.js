@@ -45,14 +45,15 @@ async function list(userChannelId, q) {
         };
         var group = {
             "$group" : {
-                    _id: "$c", 
-                    rn: {$last: "$rn"}, 
+                    _id: "$c",
                     n:  {$last: "$n"}, 
                     m:  {$last: "$m"}, 
                     d:  {$last: "$d"}, 
                     y:  {$last: "$y"},
                     i:  {$last: "$i"}, 
-                    ri:  {$last: "$ri"},
+                    rn: {$last: "$rn"},
+                    ri: {$last: "$ri"},
+                    ry: {$last: "$ry"},
                     id: {$last: "$_id"}
                 }
             };
