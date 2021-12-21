@@ -1,5 +1,4 @@
 var mysql       = require('mysql');
-const config    = require('../config/default.js');
 
 /**
  * 
@@ -9,11 +8,8 @@ const config    = require('../config/default.js');
  async function getFollowings(connection, userChannelId, q) {
     return new Promise(function (resolve, reject) {
         try {
-            var params = [parseInt(userChannelId)];
-            var avatarAlias = config.minio.bucket;
-            var query = `
-            SELECT 
-                c.id, c.name, CONCAT('` + avatarAlias + `', '/', SUBSTR(c.id,1,1), '/', SUBSTR(c.id,1,2), '/', c.id, '/', c.avatar) as avatar, account_type, last_live, online 
+            var params  = [parseInt(userChannelId)];
+            var query   = `SELECT c.id, c.name, c.avatar, account_type, last_live, online 
                 from followers f 
                 inner join channels c on c.id = f.channel_id 
                 inner join users u on u.id = c.user_id `;

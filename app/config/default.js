@@ -62,6 +62,7 @@ module.exports = {
     },
     minio: {
         bucket      : process.env.MINIO_BUCKET || 'ptvimages',
-        emojiAlias  : process.env.MINIO_EMOJI_ALIAS || 'emoticons'
+        emojiAlias  : process.env.MINIO_EMOJI_ALIAS || 'emoticons',
+        avatarAlias : process.env.MINIO_AVATAR_ALIAS || 'avatars',
     },
 };

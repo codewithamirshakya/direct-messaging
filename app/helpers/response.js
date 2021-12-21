@@ -165,13 +165,18 @@ async function formatMessageList(result) {
  */
  async function formatUserlist(users) {
     return new Promise(async function (resolve, reject) {
-        var i = 0;
+        var i   = 0;
         var res = [];
+        
         for(var i=0; i<users.length;i++) {
+            var channelId   = users[i].id.toString();
+            var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
+            var avatar      = config.minio.bucket + "/" + avatarPath + "/" + users[i].avatar;
+
             param 	  	= { 
                 c:      parseInt(users[i].id),
                 n:      users[i].name,
-                i:      users[i].avatar,
+                i:      avatar,
                 y:      users[i].account_type.substring(0,1),
                 d:      utils.dateToUnixTimeStamp(users[i].last_live),
                 o:      Boolean(users[i].online)
