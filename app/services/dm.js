@@ -62,7 +62,7 @@ async function history(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dch).then(function() {     
             // Mongo Query Param
-            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) {  
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q).then(function(q) {  
                 // Limit Pagination
                 var limit   = config.chat.limit; 
 

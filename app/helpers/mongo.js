@@ -4,7 +4,7 @@
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
-async function message(channelId, userChannelId, position) {
+async function message(channelId, userChannelId, position, q) {
     return new Promise(function (resolve, reject) {
 
         var params = {
@@ -18,6 +18,10 @@ async function message(channelId, userChannelId, position) {
                 c: parseInt(userChannelId),
                 u: parseInt(channelId)
             }]
+        };
+
+        if (typeof q !== 'undefined' && q != '') {
+            params.m =  {$regex: new RegExp(q, 'i')};
         }
 
         resolve(params);
