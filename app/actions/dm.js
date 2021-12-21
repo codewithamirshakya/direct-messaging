@@ -12,6 +12,7 @@ const em        = require('../services/emoji.js');
  async function action(initialJSON, inputJSON, ws) 
  {
     return new Promise(async function (resolve, reject) {
+        console.log(inputJSON.type);
         switch(inputJSON.type) {
             // Initial Ticker Settomg
             case m.type.messaging.send:
