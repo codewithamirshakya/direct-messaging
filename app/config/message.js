@@ -7,8 +7,7 @@ module.exports = {
             send: "dm",
             history: "dch",
             messageList: "dml",
-            userList: "ul",
-            globalSearch: "gs"
+            userList: "ul"
         },
         emotes: {
             list: "el"

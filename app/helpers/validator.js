@@ -16,11 +16,7 @@ const rules = {
     },
     ul: {
         type: "required"
-    },
-    gs: {
-        type: "required",
-        q: "required"
-    },
+    }
 }
 
 /**
