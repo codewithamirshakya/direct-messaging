@@ -14,8 +14,8 @@ const em            = require('../models/emoji.js');
         }
 
         var ri = "";
-        if(typeof settings.i !== "undefined" && typeof settings.u !== "undefined") {
-            var channelId   = settings.u.toString();
+        if(typeof settings.i !== "undefined" && typeof settings.c !== "undefined") {
+            var channelId   = settings.c.toString();
             var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
             ri              = config.minio.bucket + "/" + avatarPath + "/" + settings.i;
         }
