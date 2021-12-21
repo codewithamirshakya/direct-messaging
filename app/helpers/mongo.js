@@ -7,10 +7,7 @@
 async function message(channelId, userChannelId, position, q) {
     return new Promise(function (resolve, reject) {
 
-        var params = {
-            po: {
-                $lte: position
-            },
+        var params = {            
             $or: [{
                 c: parseInt(channelId),
                 u: parseInt(userChannelId)
@@ -22,6 +19,12 @@ async function message(channelId, userChannelId, position, q) {
 
         if (typeof q !== 'undefined' && q != '') {
             params.m =  {$regex: new RegExp(q, 'i')};
+        }
+
+        if(typeof position !== 'undefined' && position != '') {
+            params.po ={
+                $lte: position
+            };
         }
 
         resolve(params);
