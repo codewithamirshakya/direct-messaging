@@ -6,14 +6,16 @@ module.exports = {
         messaging: {
             send: "dm",
             history: "dch",
-            messageList: "dml"
+            messageList: "dml",
+            userList: "ul"
         }
     },
     response: {
         messaging: {
             send: "dm",
             history: "dch",
-            messageList: "dml"
+            messageList: "dml",
+            userList: "ul"
         }
     },
     errorCode: {

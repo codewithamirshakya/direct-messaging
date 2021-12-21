@@ -14,6 +14,9 @@ const rules = {
     dcl: {
         type: "required",
         page: "required"
+    },
+    ul: {
+        type: "required"
     }
 }
 

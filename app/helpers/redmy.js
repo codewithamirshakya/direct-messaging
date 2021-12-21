@@ -37,6 +37,10 @@ const sm        = require('../models/setting.js');
     });
 }
 
+async function getFollowers(channelId) {
+    
+}
+
 module.exports = {
     getChannelSetting
 }

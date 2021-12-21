@@ -39,6 +39,14 @@ const dm        = require('../services/dm.js');
                     reject(e);
                 });
                 break;
+            case m.type.messaging.userList:
+                // Message user list Handler
+                dm.userList(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;
         }
     });
 }
