@@ -4,7 +4,7 @@ services:
     image: mongo:4.4
     container_name: ptv-mongo
     ports:
-      - 27017
+      - 27017:27017
     networks:
       - ptvdm
     volumes:
