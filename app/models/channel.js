@@ -1,4 +1,5 @@
 var mysql       = require('mysql');
+const config    = require('../config/default.js');
 
 /**
  * 
@@ -9,9 +10,10 @@ var mysql       = require('mysql');
     return new Promise(function (resolve, reject) {
         try {
             var params = [parseInt(userChannelId)];
+            var avatarAlias = config.minio.bucket;
             var query = `
             SELECT 
-                c.id, c.name, CONCAT(SUBSTR(c.id,1,1),'/',SUBSTR(c.id,1,2),'/',c.id,'/',c.avatar) as avatar, account_type, last_live, online 
+                c.id, c.name, CONCAT('` + avatarAlias + `', '/', SUBSTR(c.id,1,1), '/', SUBSTR(c.id,1,2), '/', c.id, '/', c.avatar) as avatar, account_type, last_live, online 
                 from followers f 
                 inner join channels c on c.id = f.channel_id 
                 inner join users u on u.id = c.user_id `;
