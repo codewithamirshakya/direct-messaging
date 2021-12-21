@@ -12,6 +12,13 @@ const em            = require('../models/emoji.js');
         if(inputJSON.message.length > 255) {
             inputJSON.message = inputJSON.message.substr(0, 255);
         }
+
+        var ri = "";
+        if(typeof settings.i !== "undefined" && typeof settings.u !== "undefined") {
+            var channelId   = settings.u.toString();
+            var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
+            ri              = config.minio.bucket + "/" + avatarPath + "/" + settings.i;
+        }
         
         var param 	  	= { 
             t:      m.response.messaging.send,
@@ -19,7 +26,7 @@ const em            = require('../models/emoji.js');
             u:      parseInt(initialJSON.userChannelId),
             n:      typeof(initialJSON.displayName) === "undefined" ? "" : initialJSON.displayName,
             rn:     typeof(settings.d) === "undefined" ? "" : settings.d,
-            ri:     typeof(settings.i) === "undefined" ? "" : settings.i,
+            ri:     ri,
             i:      typeof(initialJSON.avatar) === "undefined" ? "" : initialJSON.avatar,
             y:      typeof(initialJSON.accountType) === "undefined" ? "" : initialJSON.accountType,
             m:      inputJSON.message,
