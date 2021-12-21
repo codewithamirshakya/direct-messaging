@@ -53,9 +53,15 @@ module.exports = {
         rateLimit: process.env.RATE_LIMIT || 10 // Rate Limit
     },
     rkeys: {
+        emojis:             'emojis_',
         settings:           'settings_'
     },
     expire: {
-        settings: 3600
+        settings: 3600,
+        emojis: 3600,
+    },
+    minio: {
+        bucket      : process.env.MINIO_BUCKET || 'ptvimages',
+        emojiAlias  : process.env.MINIO_EMOJI_ALIAS || 'emoticons'
     },
 };
