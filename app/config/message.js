@@ -18,7 +18,7 @@ module.exports = {
             send: "dm",
             history: "dch",
             messageList: "dml",
-            userList: "ul"
+            userlist: "ul"
         },
         emotes: {
             list: "el"
@@ -34,6 +34,9 @@ module.exports = {
         },
         emojis: {
             list:           "EMOTES_LIST"
+        },
+        userlist: {
+            list:   "USERLIST"
         }
     },
     successCode : {

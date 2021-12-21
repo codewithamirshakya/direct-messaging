@@ -1,6 +1,4 @@
 const m             = require('../config/message.js');
-const config        = require('../utils/default.js');
-
 
 /**
  * 
@@ -30,28 +28,6 @@ const config        = require('../utils/default.js');
     });
 }
 
-async function userList(users) {
-    return new Promise(async function (resolve, reject) {
-        var i = 0;
-        var res = [];
-        for(var i=0; i<users.length;i++) {
-            param 	  	= { 
-                c:      parseInt(users[i].id),
-                n:      users[i].name,
-                i:      users[i].avatar,
-                y:      users[i].account_type.substring(0,1),
-                d:      config.dateToUnixTimeStamp(users[i].last_live),
-                o:      Boolean(users[i].online)
-            };
-
-            res.push(param)
-        }           
-
-        resolve(res);
-    });
-}
-
 module.exports = {
-    dm,
-    userList
+    dm
 }

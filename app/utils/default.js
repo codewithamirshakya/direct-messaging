@@ -87,13 +87,16 @@ function sortByProp(prop) {
  * @param {*} channelId 
  * @returns 
  */
-function pubSubKey(channelId)
-{
+function pubSubKey(channelId) {
     return config.socket.prefix + channelId;  
 }
 
-function dateToUnixTimeStamp(date)
-{
+/**
+ * 
+ * @param {*} date 
+ * @returns 
+ */
+function dateToUnixTimeStamp(date) {
   return new Date(date).getTime() / 1000;
 }
 

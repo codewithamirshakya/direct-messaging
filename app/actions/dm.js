@@ -1,6 +1,7 @@
 const m         = require('../config/message.js');
 const dm        = require('../services/dm.js');
 const em        = require('../services/emoji.js');
+const ul        = require('../services/userlist.js');
 
 /**
  * 
@@ -46,7 +47,7 @@ const em        = require('../services/emoji.js');
             // User list
             case m.type.messaging.userList:
                 // Message user list Handler
-                dm.userList(initialJSON, inputJSON).then(function(message) {
+                ul.list(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
                 }).catch(function(e) {
                     reject(e);
