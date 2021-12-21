@@ -9,7 +9,7 @@ const response      = require('../helpers/response.js');
  async function list(initialJSON) {
     return new Promise(async function (resolve, reject) {
         // Get Existing Emojis
-        redmy.getEmojis(initialJSON.redis, initialJSON.connection, initialJSON.userChannelId).then(function(emojis) {
+        redmy.getEmojis(initialJSON.redis, initialJSON.mysqlConnection, initialJSON.userChannelId).then(function(emojis) {
             // Prepare Response
             response.typeMessage(m.response.emotes.list, emojis).then(function(message) {
                 resolve(message);
