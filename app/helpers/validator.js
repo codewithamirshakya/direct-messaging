@@ -8,8 +8,7 @@ const rules = {
     },
     dch: {
         type: "required",
-        channelId: "required",
-        position: "required"
+        channelId: "required"
     },
     dml: {
         type: "required",
