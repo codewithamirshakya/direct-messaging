@@ -63,6 +63,7 @@ const ul        = require('../services/userlist.js');
                     reject(e);
                 });
                 break;
+                
             // Global search
             case m.type.messaging.globalSearch:
                 // Global search Handler

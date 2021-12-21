@@ -1,4 +1,3 @@
-const config        = require('../config/default.js');
 const counter       = require('../models/counter.js');
 
 const DM_COLLECTION = 'dm';
@@ -23,7 +22,6 @@ async function save(connection, params) {
                         counter.updateLatestCounterByType(connection,{type: 'dm'},{$set: {sequence_value: result.sequence_value + 1 }}).then(function() {
                             resolve(res.insertedId);
                         });
-                        
                     } else {
                         resolve();
                     }
