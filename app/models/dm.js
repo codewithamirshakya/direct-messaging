@@ -48,7 +48,7 @@ async function history(connection, q, limit) {
         try {
             connection.collection(DM_COLLECTION)
                         .find(q)
-                        .sort({po: -1})
+                        .sort({po: 1})
                         .limit(limit)
                         .toArray(function(err, result) {
                             if (err) {
