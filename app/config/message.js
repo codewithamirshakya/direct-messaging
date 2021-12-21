@@ -6,7 +6,8 @@ module.exports = {
         messaging: {
             send: "dm",
             history: "dch",
-            messageList: "dml"
+            messageList: "dml",
+            userList: "ul"
         },
         emotes: {
             list: "el"
@@ -16,7 +17,8 @@ module.exports = {
         messaging: {
             send: "dm",
             history: "dch",
-            messageList: "dml"
+            messageList: "dml",
+            userList: "ul"
         },
         emotes: {
             list: "el"

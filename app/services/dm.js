@@ -7,6 +7,7 @@ const mongo         = require('../helpers/mongo.js');
 const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
+const channel       = require('../models/channel.js');
 
 /**
  * 
@@ -126,8 +127,32 @@ async function messageList(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON
+ * @returns 
+ */
+async function userList(initialJSON, inputJSON)
+{
+    return new Promise(async function (resolve, reject) {
+        validator.validation(inputJSON, validator.rules.ul).then(function() {
+            channel.getFollowings(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q).then(function(followings) {
+                param.userList(followings).then(function(followings) {
+                    response.paginated(m.response.messaging.userList, followings, true).then(function(message) {
+                        resolve(message);
+                    }).catch(function(e) {
+                        reject(response.error(m.errorCode.messaging.userList));
+                    });
+                });                
+            });
+        });
+    });
+}
+
 module.exports = {
     messaging,
     history,
-    messageList
+    messageList,
+    userList
 }

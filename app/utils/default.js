@@ -92,9 +92,15 @@ function pubSubKey(channelId)
     return config.socket.prefix + channelId;  
 }
 
+function dateToUnixTimeStamp(date)
+{
+  return new Date(date).getTime() / 1000;
+}
+
 module.exports = {
     readJson,
     queryParamValue,
     sortByProp,
-    pubSubKey
+    pubSubKey,
+    dateToUnixTimeStamp
 };
