@@ -63,16 +63,6 @@ const ul        = require('../services/userlist.js');
                     reject(e);
                 });
                 break;
-                
-            // Global search
-            case m.type.messaging.globalSearch:
-                // Global search Handler
-                dm.globalSearch(initialJSON, inputJSON).then(function(message) {
-                    resolve(message);
-                }).catch(function(e) {
-                    reject(e);
-                });
-            break;
         }
     });
 }
