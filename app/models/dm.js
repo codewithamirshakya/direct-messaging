@@ -90,6 +90,13 @@ async function aggregate(connection, params, limit, skip) {
     });
 }
 
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} q 
+ * @param {*} params 
+ * @returns 
+ */
 async function update(connection, q, params) { 
     return new Promise(function (resolve, reject) {
         try {
@@ -98,6 +105,7 @@ async function update(connection, q, params) {
                             if (err) {
                                 console.log(err);
                             }
+                            
                             if(typeof res !== "undefined" && res.insertedId !== "undefined") {
                                 resolve(res.modifiedCount);
                             } else {

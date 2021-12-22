@@ -29,6 +29,7 @@ module.exports = {
     errorCode: {
         jwt:                "JWT_TOKEN",
         messaging:  {
+            restricted:     "DIRECT_MESSAGING_RESTRICTION",
             validation:     "DIRECT_MESSAGING_VALIDATION",
             save:           "DIRECT_MESSAGING_SAVE",
             history:        "DIRECT_MESSAGING_HISTORY",
@@ -45,4 +46,7 @@ module.exports = {
     successCode : {
 
     },
+    system: {
+        SLOW_DOWN:                                  "Woah there! Slow down!",
+    }
 };

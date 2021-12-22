@@ -48,6 +48,29 @@ function success(successCode) {
 
 /**
  * 
+ * @param {*} message 
+ */
+ async function systemMessage(message, links, icons, append, cat, whisper) {
+    return new Promise(async function (resolve, reject) {
+        var response = JSON.stringify({
+                            t:       m.type.system,
+                            m:   [{
+                                t:   m.type.system,
+                                m:   message, 
+                                l:   links,
+                                ic:   icons
+                            }],
+                            z: append,
+                            c: cat,
+                            w: whisper
+                        });
+
+        resolve(response);
+    });
+}
+
+/**
+ * 
  * @param {*} result 
  */
 async function paginated(type, result, paginated) {
@@ -193,6 +216,7 @@ module.exports = {
     error,
     success,
     typeMessage,
+    systemMessage,
     paginated,
     formatMessageList,
     formatSettings,

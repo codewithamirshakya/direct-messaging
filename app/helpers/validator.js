@@ -1,4 +1,5 @@
 const Validator     = require('validatorjs'); 
+const utility       = require('../helpers/utility.js');
 
 const rules = {
     dm: {
@@ -40,7 +41,47 @@ const rules = {
     });
 }
 
+/**
+ * 
+ * @param {*} ws 
+ * @desc limit 2/s
+ */
+ async function canSendMessage(ws) {
+    return new Promise(async function (resolve, reject) {
+        var now         = Date.now();
+        var addTime     = new Date(new Date().getTime() + 500).getTime();
+        var lastSent    = new Date(ws['canSend']).getTime();
+        if(typeof ws['canSend'] !== "undefined" && lastSent !== "NaN" && now < lastSent) {
+            reject();
+        } else {
+            ws['canSend'] = addTime;
+            resolve();
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} ws 
+ * @returns 
+ */
+async function rateLimitValidation(ws) {
+    return new Promise(async function (resolve, reject) {
+        utility.scoreLimit(ws).then(function() {
+            utility.messageLimit(ws).then(function() {
+                utility.checkSpamming(ws).then(function() {
+                    resolve();
+                }).catch(function(e) {
+                    reject();
+                });
+            });
+        });
+    });
+}
+
 module.exports = {
     rules,
-    validation
+    validation,
+    canSendMessage,
+    rateLimitValidation
 }

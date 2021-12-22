@@ -16,37 +16,49 @@ const model         = require('../models/dm.js');
  */
  async function messaging(initialJSON, inputJSON, ws) {
     return new Promise(async function (resolve, reject) {
-        // Validate Input
-        validator.validation(inputJSON, validator.rules.dm).then(function() {
-            // Get Channel Settings
-            redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
-                // Prepare Param
-                param.dm(initialJSON, inputJSON, settings).then(function(params) {   
-                    // Save Model                
-                    model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
-                        // Prepare Response
-                        response.typeMessage(m.response.messaging.send, params).then(function(message) {
-                            // Publish Message
-                            pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-                                resolve(true);
-                            }).catch(function(e) {
-                                resolve(true);
-                            });
+        // Antispam Check; message limit 2/s
+        validator.canSendMessage(ws).then(function() {
+            // RateLimit Validation
+            validator.rateLimitValidation(ws).then(function() {
+                // Validate Input
+                validator.validation(inputJSON, validator.rules.dm).then(function() {
+                    // Get Channel Settings
+                    redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
+                        // Prepare Param
+                        param.dm(initialJSON, inputJSON, settings).then(function(params) {   
+                            // Save Model                
+                            model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
+                                // Prepare Response
+                                response.typeMessage(m.response.messaging.send, params).then(function(message) {
+                                    // Publish Message
+                                    pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                                        resolve(true);
+                                    }).catch(function(e) {
+                                        resolve(true);
+                                    });
 
-                            resolve(message);
+                                    resolve(message);
+                                });
+                            }).catch(function(e) {
+                                reject(response.error(m.errorCode.messaging.save));
+                            });
+                        }).catch(function(e) {
+                            reject(response.error(m.errorCode.messaging.validation));
                         });
                     }).catch(function(e) {
-                        reject(response.error(m.errorCode.messaging.save));
+                        console.log(e);
+                        reject(response.error(m.errorCode.messaging.validation));
                     });
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.validation));
                 });
             }).catch(function(e) {
-                console.log(e);
-                reject(response.error(m.errorCode.messaging.validation));
+                response.systemMessage(m.system.SLOW_DOWN).then(function(alertMessage) {
+                    resolve(alertMessage);
+                });
             });
         }).catch(function(e) {
-            reject(response.error(m.errorCode.messaging.validation));
+            reject(response.error(m.errorCode.messaging.restricted));
         });
     });
 }
@@ -140,19 +152,13 @@ async function seenStatus(initialJSON, inputJSON) {
             mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
                 // Update seen status
                 model.update(initialJSON.mongoConnection, q, { $set: { s: true} }).then(function() {
-                    // Format Message List
-                    response.success(m.response.messaging.seenStatus).then(function(message) {
-                        resolve(message);
-                    }).catch(function(e) {
-                        reject(response.error(m.errorCode.messaging.messageList));
-                    });
+                    resolve(response.success(m.response.messaging.seenStatus));
                 }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.messageList));
+                    reject(response.error(m.errorCode.messaging.seenStatus));
                 });
-            });            
-            
+            });
         }).catch(function(e) {
-            reject(response.error(m.errorCode.messaging.messageList));
+            reject(response.error(m.errorCode.messaging.seenStatus));
         });
     });
 }
