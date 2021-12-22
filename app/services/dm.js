@@ -82,16 +82,18 @@ async function history(initialJSON, inputJSON) {
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q).then(function(q) {  
                 // Limit Pagination
                 var limit   = config.chat.limit; 
+                var first   = true;
                 var sort    = {_id: -1};
 
-                if(typeof inputJSON.position !== "undefined" && inputJSON.position == "") {
+                if(typeof inputJSON.position !== "undefined" && inputJSON.position != "") {
                     sort    = {po: 1};
+                    first   = false;
                 }
 
                 // Fetch History
-                model.history(initialJSON.mongoConnection, q, limit).then(function(result) {
+                model.history(initialJSON.mongoConnection, q, limit, sort).then(function(result) {
                     // Prepare Response
-                    response.paginated(m.response.messaging.history, result, true).then(function(message) {
+                    response.formatHistory(m.response.messaging.history, result, first, true).then(function(message) {
                         resolve(message);
                     });
                 }).catch(function(e) {
