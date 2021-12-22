@@ -90,11 +90,42 @@ async function paginated(type, result, paginated) {
  * @param {*} result 
  * @returns 
  */
+async function formatHistory(type,result, first, paginated) {
+    return new Promise(async function (resolve, reject) {
+        var res = [];
+        try {
+            
+            if(first == true) {
+                res = result.reverse();
+            } else {
+                res = result;
+            }
+            
+        } catch(e) {
+
+        }
+        // console.log(first,res);
+
+        var response = JSON.stringify({
+            p: paginated,
+            t: type, 
+            m: res
+        });
+
+        resolve(response);
+    });
+}
+
+/**
+ * 
+ * @param {*} result 
+ * @returns 
+ */
 async function formatMessageList(result) {
     return new Promise(async function (resolve, reject) {
         var res = [];
         try {
-            for(i=0; i< result.length; i++) {
+            for(i=0; i < result.length; i++) {
                 res[i]      = result[i];
                 res[i].c    = result[i]._id;
 
@@ -221,5 +252,6 @@ module.exports = {
     formatMessageList,
     formatSettings,
     formatEmojis,
-    formatUserlist
+    formatUserlist,
+    formatHistory
 }
