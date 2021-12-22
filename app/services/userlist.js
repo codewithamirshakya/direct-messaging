@@ -1,6 +1,8 @@
 const m             = require('../config/message.js');
+const config        = require('../config/default.js');
 const validator     = require('../helpers/validator.js');
 const response      = require('../helpers/response.js');
+const redmy         = require('../helpers/redmy.js');
 const channel       = require('../models/channel.js');
 
 /**
@@ -29,6 +31,43 @@ async function list(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+ async function banUser(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.ub).then(function() {
+            // Check if user is already banned
+            validator.banValidation(initialJSON.redis, [initialJSON.userChannelId], inputJSON.channelId.toString()).then(function() {
+                // Fetch Current List Count
+                redmy.getListLength(initialJSON.redis, config.rkeys.banned + initialJSON.userChannelId).then(function(listLength) {
+                    // Validate MaxLimit
+                    validator.limitValidation(listLength, config.hlimit.banned).then(function() {
+                        // Ban User
+                        redmy.banUser(initialJSON.redis, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                            resolve(response.success(m.successCode.banUser.success));
+                        }).catch(function(e) {
+                            reject(response.error(m.errorCode.banUser.error));
+                        });
+                    }).catch(function(e) {
+                        reject(response.error(m.errorCode.banUser.error));
+                    });
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.banUser.error));
+                });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.banUser.exist));
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.banUser.validation));
+        });
+    });
+}
+
 module.exports = {
-    list
+    list,
+    banUser
 }

@@ -23,6 +23,9 @@ const rules = {
         type: "required",
         channelId: "required",
         position: "required"
+    },
+    ub: {
+        channelId: "required"
     }
 }
 
@@ -35,6 +38,22 @@ const rules = {
     return new Promise(async function (resolve, reject) {
         let validation  = new Validator(data, rules);
         if(validation.passes()) {
+            resolve(true);
+        } else {
+            reject();
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} current 
+ * @param {*} max 
+ * @returns 
+ */
+ async function limitValidation(current, max) {
+    return new Promise(async function (resolve, reject) {
+        if(current < max) {
             resolve(true);
         } else {
             reject();
@@ -83,12 +102,12 @@ async function rateLimitValidation(ws) {
 /**
  * 
  * @param {*} connection 
- * @param {*} channelId 
+ * @param {*} channels 
  * @param {*} userChannelId 
  */
- async function banValidation(redis, channelId, userChannelId) {
+ async function banValidation(redis, channels, userChannelId) {
     return new Promise(async function (resolve, reject) {
-        redmy.getBanChannels(redis, [channelId]).then(function(bannedChannels) {
+        redmy.getBanChannels(redis, channels).then(function(bannedChannels) {
             if(Array.isArray(bannedChannels) && bannedChannels.includes(userChannelId)) {
                 reject();
             } else {
@@ -101,6 +120,7 @@ async function rateLimitValidation(ws) {
 module.exports = {
     rules,
     validation,
+    limitValidation,
     canSendMessage,
     rateLimitValidation,
     banValidation

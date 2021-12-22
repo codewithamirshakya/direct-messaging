@@ -12,6 +12,9 @@ module.exports = {
         },
         emotes: {
             list: "el"
+        },
+        user: {
+            ban: "ub"
         }
     },
     response: {
@@ -42,12 +45,19 @@ module.exports = {
         },
         userlist: {
             list:   "USERLIST"
+        },
+        banUser: {
+            validation: "BAN_USER_VALIDATION",
+            exist:      "BAN_USER_EXIST",
+            error:      "BAN_USER_ERROR"
         }
     },
     successCode : {
-
+        banUser: {
+            success:    "USER_BANNED"
+        }
     },
     system: {
-        SLOW_DOWN:                                  "Woah there! Slow down!",
+        SLOW_DOWN:      "Woah there! Slow down!",
     }
 };

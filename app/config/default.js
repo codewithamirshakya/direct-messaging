@@ -56,6 +56,7 @@ module.exports = {
         emojis:             'emojis_',
         settings:           'settings_',
         banned:             'banned_',
+        moderators:         'moderators_'
     },
     expire: {
         settings: 3600,
@@ -66,4 +67,7 @@ module.exports = {
         emojiAlias  : process.env.MINIO_EMOJI_ALIAS || 'emoticons',
         avatarAlias : process.env.MINIO_AVATAR_ALIAS || 'avatars',
     },
+    hlimit: {
+        banned:     process.env.BANNED_LIMIT || 5000
+    }
 };

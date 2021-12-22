@@ -83,8 +83,39 @@ const util      = require('./redutil.js');
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} lkey 
+ * @returns 
+ */
+ async function getListLength(client, lkey) {
+    return new Promise(async function (resolve, reject) {
+        client.llen(lkey, function(err, length) {
+            resolve(length);
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ * @param {*} banChannelId 
+ */
+async function banUser(client, channelId, banChannelId) {
+    return new Promise(async function (resolve, reject) {
+        client.lpush(config.rkeys.banned + channelId, banChannelId); 
+        client.lrem(config.rkeys.moderators + channelId, 1, banChannelId);
+
+        resolve();
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
-    getBanChannels
+    getBanChannels,
+    getListLength,
+    banUser
 }

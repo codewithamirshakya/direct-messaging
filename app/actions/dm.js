@@ -73,6 +73,16 @@ const ul        = require('../services/userlist.js');
                     reject(e);
                 });
                 break;
+
+            // Ban User
+            case m.type.user.ban:
+                // Ban User Handler
+                ul.banUser(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;
         }
     });
 }
