@@ -54,7 +54,8 @@ module.exports = {
     },
     rkeys: {
         emojis:             'emojis_',
-        settings:           'settings_'
+        settings:           'settings_',
+        banned:             'banned_',
     },
     expire: {
         settings: 3600,

@@ -34,7 +34,8 @@ module.exports = {
             save:           "DIRECT_MESSAGING_SAVE",
             history:        "DIRECT_MESSAGING_HISTORY",
             messageList:    "DIRECT_MESSAGING_LIST",
-            seenStatus:     "DIRECT_MESSAGING_SEEN_STATUS"
+            seenStatus:     "DIRECT_MESSAGING_SEEN_STATUS",
+            banned:         "DIRECT_MESSAGING_BANNED"
         },
         emojis: {
             list:           "EMOTES_LIST"

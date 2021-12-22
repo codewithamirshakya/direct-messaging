@@ -2,6 +2,7 @@ const config    = require('../config/default.js');
 const response  = require('../helpers/response.js');
 const sm        = require('../models/setting.js');
 const em        = require('../models/emoji.js');
+const util      = require('./redutil.js');
 
 /**
  * 
@@ -71,7 +72,19 @@ const em        = require('../models/emoji.js');
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ */
+ async function getBanChannels(client, channels) {
+    return new Promise(async function (resolve, reject) {
+        resolve(util.multirange(client, channels, config.rkeys.banned, 0, -1));
+    });
+}
+
 module.exports = {
     getChannelSetting,
-    getEmojis
+    getEmojis,
+    getBanChannels
 }

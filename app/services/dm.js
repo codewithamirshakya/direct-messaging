@@ -22,32 +22,37 @@ const model         = require('../models/dm.js');
             validator.rateLimitValidation(ws).then(function() {
                 // Validate Input
                 validator.validation(inputJSON, validator.rules.dm).then(function() {
-                    // Get Channel Settings
-                    redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
-                        // Prepare Param
-                        param.dm(initialJSON, inputJSON, settings).then(function(params) {   
-                            // Save Model                
-                            model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
-                                // Prepare Response
-                                response.typeMessage(m.response.messaging.send, params).then(function(message) {
-                                    // Publish Message
-                                    pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-                                        resolve(true);
-                                    }).catch(function(e) {
-                                        resolve(true);
-                                    });
+                    // Check if user is banned
+                    validator.banValidation(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                        // Get Channel Settings
+                        redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
+                            // Prepare Param
+                            param.dm(initialJSON, inputJSON, settings).then(function(params) {   
+                                // Save Model                
+                                model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
+                                    // Prepare Response
+                                    response.typeMessage(m.response.messaging.send, params).then(function(message) {
+                                        // Publish Message
+                                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                                            resolve(true);
+                                        }).catch(function(e) {
+                                            resolve(true);
+                                        });
 
-                                    resolve(message);
+                                        resolve(message);
+                                    });
+                                }).catch(function(e) {
+                                    reject(response.error(m.errorCode.messaging.save));
                                 });
                             }).catch(function(e) {
-                                reject(response.error(m.errorCode.messaging.save));
+                                reject(response.error(m.errorCode.messaging.validation));
                             });
                         }).catch(function(e) {
+                            console.log(e);
                             reject(response.error(m.errorCode.messaging.validation));
                         });
                     }).catch(function(e) {
-                        console.log(e);
-                        reject(response.error(m.errorCode.messaging.validation));
+                        reject(response.error(m.errorCode.messaging.banned));
                     });
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.validation));
