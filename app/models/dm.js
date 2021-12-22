@@ -41,12 +41,12 @@ async function save(connection, params) {
  * @param {*} inputJSON 
  * @returns 
  */
-async function history(connection, q, limit) {
+async function history(connection, q, limit, sort) {
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(DM_COLLECTION)
                         .find(q)
-                        .sort({po: 1})
+                        .sort(sort)
                         .limit(limit)
                         .toArray(function(err, result) {
                             if (err) {
