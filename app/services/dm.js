@@ -82,6 +82,11 @@ async function history(initialJSON, inputJSON) {
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q).then(function(q) {  
                 // Limit Pagination
                 var limit   = config.chat.limit; 
+                var sort    = {_id: -1};
+
+                if(typeof inputJSON.position !== "undefined" && inputJSON.position == "") {
+                    sort    = {po: 1};
+                }
 
                 // Fetch History
                 model.history(initialJSON.mongoConnection, q, limit).then(function(result) {
