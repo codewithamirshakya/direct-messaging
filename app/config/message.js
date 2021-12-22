@@ -7,7 +7,8 @@ module.exports = {
             send: "dm",
             history: "dch",
             messageList: "dml",
-            userList: "ul"
+            userList: "ul",
+            seenStatus:"ss"
         },
         emotes: {
             list: "el"
@@ -18,7 +19,8 @@ module.exports = {
             send: "dm",
             history: "dch",
             messageList: "dml",
-            userlist: "ul"
+            userlist: "ul",
+            seenStatus:"ss"
         },
         emotes: {
             list: "el"
@@ -30,7 +32,8 @@ module.exports = {
             validation:     "DIRECT_MESSAGING_VALIDATION",
             save:           "DIRECT_MESSAGING_SAVE",
             history:        "DIRECT_MESSAGING_HISTORY",
-            messageList:    "DIRECT_MESSAGING_LIST"
+            messageList:    "DIRECT_MESSAGING_LIST",
+            seenStatus:     "DIRECT_MESSAGING_SEEN_STATUS"
         },
         emojis: {
             list:           "EMOTES_LIST"

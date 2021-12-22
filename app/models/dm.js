@@ -90,8 +90,29 @@ async function aggregate(connection, params, limit, skip) {
     });
 }
 
+async function update(connection, q, params) { 
+    return new Promise(function (resolve, reject) {
+        try {
+            connection.collection(DM_COLLECTION)
+                        .updateMany(q,params, function(err, res) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            if(typeof res !== "undefined" && res.insertedId !== "undefined") {
+                                resolve(res.modifiedCount);
+                            } else {
+                                resolve();
+                            }
+                        });
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     save,
     history,
-    aggregate
+    aggregate,
+    update
 }
