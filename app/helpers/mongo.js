@@ -33,6 +33,38 @@ async function message(channelId, userChannelId, position, q) {
 
 /**
  * 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+async function seenStatus(channelId, userChannelId, position) {
+    return new Promise(function (resolve, reject) {
+
+        var params = {            
+            $or: [{
+                c: parseInt(channelId),
+                u: parseInt(userChannelId)
+            }, {
+                c: parseInt(userChannelId),
+                u: parseInt(channelId)
+            }]
+        };
+
+        if(typeof position !== 'undefined' && position != '') {
+            params.po ={
+                $lte: position
+            };
+        }
+
+        params.s ={
+            $exists: false
+        };
+
+        resolve(params);
+    });
+}
+
+/**
+ * 
  * @param {*} userChannelId 
  * @returns 
  */
@@ -72,5 +104,6 @@ async function list(userChannelId, q) {
 
 module.exports = {
     message,
-    list
+    list,
+    seenStatus
 }

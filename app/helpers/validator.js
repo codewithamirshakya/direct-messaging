@@ -16,6 +16,11 @@ const rules = {
     },
     ul: {
         type: "required"
+    },
+    ss: {
+        type: "required",
+        channelId: "required",
+        position: "required"
     }
 }
 

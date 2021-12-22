@@ -126,8 +126,40 @@ async function messageList(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON
+ * @returns 
+ */
+async function seenStatus(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.ss).then(function() {
+            // Mongo Query Param
+            mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
+                // Update seen status
+                model.update(initialJSON.mongoConnection, q, { $set: { s: true} }).then(function() {
+                    // Format Message List
+                    response.success(m.response.messaging.seenStatus).then(function(message) {
+                        resolve(message);
+                    }).catch(function(e) {
+                        reject(response.error(m.errorCode.messaging.messageList));
+                    });
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.messageList));
+                });
+            });            
+            
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.messageList));
+        });
+    });
+}
+
 module.exports = {
     messaging,
     history,
-    messageList
+    messageList,
+    seenStatus
 }
