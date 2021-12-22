@@ -8,7 +8,8 @@ module.exports = {
             history: "dch",
             messageList: "dml",
             userList: "ul",
-            seenStatus:"ss"
+            seenStatus:"ss",
+            deleteMessages: "dam"
         },
         emotes: {
             list: "el"
@@ -23,7 +24,8 @@ module.exports = {
             history: "dch",
             messageList: "dml",
             userlist: "ul",
-            seenStatus:"ss"
+            seenStatus:"ss",
+            deleteMessages: "dam"
         },
         emotes: {
             list: "el"
@@ -38,7 +40,8 @@ module.exports = {
             history:        "DIRECT_MESSAGING_HISTORY",
             messageList:    "DIRECT_MESSAGING_LIST",
             seenStatus:     "DIRECT_MESSAGING_SEEN_STATUS",
-            banned:         "DIRECT_MESSAGING_BANNED"
+            banned:         "DIRECT_MESSAGING_BANNED",
+            deleteMessages: "DIRECT_MESSAGING_DELETE_MESSAGES"
         },
         emojis: {
             list:           "EMOTES_LIST"

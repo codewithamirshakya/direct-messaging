@@ -83,6 +83,15 @@ const ul        = require('../services/userlist.js');
                     reject(e);
                 });
                 break;
+                // Seen status 
+            case m.type.messaging.deleteMessages:
+                // Seen status Handler
+                dm.deleteMessages(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;
         }
     });
 }

@@ -26,6 +26,9 @@ const rules = {
     },
     ub: {
         channelId: "required"
+    },
+    dam: {
+        channelId: "required"
     }
 }
 

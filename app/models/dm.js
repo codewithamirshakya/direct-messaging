@@ -118,9 +118,38 @@ async function update(connection, q, params) {
     });
 }
 
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} q 
+ * @param {*} params 
+ * @returns 
+ */
+async function remove(connection, q) { 
+    return new Promise(function (resolve, reject) {
+        try {
+            connection.collection(DM_COLLECTION)
+                        .deleteMany(q, function(err, res) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            
+                            if(typeof res !== "undefined" && res.insertedId !== "undefined") {
+                                resolve(res.deletedCount);
+                            } else {
+                                resolve();
+                            }
+                        });
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     save,
     history,
     aggregate,
-    update
+    update,
+    remove
 }

@@ -173,9 +173,35 @@ async function seenStatus(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON
+ * @returns 
+ */
+async function deleteMessages(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.dam).then(function() {
+            // Mongo Query Param
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
+                // Update seen status
+                model.remove(initialJSON.mongoConnection, q).then(function() {
+                    resolve(response.success(m.response.messaging.deleteMessages));
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.deleteMessages));
+                });
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.deleteMessages));
+        });
+    });
+}
+
 module.exports = {
     messaging,
     history,
     messageList,
-    seenStatus
+    seenStatus,
+    deleteMessages
 }
