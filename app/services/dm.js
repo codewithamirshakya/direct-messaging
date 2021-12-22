@@ -89,7 +89,7 @@ async function history(initialJSON, inputJSON) {
                 }
 
                 // Fetch History
-                model.history(initialJSON.mongoConnection, q, limit).then(function(result) {
+                model.history(initialJSON.mongoConnection, q, limit, sort).then(function(result) {
                     // Prepare Response
                     response.paginated(m.response.messaging.history, result, true).then(function(message) {
                         resolve(message);
