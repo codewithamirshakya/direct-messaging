@@ -96,7 +96,7 @@ async function formatHistory(type,result, first, paginated, inputJson) {
         res = result.reverse();
 
         var response = JSON.stringify({
-            d: typeof inputJson.direction !== "undefined" ? inputJson.direction:"",
+            r: typeof inputJson.reverse !== "undefined" ? inputJson.reverse:false,
             q: typeof inputJson.q !== "undefined" ? inputJson.q:"",
             po: typeof inputJson.position !== "undefined" ? inputJson.position:"",
             p: paginated,
