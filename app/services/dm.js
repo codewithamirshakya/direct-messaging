@@ -165,7 +165,13 @@ async function seenStatus(initialJSON, inputJSON) {
             mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
                 // Update seen status
                 model.update(initialJSON.mongoConnection, q, { $set: { s: true} }).then(function() {
-                    resolve(response.success(m.response.messaging.seenStatus));
+                    // Publish Message
+                    pub.publish(initialJSON, inputJSON.channelId, "seen", true).then(function() {
+                        resolve(true);
+                    }).catch(function(e) {
+                        resolve(true);
+                    });
+                    
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.seenStatus));
                 });
