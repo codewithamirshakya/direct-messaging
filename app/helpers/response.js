@@ -90,23 +90,15 @@ async function paginated(type, result, paginated) {
  * @param {*} result 
  * @returns 
  */
-async function formatHistory(type,result, first, paginated) {
+async function formatHistory(type,result, first, paginated, inputJson) {
     return new Promise(async function (resolve, reject) {
         var res = [];
-        try {
-            
-            if(first == true) {
-                res = result.reverse();
-            } else {
-                res = result;
-            }
-            
-        } catch(e) {
-
-        }
-        // console.log(first,res);
+        res = result.reverse();
 
         var response = JSON.stringify({
+            d: typeof inputJson.direction !== "undefined" ? inputJson.direction:"",
+            q: typeof inputJson.q !== "undefined" ? inputJson.q:"",
+            po: typeof inputJson.position !== "undefined" ? inputJson.position:"",
             p: paginated,
             t: type, 
             m: res

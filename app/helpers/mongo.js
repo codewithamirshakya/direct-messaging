@@ -4,7 +4,7 @@
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
-async function message(channelId, userChannelId, position, q) {
+async function message(channelId, userChannelId, position, q, reverse) {
     return new Promise(function (resolve, reject) {
 
         var params = {            
@@ -23,8 +23,14 @@ async function message(channelId, userChannelId, position, q) {
 
         if(typeof position !== 'undefined' && position != '') {
             params.po ={
-                $lte: position
+                $gte: position
             };
+
+            if(typeof reverse !== 'undefined' && reverse == true) {
+                params.po ={
+                    $lte: position
+                }; 
+            }
         }
 
         resolve(params);
