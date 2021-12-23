@@ -112,10 +112,57 @@ async function banUser(client, channelId, banChannelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ */
+ async function channelOnline(client, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            // Store Online
+            client.lpush(config.rkeys.online, userChannelId, function(err, items) {
+
+            });
+
+            // Remove Existing Timestamp
+            client.zremrangebyscore(config.rkeys.lastOnline, userChannelId, userChannelId, function(err, items) {
+                // Add New Timestamp
+                client.zadd(config.rkeys.lastOnline, userChannelId, Date.now(), function(err, items) {
+                    resolve();
+                });
+            })
+        } catch(e) {
+            resolve();
+        }
+           
+        resolve();
+    });
+}
+
+/**
+ * 
+ * @param {*} client 
+ * @param {*} userChannelId 
+ */
+async function channelOffline(client, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            client.lrem(config.rkeys.online, 1, userChannelId);
+
+            resolve();
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
     getBanChannels,
     getListLength,
-    banUser
+    banUser,
+    channelOnline,
+    channelOffline
 }

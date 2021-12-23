@@ -56,7 +56,9 @@ module.exports = {
         emojis:             'emojis_',
         settings:           'settings_',
         banned:             'banned_',
-        moderators:         'moderators_'
+        moderators:         'moderators_',
+        online:             'dm_online',
+        lastOnline:         'dm_last_online'
     },
     expire: {
         settings: 3600,
