@@ -93,7 +93,12 @@ async function paginated(type, result, paginated) {
 async function formatHistory(type,result, first, paginated, inputJson) {
     return new Promise(async function (resolve, reject) {
         var res = [];
-        res = result.reverse();
+        if(typeof inputJson.reverse !== "undefined" && inputJson.reverse == true) {
+            res = result.reverse();
+        } else {
+            res = result;
+        }
+        
 
         var response = JSON.stringify({
             r: typeof inputJson.reverse !== "undefined" ? inputJson.reverse:false,
