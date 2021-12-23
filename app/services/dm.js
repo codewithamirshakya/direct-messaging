@@ -81,21 +81,20 @@ async function history(initialJSON, inputJSON, search) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dch).then(function() {     
             // Mongo Query Param
-            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q).then(function(q) {  
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.direction).then(function(q) {  
                 // Limit Pagination
                 var limit   = config.chat.limit; 
                 var first   = true;
                 var sort    = {_id: -1};
 
                 if(typeof inputJSON.position !== "undefined" && inputJSON.position != "") {
-                    sort    = {po: 1};
-                    first   = false;
+                    sort    = {po: -1};
                 }
 
                 // Fetch History
                 model.history(initialJSON.mongoConnection, q, limit, sort).then(function(result) {
                     // Prepare Response
-                    response.formatHistory(responseType, result, first, true).then(function(message) {
+                    response.formatHistory(responseType, result, first, true, inputJSON).then(function(message) {
                         resolve(message);
                     });
                 }).catch(function(e) {
