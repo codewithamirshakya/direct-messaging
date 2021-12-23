@@ -74,7 +74,9 @@ const model         = require('../models/dm.js');
  * @param {*} inputJSON
  * @returns 
  */
-async function history(initialJSON, inputJSON) {
+async function history(initialJSON, inputJSON, search) {
+    var responseType    = search ? m.response.messaging.search : m.response.messaging.history;
+    var errorType       = search ? m.errorCode.messaging.search : m.errorCode.messaging.history;
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dch).then(function() {     
@@ -93,17 +95,17 @@ async function history(initialJSON, inputJSON) {
                 // Fetch History
                 model.history(initialJSON.mongoConnection, q, limit, sort).then(function(result) {
                     // Prepare Response
-                    response.formatHistory(m.response.messaging.history, result, first, true).then(function(message) {
+                    response.formatHistory(responseType, result, first, true).then(function(message) {
                         resolve(message);
                     });
                 }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.history));
+                    reject(response.error(errorType));
                 });
             }).catch(function(e) {
-                reject(response.error(m.errorCode.messaging.history));
+                reject(response.error(errorType));
             });
         }).catch(function(e) {
-            reject(response.error(m.errorCode.messaging.history));
+            reject(response.error(errorType));
         });
     });
 }
