@@ -3,6 +3,7 @@ const uWS           = require('uWebSockets.js');
 const config        = require('../config/default.js');
 const m             = require('../config/message.js');
 const response      = require('../helpers/response.js');
+const redmy         = require('../helpers/redmy.js');
 const util          = require('../utils/default.js');
 const ma            = require('../actions/dm.js');
 
@@ -73,6 +74,9 @@ var socket = {
             // Socket Subscribe
             ws.subscribe(messageAdapter);
 
+            // Store Channel Online
+            redmy.channelOnline(redisClient, data.userChannelId);
+
             // Store User Info
             storeConnectedUser(ws, data, messageAdapter).then(function() {
 
@@ -131,7 +135,8 @@ var socket = {
   * @param {*} message 
   */
  function _close(ws, code, message) {
- 
+    // Store Channel Online
+    redmy.channelOffline(redisClient, ws['u']);
  }
 
  /**
