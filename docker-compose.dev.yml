@@ -26,6 +26,9 @@ services:
       MYSQL_PASS: ${MYSQL_PASSWORD}
       MYSQL_PORT: ${MYSQL_PORT}
       MYSQL_DB: "picarto_dev"
+      REDIS_SUB_PREFIX: ptv_dev_
+      REDIS_PUB_PREFIX: ptv_dev_
+      REDIS_PREFIX: ptv_dev_
     working_dir: /app
     command: npm start
     container_name: ptv-dm
