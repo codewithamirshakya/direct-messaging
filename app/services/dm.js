@@ -89,6 +89,7 @@ async function history(initialJSON, inputJSON, search) {
 
                 if(typeof inputJSON.position !== "undefined" && inputJSON.position != "") {
                     sort    = {po: -1};
+                    first   = false;
 
                     if(typeof inputJSON.reverse !== "undefined" && inputJSON.reverse == false) {
                         sort    = {po: 1};
