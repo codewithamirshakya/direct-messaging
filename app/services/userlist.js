@@ -17,15 +17,21 @@ async function list(initialJSON, inputJSON) {
         validator.validation(inputJSON, validator.rules.ul).then(function() {
             // Get Userlist
             channel.getFollowings(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q).then(function(followings) {
-                // Format Userlist
-                response.formatUserlist(followings).then(function(followings) {
-                    // Prepare Response
-                    response.paginated(m.response.messaging.userlist, followings, true).then(function(message) {
-                        resolve(message);
-                    }).catch(function(e) {
-                        reject(response.error(m.errorCode.userlist.list));
+                redmy.onlineChannels(initialJSON.redis).then(function(onlineChannels) {
+                    redmy.lastOnlineChannels(initialJSON.redis).then(function(onlineChannelTimeStamps) {
+                        // Format Userlist
+                        response.formatUserlist(followings, onlineChannels, onlineChannelTimeStamps).then(function(followings) {
+                            // Prepare Response
+                            response.paginated(m.response.messaging.userlist, followings, true).then(function(message) {
+                                resolve(message);
+                            }).catch(function(e) {
+                                reject(response.error(m.errorCode.userlist.list));
+                            });
+                        }); 
                     });
-                });                
+                    
+                });
+                               
             });
         });
     });

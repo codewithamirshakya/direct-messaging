@@ -3,6 +3,7 @@ const response  = require('../helpers/response.js');
 const sm        = require('../models/setting.js');
 const em        = require('../models/emoji.js');
 const util      = require('./redutil.js');
+const utility   = require('./utility.js');
 
 /**
  * 
@@ -157,6 +158,49 @@ async function channelOffline(client, userChannelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ */
+async function onlineChannels(client) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            client.lrange(config.rkeys.online, 0, -1,function(err, items) {
+                if (err) {
+                    console.log(err);
+                }
+                resolve(items);
+            });
+
+            
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} client 
+ */
+async function lastOnlineChannels(client) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            client.zrange(config.rkeys.lastOnline, 0, -1,'withscores',function(err,items) {
+                if (err) {
+                    console.log(err);
+                }
+                res = utility.prepareWithScoreResponse(items, 2);
+                resolve(items);
+            });
+
+            
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
@@ -164,5 +208,7 @@ module.exports = {
     getListLength,
     banUser,
     channelOnline,
-    channelOffline
+    channelOffline,
+    onlineChannels,
+    lastOnlineChannels
 }
