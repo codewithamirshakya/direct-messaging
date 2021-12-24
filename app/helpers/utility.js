@@ -88,8 +88,42 @@ async function messageLimit(ws) {
     });
 }
 
+/**
+ * @param {*} array
+ * @param {*} chunk 
+ */
+function chunker(array, chunk){
+    var i,j, temporary;
+    var res = [];
+    for (i = 0,j = array.length-1; i < j; i += chunk) {
+        temporary = array.slice(i, i + chunk);
+        res.push(temporary);
+    }
+
+    return res;
+}
+
+/**
+ * @param {*} array
+ * @param {*} chunk 
+ */
+function prepareWithScoreResponse(array, chunk){
+    result = [];
+    res = chunker(array, chunk);
+
+    for(var k = 0; k < array.length-2; k++) {
+        var tmp = [];
+        tmp[res[k][1]] = res[k][0];
+        result.push(tmp);
+    }
+
+    return result;
+}
+
 module.exports = {
     scoreLimit,
     messageLimit,
-    checkSpamming
+    checkSpamming,
+    chunker,
+    prepareWithScoreResponse
 }
