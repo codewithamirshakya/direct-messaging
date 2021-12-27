@@ -121,9 +121,9 @@ var mysql       = require('mysql');
                     if (error) {
                         console.log(error);
                     }
-
-                    conn.release();
                     
+                    conn.release();
+
                     resolve(results);
                 });
             });

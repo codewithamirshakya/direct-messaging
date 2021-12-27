@@ -30,7 +30,7 @@ const validator     = require('../helpers/validator.js');
         // Validate Input
         validator.validation(inputJSON, validator.rules.es).then(function() {
             // Get Existing Emojis
-            redmy.getSubscribedEmojis(initialJSON.redis, initialJSON.connection, inputJSON.channelId, initialJSON.userChannelId).then(function(emojis) {
+            redmy.getSubscribedEmojis(initialJSON.mysqlConnection, inputJSON.channelId, initialJSON.userChannelId).then(function(emojis) {
                 // Prepare Response
                 response.typeMessage(m.response.emotes.subscribed, emojis).then(function(message) {
                     resolve(message);
