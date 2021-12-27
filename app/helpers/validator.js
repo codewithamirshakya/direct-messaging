@@ -29,6 +29,9 @@ const rules = {
     },
     dam: {
         channelId: "required"
+    },
+    es: {
+        channelId: "required"
     }
 }
 

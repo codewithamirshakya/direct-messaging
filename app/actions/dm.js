@@ -63,6 +63,17 @@ const ul        = require('../services/userlist.js');
                     reject(e);
                 });
                 break;
+
+            // Emoji Subscribed
+            case m.type.emotes.subscribed:
+                // Emoji Subscribed Handler
+                em.subscribed(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    logger.log('DEBUG', 'emojis.subscribed', JSON.stringify(e));
+                    reject(e);
+                });
+                break;
                 
             // Seen status 
             case m.type.messaging.seenStatus:
@@ -83,7 +94,8 @@ const ul        = require('../services/userlist.js');
                     reject(e);
                 });
                 break;
-                // Seen status 
+
+            // Seen status 
             case m.type.messaging.deleteMessages:
                 // Seen status Handler
                 dm.deleteMessages(initialJSON, inputJSON).then(function(message) {

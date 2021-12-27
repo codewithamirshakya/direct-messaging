@@ -13,7 +13,8 @@ module.exports = {
             search: "dsh"
         },
         emotes: {
-            list: "el"
+            list: "el",
+            subscribed: "es"
         },
         user: {
             ban: "ub"
@@ -30,7 +31,8 @@ module.exports = {
             search: "dsh"
         },
         emotes: {
-            list: "el"
+            list: "el",
+            subscribed: "es"
         }
     },
     errorCode: {
@@ -47,7 +49,8 @@ module.exports = {
             search:         "DIRECT_MESSAGING_SEARCH_HISTORY"
         },
         emojis: {
-            list:           "EMOTES_LIST"
+            list:           "EMOTES_LIST",
+            subscribed:     "EMOTES_SUBSCRIBED"
         },
         userlist: {
             list:   "USERLIST"
