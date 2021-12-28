@@ -32,22 +32,6 @@ function success(successCode) {
 
 /**
  * 
- * @param {*} successCode 
- * @response JSON
- */
-function genericResponse(type, initialJson, inputJson, success) {
-    var response = JSON.stringify({
-        t: type,
-        pg: typeof inputJson.page !== 'undefined' ? inputJson.page : "",
-        c: typeof inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
-        su: success
-    });
-
-    return response;
-}
-
-/**
- * 
  * @param {*} type 
  * @param {*} message 
  */
@@ -274,6 +258,5 @@ module.exports = {
     formatSettings,
     formatEmojis,
     formatUserlist,
-    formatHistory,
-    genericResponse
+    formatHistory
 }

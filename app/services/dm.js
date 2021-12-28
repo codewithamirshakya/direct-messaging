@@ -201,7 +201,10 @@ async function deleteMessages(initialJSON, inputJSON) {
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
                 // Update seen status
                 model.remove(initialJSON.mongoConnection, q).then(function() {
-                    resolve(response.genericResponse(m.response.messaging.deleteMessages, initialJSON, inputJSON, true));
+                    // Prepare Response
+                    response.typeMessage(m.response.messaging.deleteMessages, {c: inputJSON.channelId}).then(function(message) {
+                        resolve(message);
+                    });
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.deleteMessages));
                 });
