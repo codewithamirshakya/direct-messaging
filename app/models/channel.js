@@ -1,5 +1,5 @@
 var mysql       = require('mysql');
-
+const DM_COLLECTION = 'channels';
 /**
  * 
  * @param {*} connection 
@@ -60,6 +60,64 @@ var mysql       = require('mysql');
     });
 }
 
+async function isFollowing(connection, userChannelId, channelId) {
+    return new Promise(function (resolve, reject) {
+        try {
+            params = [userChannelId, channelId];
+            var query = `SELECT * FROM followers where channel_id = ? and follower_id = ? LIMIT 1 `;  
+
+            var sql = mysql.format(query, 
+                params
+                );
+                
+            connection.getConnection((err, conn) => {
+                if(err) {
+                    console.log(err);
+                }
+
+                conn.query(sql, function (error, results, fields) {
+                    if (error) {
+                        console.log(error);
+                    }
+
+                    conn.release();
+
+                    if(typeof results !== "undefined") {
+                        resolve(results);
+                    } 
+                    
+                    reject();
+                });
+            });
+        } catch(e) {
+
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} channelId 
+ */
+async function getChannel(connection, channelId) {
+    return new Promise(function (resolve, reject) {
+        try {
+            connection
+                .collection(DM_COLLECTION)
+                .findOne({channel_id: channelId})
+                .then(function(result) {
+                    resolve(result);
+                });
+        } catch(e) {
+            reject(e);
+        }
+        
+    });
+}
+
 module.exports = {
-    getFollowings
+    getFollowings,
+    getChannel,
+    isFollowing
 }

@@ -7,6 +7,7 @@ const mongo         = require('../helpers/mongo.js');
 const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
+const channel       = require('../models/channel.js');
 
 /**
  * 
@@ -24,31 +25,35 @@ const model         = require('../models/dm.js');
                 validator.validation(inputJSON, validator.rules.dm).then(function() {
                     // Check if user is banned
                     validator.banValidation(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
-                        // Get Channel Settings
-                        redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
-                            // Prepare Param
-                            param.dm(initialJSON, inputJSON, settings).then(function(params) {   
-                                // Save Model                
-                                model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
-                                    // Prepare Response
-                                    response.typeMessage(m.response.messaging.send, params).then(function(message) {
-                                        // Publish Message
-                                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-                                            resolve(true);
-                                        }).catch(function(e) {
-                                            resolve(true);
-                                        });
+                        // allow guest validation
+                        validator.settingValidation(ws, initialJSON, inputJSON).then(function() {
+                            // Get Channel Settings
+                            redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
+                                // Prepare Param
+                                param.dm(initialJSON, inputJSON, settings).then(function(params) {   
+                                    // Save Model                
+                                    model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
+                                        // Prepare Response
+                                        response.typeMessage(m.response.messaging.send, params).then(function(message) {
+                                            // Publish Message
+                                            pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                                                resolve(true);
+                                            }).catch(function(e) {
+                                                resolve(true);
+                                            });
 
-                                        resolve(message);
+                                            resolve(message);
+                                        });
+                                    }).catch(function(e) {
+                                        reject(response.error(m.errorCode.messaging.save));
                                     });
                                 }).catch(function(e) {
-                                    reject(response.error(m.errorCode.messaging.save));
+                                    reject(response.error(m.errorCode.messaging.validation));
                                 });
                             }).catch(function(e) {
                                 reject(response.error(m.errorCode.messaging.validation));
                             });
                         }).catch(function(e) {
-                            console.log(e);
                             reject(response.error(m.errorCode.messaging.validation));
                         });
                     }).catch(function(e) {
