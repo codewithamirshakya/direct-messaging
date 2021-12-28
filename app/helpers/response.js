@@ -38,8 +38,8 @@ function success(successCode) {
 function genericResponse(type, initialJson, inputJson, success) {
     var response = JSON.stringify({
         t: type,
-        pg: inputJson.page !== 'undefined' ? inputJson.page : "",
-        c: inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
+        pg: typeof inputJson.page !== 'undefined' ? inputJson.page : "",
+        c: typeof inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
         su: success
     });
 
@@ -95,9 +95,9 @@ async function paginated(type, result, paginated, initialJson, inputJson) {
             p: paginated,
             t: type, 
             m: result,
-            pg: inputJson.page !== 'undefined' ? inputJson.page : "",
-            c: inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
-            u: initialJson.userChannelId !== 'undefined' ? initialJson.userChannelId : ""
+            pg: typeof inputJson.page !== 'undefined' ? inputJson.page : "",
+            c: typeof inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
+            u: typeof initialJson.userChannelId !== 'undefined' ? initialJson.userChannelId : ""
         });
 
         resolve(response);
