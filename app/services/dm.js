@@ -135,7 +135,7 @@ async function messageList(initialJSON, inputJSON) {
                     // Format Message List
                     response.formatMessageList(result).then(function(list) {
                         // Prepare Response
-                        response.paginated(m.response.messaging.messageList, list, true).then(function(message) {
+                        response.paginated(m.response.messaging.messageList, list, true, initialJSON, inputJSON).then(function(message) {
                             resolve(message);
                         }).catch(function(e) {
                             reject(response.error(m.errorCode.messaging.messageList));
@@ -201,7 +201,7 @@ async function deleteMessages(initialJSON, inputJSON) {
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
                 // Update seen status
                 model.remove(initialJSON.mongoConnection, q).then(function() {
-                    resolve(response.success(m.response.messaging.deleteMessages));
+                    resolve(response.genericResponse(m.response.messaging.deleteMessages, initialJSON, inputJSON, true));
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.deleteMessages));
                 });
