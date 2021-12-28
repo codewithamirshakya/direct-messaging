@@ -32,6 +32,22 @@ function success(successCode) {
 
 /**
  * 
+ * @param {*} successCode 
+ * @response JSON
+ */
+function genericResponse(type, initialJson, inputJson, success) {
+    var response = JSON.stringify({
+        t: type,
+        pg: inputJson.page !== 'undefined' ? inputJson.page : "",
+        c: inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
+        su: success
+    });
+
+    return response;
+}
+
+/**
+ * 
  * @param {*} type 
  * @param {*} message 
  */
@@ -73,12 +89,15 @@ function success(successCode) {
  * 
  * @param {*} result 
  */
-async function paginated(type, result, paginated) {
+async function paginated(type, result, paginated, initialJson, inputJson) {
     return new Promise(async function (resolve, reject) {
         var response = JSON.stringify({
             p: paginated,
             t: type, 
-            m: result
+            m: result,
+            pg: inputJson.page !== 'undefined' ? inputJson.page : "",
+            c: inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
+            u: initialJson.userChannelId !== 'undefined' ? initialJson.userChannelId : ""
         });
 
         resolve(response);
@@ -255,5 +274,6 @@ module.exports = {
     formatSettings,
     formatEmojis,
     formatUserlist,
-    formatHistory
+    formatHistory,
+    genericResponse
 }
