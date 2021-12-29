@@ -35,15 +35,18 @@ async function list(initialJSON, inputJSON) {
                         });
 
                         setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
-                            // Format Userlist
-                            response.formatUserlist(followings, onlineChannels, onlineChannelTimeStamps, settings).then(function(followings) {
-                                // Prepare Response
-                                response.paginated(m.response.messaging.userlist, followings, true, initialJSON, inputJSON).then(function(message) {
-                                    resolve(message);
-                                }).catch(function(e) {
-                                    reject(response.error(m.errorCode.userlist.list));
-                                });
-                            }); 
+                            redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {
+                                // Format Userlist
+                                response.formatUserlist(followings, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels).then(function(followings) {
+                                    // Prepare Response
+                                    response.paginated(m.response.messaging.userlist, followings, true, initialJSON, inputJSON).then(function(message) {
+                                        resolve(message);
+                                    }).catch(function(e) {
+                                        reject(response.error(m.errorCode.userlist.list));
+                                    });
+                                }); 
+                            });
+                            
                         });
                         
                     });

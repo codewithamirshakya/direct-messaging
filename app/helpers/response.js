@@ -220,7 +220,7 @@ async function formatMessageList(result) {
  * @param {*} onlineChannelTimeStamps 
  * @returns 
  */
- async function formatUserlist(users, onlineChannels, onlineChannelTimeStamps, settings) {
+ async function formatUserlist(users, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels) {
     return new Promise(async function (resolve, reject) {
         var i   = 0;
         var res = [];
@@ -235,7 +235,8 @@ async function formatMessageList(result) {
         for(var i=0; i<users.length;i++) {
             var channelId   = users[i].id.toString();
             var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
-            var avatar      = config.minio.bucket + "/" + avatarPath + "/" + users[i].avatar;            
+            var avatar      = config.minio.bucket + "/" + avatarPath + "/" + users[i].avatar;   
+            var isBanned    = (bannedChannels.indexOf(channelId) != -1) ? true: false;          
 
             var online      = false;
             var lastOnline  = "";
@@ -258,7 +259,8 @@ async function formatMessageList(result) {
                 y:      users[i].account_type.substring(0,1),
                 d:      utils.dateToUnixTimeStamp(users[i].last_live),
                 o:      Boolean(online),
-                lo:     lastOnline
+                lo:     lastOnline,
+                b:      isBanned
             };
 
             res.push(param)
