@@ -20,7 +20,7 @@ const rules = {
     ul: {
         type: "required"
     },
-    ss: {
+    dmss: {
         type: "required",
         channelId: "required",
         position: "required"

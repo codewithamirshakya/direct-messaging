@@ -108,8 +108,8 @@ function chunker(array, chunk){
  * @param {*} chunk 
  */
 function prepareWithScoreResponse(array, chunk){
-    result = [];
-    res = chunker(array, chunk);
+    var result  = [];
+    var res     = chunker(array, chunk);
 
     for(var k = 0; k < array.length-2; k++) {
         var tmp = [];
