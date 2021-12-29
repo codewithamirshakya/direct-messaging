@@ -46,15 +46,23 @@ async function list(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.ub).then(function() {
-            // Check if user is already banned
-            validator.banValidation(initialJSON.redis, [initialJSON.userChannelId], inputJSON.channelId.toString()).then(function() {
-                // Fetch Current List Count
-                redmy.getListLength(initialJSON.redis, config.rkeys.banned + initialJSON.userChannelId).then(function(listLength) {
-                    // Validate MaxLimit
-                    validator.limitValidation(listLength, config.hlimit.banned).then(function() {
-                        // Ban User
-                        redmy.banUser(initialJSON.redis, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                            resolve(response.success(m.successCode.banUser.success));
+            // Cannot ban Self
+            if(initialJSON.userChannelId !== inputJSON.channelId) {
+                // Check if user is already banned
+                validator.banValidation(initialJSON.redis, [initialJSON.userChannelId], inputJSON.channelId.toString()).then(function() {
+                    // Fetch Current List Count
+                    redmy.getListLength(initialJSON.redis, config.rkeys.banned + initialJSON.userChannelId).then(function(listLength) {
+                        // Validate MaxLimit
+                        validator.limitValidation(listLength, config.hlimit.banned).then(function() {
+                            // Ban User
+                            redmy.banUser(initialJSON.redis, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                                // Prepare Response
+                                response.typeMessage(m.successCode.banUser.success, {c: inputJSON.channelId}).then(function(message) {
+                                    resolve(message);
+                                });
+                            }).catch(function(e) {
+                                reject(response.error(m.errorCode.banUser.error));
+                            });
                         }).catch(function(e) {
                             reject(response.error(m.errorCode.banUser.error));
                         });
@@ -62,11 +70,11 @@ async function list(initialJSON, inputJSON) {
                         reject(response.error(m.errorCode.banUser.error));
                     });
                 }).catch(function(e) {
-                    reject(response.error(m.errorCode.banUser.error));
+                    reject(response.error(m.errorCode.banUser.exist));
                 });
-            }).catch(function(e) {
-                reject(response.error(m.errorCode.banUser.exist));
-            });
+            } else {
+                reject(response.error(m.errorCode.banUser.validation));
+            }
         }).catch(function(e) {
             reject(response.error(m.errorCode.banUser.validation));
         });
