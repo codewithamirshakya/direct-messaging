@@ -201,21 +201,21 @@ async function seenStatus(initialJSON, inputJSON) {
 async function deleteMessages(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dam).then(function() {
+        validator.validation(inputJSON, validator.rules.dmd).then(function() {
             // Mongo Query Param
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
                 // Update seen status
                 model.remove(initialJSON.mongoConnection, q).then(function() {
                     // Prepare Response
-                    response.typeMessage(m.response.messaging.deleteMessages, {c: inputJSON.channelId}).then(function(message) {
+                    response.typeMessage(m.response.messaging.delete, {c: inputJSON.channelId}).then(function(message) {
                         resolve(message);
                     });
                 }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.deleteMessages));
+                    reject(response.error(m.errorCode.messaging.delete));
                 });
             });
         }).catch(function(e) {
-            reject(response.error(m.errorCode.messaging.deleteMessages));
+            reject(response.error(m.errorCode.messaging.delete));
         });
     });
 }

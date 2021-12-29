@@ -96,7 +96,7 @@ const ul        = require('../services/userlist.js');
                 break;
 
             // Seen status 
-            case m.type.messaging.deleteMessages:
+            case m.type.messaging.delete:
                 // Seen status Handler
                 dm.deleteMessages(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
