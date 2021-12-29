@@ -135,7 +135,7 @@ async function settingValidation(ws,initialJson, inputJSON) {
         var ij = initialJson;
         var inj = inputJSON;
         channel.getChannel(initialJson.mongoConnection, inputJSON.channelId).then(function(ch) {
-            if(typeof ch !== 'undefined' && typeof ch.dm !== 'undefined' && typeof ch.dm.allow_message_every_one !== 'undefined' && ch.dm.allow_message_every_one == true) {
+            if(typeof ch !== 'undefined' && ch !== null && typeof ch.dm !== 'undefined' && typeof ch.dm.allow_message_every_one !== 'undefined' && ch.dm.allow_message_every_one == true) {
                resolve();     
             }
 
