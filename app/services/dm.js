@@ -7,7 +7,6 @@ const mongo         = require('../helpers/mongo.js');
 const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
-const channel       = require('../models/channel.js');
 
 /**
  * 
@@ -174,14 +173,16 @@ async function seenStatus(initialJSON, inputJSON) {
             // Mongo Query Param
             mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
                 // Update seen status
-                model.update(initialJSON.mongoConnection, q, { $set: { s: true} }).then(function() {
-                    // Publish Message
-                    pub.publish(initialJSON, inputJSON.channelId, "seen", true).then(function() {
-                        resolve(true);
-                    }).catch(function(e) {
-                        resolve(true);
+                model.update(initialJSON.mongoConnection, q, { $set: { s: true } }).then(function() {
+                    // Prepare Response
+                    response.typeMessage(m.response.messaging.seenStatus, { c: initialJSON.userChannelId }).then(function(message) {
+                         // Publish Message
+                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                            resolve(true);
+                        }).catch(function(e) {
+                            resolve(true);
+                        });
                     });
-                    
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.seenStatus));
                 });

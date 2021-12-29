@@ -4,13 +4,13 @@ module.exports = {
 
         },
         messaging: {
-            send: "dm",
-            history: "dch",
-            messageList: "dml",
-            userList: "ul",
-            seenStatus:"ss",
-            delete: "dmd",
-            search: "dms"
+            send:           "dm",
+            history:        "dch",
+            messageList:    "dml",
+            userList:       "ul",
+            seenStatus:     "dmss",
+            delete:         "dmd",
+            search:         "dms"
         },
         emotes: {
             list: "el",
@@ -22,13 +22,13 @@ module.exports = {
     },
     response: {
         messaging: {
-            send: "dm",
-            history: "dch",
-            messageList: "dml",
-            userlist: "ul",
-            seenStatus:"ss",
-            delete: "dmd",
-            search: "dms"
+            send:           "dm",
+            history:        "dch",
+            messageList:    "dml",
+            userlist:       "ul",
+            seenStatus:     "dmss",
+            delete:         "dmd",
+            search:         "dms"
         },
         emotes: {
             list: "el",
