@@ -10,7 +10,7 @@ module.exports = {
             userList: "ul",
             seenStatus:"ss",
             delete: "dmd",
-            search: "dsh"
+            search: "dms"
         },
         emotes: {
             list: "el",
@@ -28,7 +28,7 @@ module.exports = {
             userlist: "ul",
             seenStatus:"ss",
             delete: "dmd",
-            search: "dsh"
+            search: "dms"
         },
         emotes: {
             list: "el",
