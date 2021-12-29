@@ -81,7 +81,8 @@ async function paginated(type, result, paginated, initialJson, inputJson) {
             m: result,
             pg: typeof inputJson !== 'undefined' && typeof inputJson.page !== 'undefined' ? inputJson.page : "",
             c: typeof inputJson !== 'undefined' && typeof inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
-            u: typeof initialJson !== 'undefined' && typeof initialJson.userChannelId !== 'undefined' ? initialJson.userChannelId : ""
+            u: typeof initialJson !== 'undefined' && typeof initialJson.userChannelId !== 'undefined' ? initialJson.userChannelId : "",
+            q: typeof initialJson !== 'undefined' && typeof initialJson.userChannqelId !== 'undefined' ? initialJson.q : ""
         });
 
         resolve(response);
@@ -219,17 +220,37 @@ async function formatMessageList(result) {
  * @param {*} onlineChannelTimeStamps 
  * @returns 
  */
- async function formatUserlist(users, onlineChannels, onlineChannelTimeStamps) {
+ async function formatUserlist(users, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels) {
     return new Promise(async function (resolve, reject) {
         var i   = 0;
         var res = [];
-        
+
+        var settingRes = [];
+        settings.forEach(function (setting) {
+            if(typeof setting.dm !== "undefined") {
+                settingRes[setting.channel_id] = setting.dm;
+            }            
+        });
+
         for(var i=0; i<users.length;i++) {
             var channelId   = users[i].id.toString();
             var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
-            var avatar      = config.minio.bucket + "/" + avatarPath + "/" + users[i].avatar;
-            var online      = (onlineChannels.indexOf(channelId) != -1) ? true: false; 
-            var lastOnline  = (onlineChannelTimeStamps.indexOf(channelId) != -1) ? onlineChannelTimeStamps[onlineChannelTimeStamps.indexOf(channelId)]: ""; 
+            var avatar      = config.minio.bucket + "/" + avatarPath + "/" + users[i].avatar;   
+            var isBanned    = (bannedChannels.indexOf(channelId) != -1) ? true: false;          
+
+            var online      = false;
+            var lastOnline  = "";
+
+            if(typeof settingRes[channelId] !== "undefined") {
+                var dmSetting = settingRes[channelId];
+                if(dmSetting.show_online_status == true) {
+                    online      = (onlineChannels.indexOf(channelId) != -1) ? true: false; 
+                }
+
+                if(dmSetting.show_last_online == true && typeof onlineChannelTimeStamps[channelId] !== "undefined") {
+                    lastOnline  = onlineChannelTimeStamps[channelId];
+                }
+            }             
 
             param 	  	= { 
                 c:      parseInt(users[i].id),
@@ -238,7 +259,8 @@ async function formatMessageList(result) {
                 y:      users[i].account_type.substring(0,1),
                 d:      utils.dateToUnixTimeStamp(users[i].last_live),
                 o:      Boolean(online),
-                lo:     lastOnline
+                lo:     lastOnline,
+                b:      isBanned
             };
 
             res.push(param)

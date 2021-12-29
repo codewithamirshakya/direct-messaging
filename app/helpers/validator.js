@@ -18,7 +18,8 @@ const rules = {
         page: "required"
     },
     ul: {
-        type: "required"
+        type: "required",
+        page: "required"
     },
     dmss: {
         type: "required",

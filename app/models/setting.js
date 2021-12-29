@@ -35,6 +35,32 @@ var mysql       = require('mysql');
     });
 }
 
+async function getDMSettings(connection, channelIds){
+    return new Promise(function (resolve, reject) {
+        try {
+            connection
+                .collection('channels')
+                .find({
+                    channel_id: {
+                        $in: channelIds
+                    }
+                })
+                .toArray(function(err, result) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    
+                    resolve(result);
+                });
+        } catch(e) {
+            reject(e);
+        }
+        
+    });
+
+}
+
 module.exports = {
-    get
+    get,
+    getDMSettings
 }

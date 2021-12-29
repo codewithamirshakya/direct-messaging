@@ -112,10 +112,8 @@ function prepareWithScoreResponse(array, chunk){
     var res     = chunker(array, chunk);
 
     for(var k = 0; k < array.length-2; k++) {
-        var tmp = [];
         if(typeof res !== "undefined" && typeof res[k] !== "undefined") {
-            tmp[res[k][1]] = res[k][0];
-            result.push(tmp);
+            result[res[k][1]] = res[k][0];
         }
     }
 
