@@ -4,13 +4,13 @@ module.exports = {
 
         },
         messaging: {
-            send: "dm",
-            history: "dch",
-            messageList: "dml",
-            userList: "ul",
-            seenStatus:"ss",
-            deleteMessages: "dam",
-            search: "dsh"
+            send:           "dm",
+            history:        "dch",
+            messageList:    "dml",
+            userList:       "ul",
+            seenStatus:     "dmss",
+            delete:         "dmd",
+            search:         "dms"
         },
         emotes: {
             list: "el",
@@ -22,13 +22,13 @@ module.exports = {
     },
     response: {
         messaging: {
-            send: "dm",
-            history: "dch",
-            messageList: "dml",
-            userlist: "ul",
-            seenStatus:"ss",
-            deleteMessages: "dam",
-            search: "dsh"
+            send:           "dm",
+            history:        "dch",
+            messageList:    "dml",
+            userlist:       "ul",
+            seenStatus:     "dmss",
+            delete:         "dmd",
+            search:         "dms"
         },
         emotes: {
             list: "el",
@@ -45,7 +45,7 @@ module.exports = {
             messageList:    "DIRECT_MESSAGING_LIST",
             seenStatus:     "DIRECT_MESSAGING_SEEN_STATUS",
             banned:         "DIRECT_MESSAGING_BANNED",
-            deleteMessages: "DIRECT_MESSAGING_DELETE_MESSAGES",
+            delete:         "DIRECT_MESSAGING_DELETE_MESSAGES",
             search:         "DIRECT_MESSAGING_SEARCH_HISTORY"
         },
         emojis: {

@@ -198,14 +198,16 @@ async function seenStatus(initialJSON, inputJSON) {
             // Mongo Query Param
             mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
                 // Update seen status
-                model.update(initialJSON.mongoConnection, q, { $set: { s: true} }).then(function() {
-                    // Publish Message
-                    pub.publish(initialJSON, inputJSON.channelId, "seen", true).then(function() {
-                        resolve(true);
-                    }).catch(function(e) {
-                        resolve(true);
+                model.update(initialJSON.mongoConnection, q, { $set: { s: true } }).then(function() {
+                    // Prepare Response
+                    response.typeMessage(m.response.messaging.seenStatus, { c: initialJSON.userChannelId }).then(function(message) {
+                         // Publish Message
+                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                            resolve(true);
+                        }).catch(function(e) {
+                            resolve(true);
+                        });
                     });
-                    
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.seenStatus));
                 });
@@ -225,21 +227,21 @@ async function seenStatus(initialJSON, inputJSON) {
 async function deleteMessages(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dam).then(function() {
+        validator.validation(inputJSON, validator.rules.dmd).then(function() {
             // Mongo Query Param
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
                 // Update seen status
                 model.remove(initialJSON.mongoConnection, q).then(function() {
                     // Prepare Response
-                    response.typeMessage(m.response.messaging.deleteMessages, {c: inputJSON.channelId}).then(function(message) {
+                    response.typeMessage(m.response.messaging.delete, {c: inputJSON.channelId}).then(function(message) {
                         resolve(message);
                     });
                 }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.deleteMessages));
+                    reject(response.error(m.errorCode.messaging.delete));
                 });
             });
         }).catch(function(e) {
-            reject(response.error(m.errorCode.messaging.deleteMessages));
+            reject(response.error(m.errorCode.messaging.delete));
         });
     });
 }

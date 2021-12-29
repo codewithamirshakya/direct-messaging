@@ -14,7 +14,7 @@ const ul        = require('../services/userlist.js');
  {
     return new Promise(async function (resolve, reject) {
         switch(inputJSON.type) {
-            // Initial Ticker Settomg
+            // Direct Messaging
             case m.type.messaging.send:
                 // Message Handler
                 dm.messaging(initialJSON, inputJSON, ws).then(function(message) {
@@ -96,7 +96,7 @@ const ul        = require('../services/userlist.js');
                 break;
 
             // Seen status 
-            case m.type.messaging.deleteMessages:
+            case m.type.messaging.delete:
                 // Seen status Handler
                 dm.deleteMessages(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
