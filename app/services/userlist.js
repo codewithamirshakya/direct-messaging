@@ -4,6 +4,8 @@ const validator     = require('../helpers/validator.js');
 const response      = require('../helpers/response.js');
 const redmy         = require('../helpers/redmy.js');
 const channel       = require('../models/channel.js');
+const setting       = require('../models/setting.js');
+
 
 /**
  * 
@@ -19,15 +21,23 @@ async function list(initialJSON, inputJSON) {
             channel.getFollowings(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q).then(function(followings) {
                 redmy.onlineChannels(initialJSON.redis).then(function(onlineChannels) {
                     redmy.lastOnlineChannels(initialJSON.redis).then(function(onlineChannelTimeStamps) {
-                        // Format Userlist
-                        response.formatUserlist(followings, onlineChannels, onlineChannelTimeStamps).then(function(followings) {
-                            // Prepare Response
-                            response.paginated(m.response.messaging.userlist, followings, true).then(function(message) {
-                                resolve(message);
-                            }).catch(function(e) {
-                                reject(response.error(m.errorCode.userlist.list));
-                            });
-                        }); 
+                        var channelIds = [];
+
+                        followings.forEach(function (following) {
+                            channelIds.push(following.id);
+                        });
+                        setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
+                            // Format Userlist
+                            response.formatUserlist(followings, onlineChannels, onlineChannelTimeStamps, settings).then(function(followings) {
+                                // Prepare Response
+                                response.paginated(m.response.messaging.userlist, followings, true).then(function(message) {
+                                    resolve(message);
+                                }).catch(function(e) {
+                                    reject(response.error(m.errorCode.userlist.list));
+                                });
+                            }); 
+                        });
+                        
                     });
                     
                 });

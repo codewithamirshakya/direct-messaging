@@ -219,17 +219,36 @@ async function formatMessageList(result) {
  * @param {*} onlineChannelTimeStamps 
  * @returns 
  */
- async function formatUserlist(users, onlineChannels, onlineChannelTimeStamps) {
+ async function formatUserlist(users, onlineChannels, onlineChannelTimeStamps, settings) {
     return new Promise(async function (resolve, reject) {
         var i   = 0;
         var res = [];
-        
+
+        var settingRes = [];
+        settings.forEach(function (setting) {
+            if(typeof setting.dm !== "undefined") {
+                settingRes[setting.channel_id] = setting.dm;
+            }            
+        });
+
         for(var i=0; i<users.length;i++) {
             var channelId   = users[i].id.toString();
             var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
-            var avatar      = config.minio.bucket + "/" + avatarPath + "/" + users[i].avatar;
-            var online      = (onlineChannels.indexOf(channelId) != -1) ? true: false; 
-            var lastOnline  = (onlineChannelTimeStamps.indexOf(channelId) != -1) ? onlineChannelTimeStamps[onlineChannelTimeStamps.indexOf(channelId)]: ""; 
+            var avatar      = config.minio.bucket + "/" + avatarPath + "/" + users[i].avatar;            
+
+            var online      = false;
+            var lastOnline  = "";
+
+            if(typeof settingRes[channelId] !== "undefined") {
+                var dmSetting = settingRes[channelId];
+                if(dmSetting.show_online_status == true) {
+                    online      = (onlineChannels.indexOf(channelId) != -1) ? true: false; 
+                }
+
+                if(dmSetting.show_last_online == true && typeof onlineChannelTimeStamps[channelId] !== "undefined") {
+                    lastOnline  = onlineChannelTimeStamps[channelId];
+                }
+            }             
 
             param 	  	= { 
                 c:      parseInt(users[i].id),

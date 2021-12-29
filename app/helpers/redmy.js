@@ -191,7 +191,7 @@ async function lastOnlineChannels(client) {
                     console.log(err);
                 }
                 res = utility.prepareWithScoreResponse(items, 2);
-                resolve(items);
+                resolve(res);
             });
 
             
