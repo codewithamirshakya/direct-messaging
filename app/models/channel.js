@@ -1,5 +1,6 @@
-var mysql       = require('mysql');
+var mysql           = require('mysql');
 const DM_COLLECTION = 'channels';
+
 /**
  * 
  * @param {*} connection 
@@ -63,6 +64,13 @@ const DM_COLLECTION = 'channels';
     });
 }
 
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} userChannelId 
+ * @param {*} channelId 
+ * @returns 
+ */
 async function isFollowing(connection, userChannelId, channelId) {
     return new Promise(function (resolve, reject) {
         try {

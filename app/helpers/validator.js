@@ -21,7 +21,7 @@ const rules = {
         type: "required",
         page: "required"
     },
-    ss: {
+    dmss: {
         type: "required",
         channelId: "required",
         position: "required"
@@ -29,7 +29,7 @@ const rules = {
     ub: {
         channelId: "required"
     },
-    dam: {
+    dmd: {
         channelId: "required"
     },
     es: {

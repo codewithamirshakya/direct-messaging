@@ -169,10 +169,9 @@ async function onlineChannels(client) {
                 if (err) {
                     console.log(err);
                 }
+
                 resolve(items);
             });
-
-            
         } catch(e) {
             resolve();
         }
@@ -186,15 +185,14 @@ async function onlineChannels(client) {
 async function lastOnlineChannels(client) {
     return new Promise(async function (resolve, reject) {
         try {
-            client.zrange(config.rkeys.lastOnline, 0, -1,'withscores',function(err,items) {
+            client.zrange(config.rkeys.lastOnline, 0, -1, 'withscores', function(err,items) {
                 if (err) {
                     console.log(err);
                 }
+
                 res = utility.prepareWithScoreResponse(items, 2);
                 resolve(res);
             });
-
-            
         } catch(e) {
             resolve();
         }
