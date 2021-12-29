@@ -122,20 +122,51 @@ async function formatHistory(type,result, first, paginated, inputJson) {
  * @param {*} result 
  * @returns 
  */
-async function formatMessageList(result) {
+async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels) {
+    console.log(onlineChannels);
     return new Promise(async function (resolve, reject) {
         var res = [];
+
+        var settingRes = [];
+        settings.forEach(function (setting) {
+            if(typeof setting.dm !== "undefined") {
+                settingRes[setting.channel_id] = setting.dm;
+            }            
+        });
+        
+
         try {
             for(i=0; i < result.length; i++) {
                 res[i]      = result[i];
                 res[i].c    = result[i]._id;
+                var channelId   = result[i]._id;   
+                var isBanned    = (bannedChannels.indexOf(channelId) != -1) ? true: false;          
+
+                var online      = false;
+                var lastOnline  = "";
+
+                if(typeof settingRes[channelId] !== "undefined") {
+                    var dmSetting = settingRes[channelId];
+                    
+                    if(dmSetting.show_online_status == true) {
+                        online      = (onlineChannels.indexOf(channelId.toString()) != -1) ? true: false; 
+                    }
+    
+                    if(dmSetting.show_last_online == true && typeof onlineChannelTimeStamps[channelId] !== "undefined") {
+                        lastOnline  = onlineChannelTimeStamps[channelId];
+                    }                   
+                }   
+
+                res[i].o    =       Boolean(online);
+                res[i].lo   =       lastOnline;
+                res[i].b    =       isBanned;
 
                 delete res[i]._id;
             }
         } catch(e) {
-
+            console.log(e);    
         }
-
+        
         resolve(res);
     });
 }
@@ -244,7 +275,7 @@ async function formatMessageList(result) {
             if(typeof settingRes[channelId] !== "undefined") {
                 var dmSetting = settingRes[channelId];
                 if(dmSetting.show_online_status == true) {
-                    online      = (onlineChannels.indexOf(channelId) != -1) ? true: false; 
+                    online      = (onlineChannels.indexOf(channelId.toString()) != -1) ? true: false; 
                 }
 
                 if(dmSetting.show_last_online == true && typeof onlineChannelTimeStamps[channelId] !== "undefined") {
