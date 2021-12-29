@@ -63,7 +63,7 @@ const DM_COLLECTION = 'channels';
 async function isFollowing(connection, userChannelId, channelId) {
     return new Promise(function (resolve, reject) {
         try {
-            params = [channelId,userChannelId];
+            params = [parseInt(channelId), parseInt(userChannelId)];
             var query = `SELECT * FROM followers where channel_id = ? and follower_id = ? LIMIT 1 `;  
 
             var sql = mysql.format(query, 
