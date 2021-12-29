@@ -81,7 +81,8 @@ async function paginated(type, result, paginated, initialJson, inputJson) {
             m: result,
             pg: typeof inputJson !== 'undefined' && typeof inputJson.page !== 'undefined' ? inputJson.page : "",
             c: typeof inputJson !== 'undefined' && typeof inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
-            u: typeof initialJson !== 'undefined' && typeof initialJson.userChannelId !== 'undefined' ? initialJson.userChannelId : ""
+            u: typeof initialJson !== 'undefined' && typeof initialJson.userChannelId !== 'undefined' ? initialJson.userChannelId : "",
+            q: typeof initialJson !== 'undefined' && typeof initialJson.userChannqelId !== 'undefined' ? initialJson.q : ""
         });
 
         resolve(response);

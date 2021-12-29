@@ -5,7 +5,7 @@ const DM_COLLECTION = 'channels';
  * @param {*} connection 
  * @param {*} channelId 
  */
- async function getFollowings(connection, userChannelId, q) {
+ async function getFollowings(connection, userChannelId, q, limit, offset) {
     return new Promise(function (resolve, reject) {
         try {
             var params  = [parseInt(userChannelId)];
@@ -27,8 +27,11 @@ const DM_COLLECTION = 'channels';
             AND u.deleted_at IS NULL 
             AND c.deleted_at IS NULL 
             order by online, last_live desc 
-            LIMIT 10
+            LIMIT ? OFFSET ?
             `;
+
+            params.push(limit);
+            params.push(offset);
 
             var sql = mysql.format(query, 
                 params

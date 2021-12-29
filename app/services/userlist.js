@@ -17,20 +17,28 @@ async function list(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validation
         validator.validation(inputJSON, validator.rules.ul).then(function() {
+
+            // Limit Pagination
+            var limit       = config.chat.limit; 
+            var page        = parseInt(inputJSON.page);   
+            var offset      = ( page - 1 ) * limit;
+
             // Get Userlist
-            channel.getFollowings(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q).then(function(followings) {
+            channel.getFollowings(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q, limit, offset).then(function(followings) {
                 redmy.onlineChannels(initialJSON.redis).then(function(onlineChannels) {
                     redmy.lastOnlineChannels(initialJSON.redis).then(function(onlineChannelTimeStamps) {
+                        
+                        // parse channel IDs from following object collection
                         var channelIds = [];
-
                         followings.forEach(function (following) {
                             channelIds.push(following.id);
                         });
+
                         setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
                             // Format Userlist
                             response.formatUserlist(followings, onlineChannels, onlineChannelTimeStamps, settings).then(function(followings) {
                                 // Prepare Response
-                                response.paginated(m.response.messaging.userlist, followings, true).then(function(message) {
+                                response.paginated(m.response.messaging.userlist, followings, true, initialJSON, inputJSON).then(function(message) {
                                     resolve(message);
                                 }).catch(function(e) {
                                     reject(response.error(m.errorCode.userlist.list));
