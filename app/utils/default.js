@@ -100,10 +100,19 @@ function dateToUnixTimeStamp(date) {
   return new Date(date).getTime() / 1000;
 }
 
+function now()
+{
+  const timeElapsed = Date.now();
+  const today = new Date(timeElapsed);
+
+  return today.toISOString().split('T')[0];
+}
+
 module.exports = {
     readJson,
     queryParamValue,
     sortByProp,
     pubSubKey,
-    dateToUnixTimeStamp
+    dateToUnixTimeStamp,
+    now
 };

@@ -85,7 +85,49 @@ async function getDMSettings(connection, channelIds){
 
 }
 
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} channelId 
+ * @param {*} online
+ * @param {*} lastOnline  
+ */
+async function updateOnlineDmSetting(connection, channelId, online, lastOnline) {
+    return new Promise(function (resolve, reject) {
+        try {
+            var sql = mysql.format(`
+            UPDATE dm_settings 
+            SET online = ? , last_online = ? 
+            WHERE channel_id = ?
+            `, [ online, lastOnline, channelId ]);
+
+            connection.getConnection((err, conn) => {
+                if(err) {
+                    console.log(err);
+                }
+
+                conn.query(sql, function (error, results) {
+                    if (error) {
+                        console.log(error);
+                    }
+
+                    conn.release();
+
+                    if(typeof results !== "undefined") {
+                        resolve(results.affectedRows);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+        } catch (e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     get,
-    getDMSettings
+    getDMSettings,
+    updateOnlineDmSetting
 }
