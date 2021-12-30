@@ -44,16 +44,26 @@ async function list(initialJSON, inputJSON) {
                                     }).catch(function(e) {
                                         reject(response.error(m.errorCode.userlist.list));
                                     });
-                                }); 
+                                }).catch(function(e) {
+                                    reject(response.error(m.errorCode.userlist.list));
+                                });
+                            }).catch(function(e) {
+                                reject(response.error(m.errorCode.userlist.list));
                             });
-                            
+                        }).catch(function(e) {
+                            reject(response.error(m.errorCode.userlist.list));
                         });
-                        
+                    }).catch(function(e) {
+                        reject(response.error(m.errorCode.userlist.list));
                     });
-                    
-                });
-                               
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.userlist.list));
+                });               
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.userlist.list));
             });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.userlist.validation));
         });
     });
 }

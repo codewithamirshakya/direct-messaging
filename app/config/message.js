@@ -53,7 +53,8 @@ module.exports = {
             subscribed:     "EMOTES_SUBSCRIBED"
         },
         userlist: {
-            list:   "USERLIST"
+            list:   "USERLIST",
+            validation: "USERLIST_VALIDATION"
         },
         banUser: {
             validation: "BAN_USER_VALIDATION",
