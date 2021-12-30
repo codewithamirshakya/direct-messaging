@@ -254,40 +254,19 @@ async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps
  * @param {*} onlineChannelTimeStamps 
  * @returns 
  */
- async function formatUserlist(users, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels) {
+ async function formatUserlist(users,bannedChannels) {
     return new Promise(async function (resolve, reject) {
         var i   = 0;
         var res = [];
-
-        var settingRes = [];
-        settings.forEach(function (setting) {
-            if(typeof setting.dm !== "undefined") {
-                settingRes[setting.channel_id] = setting.dm;
-            }            
-        });
 
         for(var i=0; i<users.length;i++) {
             var channelId   = users[i].id.toString();
             var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
             var avatar      = config.minio.bucket + "/" + avatarPath + "/" + users[i].avatar;   
-            var isBanned    = (bannedChannels.indexOf(channelId) != -1) ? true: false;          
-
-            var online      = false;
-            var lastOnline  = "";
-            var readReceipt = false;
-
-            if(typeof settingRes[channelId] !== "undefined") {
-                var dmSetting = settingRes[channelId];
-                if(dmSetting.show_online_status == true) {
-                    online      = (onlineChannels.indexOf(channelId.toString()) != -1) ? true: false; 
-                }
-
-                if(dmSetting.show_last_online == true && typeof onlineChannelTimeStamps[channelId] !== "undefined") {
-                    lastOnline  = onlineChannelTimeStamps[channelId];
-                }
-
-                readReceipt     = dmSetting.show_read_receipts;
-            }             
+            var isBanned    = (bannedChannels.indexOf(channelId) != -1) ? true: false; 
+            var online      = users[i].show_online_status == true ? users[i].online : false; 
+            var lastOnline  = users[i].show_last_online == true ? utils.dateToUnixTimeStamp(users[i].last_online) : ""; 
+            var readReceipt = users[i].show_read_receipts;  
 
             param 	  	= { 
                 c:      parseInt(users[i].id),
