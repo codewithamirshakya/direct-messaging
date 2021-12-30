@@ -24,7 +24,7 @@ async function list(initialJSON, inputJSON) {
             var offset      = ( page - 1 ) * limit;
 
             // Get Userlist
-            channel.getFollowings(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q, limit, offset).then(function(followings) {
+            channel.getFollowers(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q, limit, offset).then(function(followings) {
                 redmy.onlineChannels(initialJSON.redis).then(function(onlineChannels) {
                     redmy.lastOnlineChannels(initialJSON.redis).then(function(onlineChannelTimeStamps) {
                         

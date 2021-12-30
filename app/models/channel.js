@@ -6,7 +6,7 @@ const DM_COLLECTION = 'channels';
  * @param {*} connection 
  * @param {*} channelId 
  */
- async function getFollowings(connection, userChannelId, q, limit, offset) {
+ async function getFollowers(connection, userChannelId, q, limit, offset) {
     return new Promise(function (resolve, reject) {
         try {
             var params  = [parseInt(userChannelId)];
@@ -15,7 +15,7 @@ const DM_COLLECTION = 'channels';
                 inner join channels c on c.id = f.channel_id 
                 inner join users u on u.id = c.user_id `;
 
-            query += `WHERE follower_id = ? `;    
+            query += `WHERE channel_id = ? `;    
 
             if(typeof q !== 'undefined' && q != '') {
                 query += ` AND c.name LIKE ? `;
@@ -71,10 +71,10 @@ const DM_COLLECTION = 'channels';
  * @param {*} channelId 
  * @returns 
  */
-async function isFollowing(connection, userChannelId, channelId) {
+async function isFollower(connection, userChannelId, channelId) {
     return new Promise(function (resolve, reject) {
         try {
-            params = [parseInt(channelId), parseInt(userChannelId)];
+            params = [parseInt(userChannelId),parseInt(channelId)];
             var query = `SELECT * FROM followers where channel_id = ? and follower_id = ? LIMIT 1 `;  
 
             var sql = mysql.format(query, 
@@ -128,7 +128,7 @@ async function getChannel(connection, channelId) {
 }
 
 module.exports = {
-    getFollowings,
+    getFollowers,
     getChannel,
-    isFollowing
+    isFollower
 }

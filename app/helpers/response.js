@@ -123,7 +123,6 @@ async function formatHistory(type,result, first, paginated, inputJson) {
  * @returns 
  */
 async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels) {
-    console.log(onlineChannels);
     return new Promise(async function (resolve, reject) {
         var res = [];
 
@@ -144,6 +143,7 @@ async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps
 
                 var online      = false;
                 var lastOnline  = "";
+                var readReceipt = false;
 
                 if(typeof settingRes[channelId] !== "undefined") {
                     var dmSetting = settingRes[channelId];
@@ -154,12 +154,15 @@ async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps
     
                     if(dmSetting.show_last_online == true && typeof onlineChannelTimeStamps[channelId] !== "undefined") {
                         lastOnline  = onlineChannelTimeStamps[channelId];
-                    }                   
+                    }    
+                    
+                    readReceipt     = dmSetting.show_read_receipts;
                 }   
 
                 res[i].o    =       Boolean(online);
                 res[i].lo   =       lastOnline;
-                res[i].b    =       isBanned;
+                res[i].bn   =       isBanned;
+                res[i].rr   =       readReceipt;
 
                 delete res[i]._id;
             }
@@ -271,6 +274,7 @@ async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps
 
             var online      = false;
             var lastOnline  = "";
+            var readReceipt = false;
 
             if(typeof settingRes[channelId] !== "undefined") {
                 var dmSetting = settingRes[channelId];
@@ -281,6 +285,8 @@ async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps
                 if(dmSetting.show_last_online == true && typeof onlineChannelTimeStamps[channelId] !== "undefined") {
                     lastOnline  = onlineChannelTimeStamps[channelId];
                 }
+
+                readReceipt     = dmSetting.show_read_receipts;
             }             
 
             param 	  	= { 
@@ -291,7 +297,8 @@ async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps
                 d:      utils.dateToUnixTimeStamp(users[i].last_live),
                 o:      Boolean(online),
                 lo:     lastOnline,
-                b:      isBanned
+                bn:     isBanned,
+                rr:     readReceipt
             };
 
             res.push(param)

@@ -155,7 +155,7 @@ async function settingValidation(ws,initialJson, inputJSON) {
                        resolve();     
                     }
         
-                    channel.isFollowing(ij.mysqlConnection, ij.userChannelId, inj.channelId).then(function(res) {
+                    channel.isFollower(ij.mysqlConnection, ij.userChannelId, inj.channelId).then(function(res) {
                         if(res.length > 0) {
                             resolve();
                         }  else {
