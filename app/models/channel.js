@@ -12,7 +12,7 @@ const DM_COLLECTION = 'channels';
             var params  = [parseInt(userChannelId)];
             var query   = `SELECT c.id, c.name, c.avatar, account_type, last_live, online 
                 from followers f 
-                inner join channels c on c.id = f.channel_id 
+                inner join channels c on c.id = f.follower_id 
                 inner join users u on u.id = c.user_id `;
 
             query += `WHERE channel_id = ? `;    
