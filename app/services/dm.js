@@ -7,6 +7,9 @@ const mongo         = require('../helpers/mongo.js');
 const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
+const channel       = require('../models/channel.js');
+const setting       = require('../models/setting.js');
+
 
 /**
  * 
@@ -136,14 +139,36 @@ async function messageList(initialJSON, inputJSON) {
 
                 // Fetch History
                 model.aggregate(initialJSON.mongoConnection, q, limit, skip).then(function(result) {
-                    // Format Message List
-                    response.formatMessageList(result).then(function(list) {
-                        // Prepare Response
-                        response.paginated(m.response.messaging.messageList, list, true, initialJSON, inputJSON).then(function(message) {
-                            resolve(message);
-                        }).catch(function(e) {
-                            reject(response.error(m.errorCode.messaging.messageList));
-                        });
+                    redmy.onlineChannels(initialJSON.redis).then(function(onlineChannels) {
+                        redmy.lastOnlineChannels(initialJSON.redis).then(function(onlineChannelTimeStamps) {
+                                // parse channel IDs from following object collection
+                                var channelIds = [];
+                                result.forEach(function (r) {
+                                    channelIds.push(r._id);
+                                });
+
+                                setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
+                                    redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {                    
+                                        // Format Message List
+                                        response.formatMessageList(result, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels).then(function(list) {
+                                            // Prepare Response
+                                            response.paginated(m.response.messaging.messageList, list, true, initialJSON, inputJSON).then(function(message) {
+                                                resolve(message);
+                                            }).catch(function(e) {
+                                                reject(response.error(m.errorCode.messaging.messageList));
+                                            });
+                                        }).catch(function(e) {
+                                            reject(response.error(m.errorCode.messaging.messageList));
+                                        });
+                                    }).catch(function(e) {
+                                        reject(response.error(m.errorCode.messaging.messageList));
+                                    });
+                                }).catch(function(e) {
+                                    reject(response.error(m.errorCode.messaging.messageList));
+                                });
+                            }).catch(function(e) {
+                                reject(response.error(m.errorCode.messaging.messageList));
+                            });
                     }).catch(function(e) {
                         reject(response.error(m.errorCode.messaging.messageList));
                     });
