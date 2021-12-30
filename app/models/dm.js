@@ -1,4 +1,5 @@
-const counter       = require('../models/counter.js');
+const counter               = require('../models/counter.js');
+const conversation          = require('../models/conversation.js');
 
 const DM_COLLECTION = 'dm';
 
@@ -20,6 +21,16 @@ async function save(connection, params) {
                     
                     if(typeof res !== "undefined" && res.insertedId !== "undefined") {
                         counter.updateLatestCounterByType(connection,{type: 'dm'},{$set: {sequence_value: result.sequence_value + 1 }}).then(function() {
+                            const query = {
+                                $or: [{
+                                    c: params.c,
+                                    u: params.u
+                                }, {
+                                    u: params.c,
+                                    c: params.u
+                                }]
+                            };
+                            conversation.save(connection, { $set: {c: params.c, u: params.u, m: params.m} } ,query, { upsert: true });
                             resolve(res.insertedId);
                         });
                     } else {
