@@ -2,6 +2,7 @@ const Validator     = require('validatorjs');
 const utility       = require('../helpers/utility.js');
 const redmy         = require('../helpers/redmy.js');
 const channel       = require('../models/channel.js');
+const conversation  = require('../models/conversation.js');
 
 const rules = {
     dm: {
@@ -135,21 +136,40 @@ async function settingValidation(ws,initialJson, inputJSON) {
     return new Promise(async function (resolve, reject) {
         var ij = initialJson;
         var inj = inputJSON;
-        channel.getChannel(initialJson.mongoConnection, inputJSON.channelId).then(function(ch) {
-            if(typeof ch !== 'undefined' && ch !== null && typeof ch.dm !== 'undefined' && typeof ch.dm.allow_message_every_one !== 'undefined' && ch.dm.allow_message_every_one == true) {
-               resolve();     
-            }
 
-            channel.isFollowing(ij.mysqlConnection, ij.userChannelId, inj.channelId).then(function(res) {
-                if(res.length > 0) {
-                    resolve();
-                }  else {
-                    reject();
-                }                      
-            }). catch(function(e) {
-                reject();
-            });   
+        const query = {
+            $or: [{
+                c: inputJSON.channelId,
+                u: parseInt(initialJson.userChannelId)
+            }, {
+                u: inputJSON.channelId,
+                c: parseInt(initialJson.userChannelId)
+            }]
+        };
+        conversation.exist(initialJson.mongoConnection, query).then((res) => {
+            if(typeof res !== "undefined" && res != null) {
+                resolve();                
+            } else {
+                channel.getChannel(initialJson.mongoConnection, inputJSON.channelId).then(function(ch) {
+                    if(typeof ch !== 'undefined' && ch !== null && typeof ch.dm !== 'undefined' && typeof ch.dm.allow_message_every_one !== 'undefined' && ch.dm.allow_message_every_one == true) {
+                       resolve();     
+                    }
+        
+                    channel.isFollowing(ij.mysqlConnection, ij.userChannelId, inj.channelId).then(function(res) {
+                        if(res.length > 0) {
+                            resolve();
+                        }  else {
+                            reject();
+                        }                      
+                    }). catch(function(e) {
+                        reject();
+                    });   
+                });
+            }          
+        }).catch((e) => {
+
         });
+        
     });
 }
 
