@@ -74,7 +74,64 @@ async function seenStatus(channelId, userChannelId, position) {
  * @param {*} userChannelId 
  * @returns 
  */
+
 async function list(userChannelId, q) {
+    return new Promise(function (resolve, reject) {
+        var params = [
+            { $match: { u: parseInt(userChannelId) } },
+            { $lookup: { from: "channels", localField: "c", foreignField: "channel_id", as: "channel" } },
+            { $lookup: { from: "channels", localField: "u", foreignField: "channel_id", as: "userChannel" } },
+            {
+                $lookup:
+                {
+                    from: "dm",
+                    let: { ch: "$c", uh: "$u" },
+                    pipeline: [
+                        {
+                            $match:
+                            {
+                                $expr:
+                                {
+                                    $and: [
+                                        {
+                                            $or: [
+                                                {
+                                                    $and:
+                                                        [
+                                                            { $eq: ["$c", "$$ch"] },
+                                                            { $eq: ["$u", "$$uh"] }
+                                                        ]
+                                                },
+                                                {
+                                                    $and:
+                                                        [
+                                                            { $eq: ["$c", "$$uh"] },
+                                                            { $eq: ["$u", "$$ch"] }
+                                                        ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            s: false
+                                        }
+                                    ]
+        
+                                }
+                            }
+                        }
+                    ],
+                    as: "uncd"
+                }
+            },
+            {
+                $addFields: { unc: { $size: "$uncd" } }
+        
+            }        
+        ];
+        resolve(params);
+    });
+}
+async function list1(userChannelId, q) {
     return new Promise(function (resolve, reject) {
         var match = {
             "$match" : {
