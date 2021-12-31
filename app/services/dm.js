@@ -164,12 +164,10 @@ async function messageList(initialJSON, inputJSON) {
                     });
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.messageList));
-                });
-                    
+                }); 
             }).catch(function(e) {
                 reject(response.error(m.errorCode.messaging.messageList));
             });
-            
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.messageList));
         });

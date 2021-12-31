@@ -20,7 +20,7 @@ const DM_COLLECTION = 'channels';
   
                 from followers f 
                 inner join channels c on c.id = f.follower_id 
-                inner join dm_settings ds ON ds.channel_id = c.id
+                left join dm_settings ds ON ds.channel_id = c.id
                 inner join users u on u.id = c.user_id `;
 
             query += `WHERE f.channel_id = ? `;    
