@@ -70,7 +70,6 @@ const ul        = require('../services/userlist.js');
                 em.subscribed(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
                 }).catch(function(e) {
-                    logger.log('DEBUG', 'emojis.subscribed', JSON.stringify(e));
                     reject(e);
                 });
                 break;

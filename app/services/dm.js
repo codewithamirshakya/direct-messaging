@@ -242,8 +242,9 @@ async function deleteMessages(initialJSON, inputJSON) {
  */
 async function search(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
+        console.log("searching....");
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dch).then(function() {
+        validator.validation(inputJSON, validator.rules.dms).then(function() {
             // Mongo Query Param
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {  
                 // Limit Pagination
@@ -271,6 +272,7 @@ async function search(initialJSON, inputJSON) {
                 reject(response.error(m.errorCode.messaging.search));
             });
         }).catch(function(e) {
+            console.log(e);
             reject(response.error(m.errorCode.messaging.search));
         });
     });
