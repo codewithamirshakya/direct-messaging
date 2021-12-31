@@ -22,6 +22,11 @@ const rules = {
         type: "required",
         page: "required"
     },
+    dms: {
+        type: "required",
+        channelId: "required",
+        q: "required"
+    },
     dmss: {
         type: "required",
         channelId: "required",

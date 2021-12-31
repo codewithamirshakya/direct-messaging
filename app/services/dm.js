@@ -164,12 +164,10 @@ async function messageList(initialJSON, inputJSON) {
                     });
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.messageList));
-                });
-                    
+                }); 
             }).catch(function(e) {
                 reject(response.error(m.errorCode.messaging.messageList));
             });
-            
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.messageList));
         });
@@ -245,7 +243,7 @@ async function deleteMessages(initialJSON, inputJSON) {
 async function search(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dch).then(function() {
+        validator.validation(inputJSON, validator.rules.dms).then(function() {
             // Mongo Query Param
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {  
                 // Limit Pagination
