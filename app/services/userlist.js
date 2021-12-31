@@ -24,29 +24,19 @@ async function list(initialJSON, inputJSON) {
             var offset      = ( page - 1 ) * limit;
 
             // Get Userlist
-            channel.getFollowers(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q, limit, offset).then(function(followings) {
-                redmy.onlineChannels(initialJSON.redis).then(function(onlineChannels) {
-                    redmy.lastOnlineChannels(initialJSON.redis).then(function(onlineChannelTimeStamps) {
-                        
-                        // parse channel IDs from following object collection
-                        var channelIds = [];
-                        followings.forEach(function (following) {
-                            channelIds.push(following.id);
-                        });
+            channel.getFollowers(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q, limit, offset).then(function(followings) { 
+                    // parse channel IDs from following object collection
+                    var channelIds = [];
+                    followings.forEach(function (following) {
+                        channelIds.push(following.id);
+                    });
 
-                        setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
-                            redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {
-                                // Format Userlist
-                                response.formatUserlist(followings, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels).then(function(followings) {
-                                    // Prepare Response
-                                    response.paginated(m.response.messaging.userlist, followings, true, initialJSON, inputJSON).then(function(message) {
-                                        resolve(message);
-                                    }).catch(function(e) {
-                                        reject(response.error(m.errorCode.userlist.list));
-                                    });
-                                }).catch(function(e) {
-                                    reject(response.error(m.errorCode.userlist.list));
-                                });
+                    redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {
+                        // Format Userlist
+                        response.formatUserlist(followings, bannedChannels).then(function(followings) {
+                            // Prepare Response
+                            response.paginated(m.response.messaging.userlist, followings, true, initialJSON, inputJSON).then(function(message) {
+                                resolve(message);
                             }).catch(function(e) {
                                 reject(response.error(m.errorCode.userlist.list));
                             });
@@ -56,16 +46,14 @@ async function list(initialJSON, inputJSON) {
                     }).catch(function(e) {
                         reject(response.error(m.errorCode.userlist.list));
                     });
+                    
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.userlist.list));
                 });               
             }).catch(function(e) {
                 reject(response.error(m.errorCode.userlist.list));
             });
-        }).catch(function(e) {
-            reject(response.error(m.errorCode.userlist.validation));
         });
-    });
 }
 
 /**

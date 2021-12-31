@@ -6,6 +6,7 @@ const response      = require('../helpers/response.js');
 const redmy         = require('../helpers/redmy.js');
 const util          = require('../utils/default.js');
 const ma            = require('../actions/dm.js');
+const setting       = require('../models/setting.js');
 
 let redisClient;
 let redisSub;
@@ -75,7 +76,7 @@ var socket = {
             ws.subscribe(messageAdapter);
 
             // Store Channel Online
-            redmy.channelOnline(redisClient, data.userChannelId);
+            setting.updateOnlineDmSetting(mysqlConnection, parseInt(data.userChannelId), true, null);
 
             // Store User Info
             storeConnectedUser(ws, data, messageAdapter).then(function() {
@@ -135,8 +136,15 @@ var socket = {
   * @param {*} message 
   */
  function _close(ws, code, message) {
+
+    var queryparam  = ws.url.substr(9);
+    var token       = util.queryParamValue(queryparam, "token");
+
+    // Decode jwt
+    var verifiedJwt = nJwt.verify(token, config.jwt.key, config.jwt.algorithm);
+    var data        = verifiedJwt.body;
     // Store Channel Online
-    redmy.channelOffline(redisClient, ws['u']);
+    setting.updateOnlineDmSetting(mysqlConnection, parseInt(data.userChannelId), false, util.now());
  }
 
  /**

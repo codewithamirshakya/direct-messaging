@@ -35,32 +35,99 @@ var mysql       = require('mysql');
     });
 }
 
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} channelId 
+ */
+
 async function getDMSettings(connection, channelIds){
     return new Promise(function (resolve, reject) {
         try {
-            connection
-                .collection('channels')
-                .find({
-                    channel_id: {
-                        $in: channelIds
+            var sql = mysql.format(
+                `
+                SELECT 
+                allow_message_every_one,
+                allow_message_subscriber,
+                show_read_receipts,
+                show_online_status,
+                show_last_online
+
+                FROM dm_settings 
+                WHERE channel_id IN (?) 
+                LIMIT 1 
+                `, 
+                [channelIds.join()]
+                );
+            connection.getConnection((err, conn) => {
+                if(err) {
+                    console.log(err);
+                }
+
+                conn.query(sql, function (error, results, fields) {
+                    if (error) {
+                        console.log(error);
                     }
-                })
-                .toArray(function(err, result) {
-                    if (err) {
-                        console.log(err);
+
+                    conn.release();
+
+                    if(typeof results !== "undefined") {
+                        resolve(results[0]);
+                    } else {
+                        resolve();
                     }
-                    
-                    resolve(result);
                 });
+            });
         } catch(e) {
-            reject(e);
+            resolve();
         }
-        
     });
 
 }
 
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} channelId 
+ * @param {*} online
+ * @param {*} lastOnline  
+ */
+async function updateOnlineDmSetting(connection, channelId, online, lastOnline) {
+    return new Promise(function (resolve, reject) {
+        try {
+            var sql = mysql.format(`
+            UPDATE dm_settings 
+            SET online = ? , last_online = ? 
+            WHERE channel_id = ?
+            `, [ online, lastOnline, channelId ]);
+
+            connection.getConnection((err, conn) => {
+                if(err) {
+                    console.log(err);
+                }
+
+                conn.query(sql, function (error, results) {
+                    if (error) {
+                        console.log(error);
+                    }
+
+                    conn.release();
+
+                    if(typeof results !== "undefined") {
+                        resolve(results.affectedRows);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+        } catch (e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     get,
-    getDMSettings
+    getDMSettings,
+    updateOnlineDmSetting
 }

@@ -10,12 +10,20 @@ const DM_COLLECTION = 'channels';
     return new Promise(function (resolve, reject) {
         try {
             var params  = [parseInt(userChannelId)];
-            var query   = `SELECT c.id, c.name, c.avatar, account_type, last_live, online 
+            var query   = `
+            SELECT c.id, c.name, c.avatar, account_type, ds.online, ds.last_online, 
+                allow_message_every_one,
+                allow_message_subscriber,
+                show_read_receipts,
+                show_online_status,
+                show_last_online 
+  
                 from followers f 
                 inner join channels c on c.id = f.follower_id 
+                inner join dm_settings ds ON ds.channel_id = c.id
                 inner join users u on u.id = c.user_id `;
 
-            query += `WHERE channel_id = ? `;    
+            query += `WHERE f.channel_id = ? `;    
 
             if(typeof q !== 'undefined' && q != '') {
                 query += ` AND c.name LIKE ? `;
@@ -23,20 +31,19 @@ const DM_COLLECTION = 'channels';
             }   
 
             query += 
-            `AND u.deactivate = false 
+            `
+            AND u.deactivate = false 
             AND u.banned = false 
             AND u.deleted_at IS NULL 
             AND c.deleted_at IS NULL 
-            order by online, last_live desc 
-            LIMIT ? OFFSET ?
+            order by ds.online desc, last_online desc 
+            LIMIT ? OFFSET ? 
             `;
 
-            params.push(limit);
+            params.push(limit); 
             params.push(offset);
 
-            var sql = mysql.format(query, 
-                params
-                );
+            var sql = mysql.format(query, params);
                 
             connection.getConnection((err, conn) => {
                 if(err) {
