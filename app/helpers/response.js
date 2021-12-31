@@ -127,13 +127,14 @@ async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps
         var res = [];
 
         var settingRes = [];
-        settings.forEach(function (setting) {
-            if(typeof setting.dm !== "undefined") {
-                settingRes[setting.channel_id] = setting.dm;
-            }            
-        });
+        if(typeof settings !== "undefined") {
+            settings.forEach(function (setting) {
+                if(typeof setting.dm !== "undefined") {
+                    settingRes[setting.channel_id] = setting.dm;
+                }            
+            });
+        }
         
-
         try {
             for(i=0; i < result.length; i++) {
                 res[i]      = result[i];
