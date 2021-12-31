@@ -94,11 +94,18 @@ async function getDMSettings(connection, channelIds){
 async function updateOnlineDmSetting(connection, channelId, online, lastOnline) {
     return new Promise(function (resolve, reject) {
         try {
-            var sql = mysql.format(`
-            UPDATE dm_settings 
-            SET online = ? , last_online = ? 
-            WHERE channel_id = ?
-            `, [ online, lastOnline, channelId ]);
+            var param = [ channelId, online, lastOnline, online, lastOnline ];
+            var query = `
+            INSERT INTO dm_settings 
+                (channel_id, online, last_online)
+            VALUES
+                (?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                online = ?,
+                last_online = ? 
+            `;
+            
+            var sql = mysql.format(query, param);
 
             connection.getConnection((err, conn) => {
                 if(err) {
