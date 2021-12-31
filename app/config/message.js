@@ -10,7 +10,8 @@ module.exports = {
             userList:       "ul",
             seenStatus:     "dmss",
             delete:         "dmd",
-            search:         "dms"
+            search:         "dms",
+            active:         "dma"
         },
         emotes: {
             list: "el",
@@ -40,6 +41,7 @@ module.exports = {
         messaging:  {
             restricted:     "DIRECT_MESSAGING_RESTRICTION",
             validation:     "DIRECT_MESSAGING_VALIDATION",
+            follower:       "DIRECT_MESSAGING_FOLLOWER_VALIDATION",
             save:           "DIRECT_MESSAGING_SAVE",
             history:        "DIRECT_MESSAGING_HISTORY",
             messageList:    "DIRECT_MESSAGING_LIST",
@@ -60,11 +62,18 @@ module.exports = {
             validation: "BAN_USER_VALIDATION",
             exist:      "BAN_USER_EXIST",
             error:      "BAN_USER_ERROR"
+        },
+        dma: {
+            validation: "DIRECT_MESSAGING_ACTIVE_VALIDATION",
+            error:      "DIRECT_MESSAGING_ACTIVE_ERROR"
         }
     },
     successCode : {
         banUser: {
             success:    "USER_BANNED"
+        },
+        dma: {
+            success:    "ACTIVE_CONVERSATION"
         }
     },
     system: {

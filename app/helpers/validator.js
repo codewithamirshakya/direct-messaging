@@ -29,8 +29,7 @@ const rules = {
     },
     dmss: {
         type: "required",
-        channelId: "required",
-        position: "required"
+        channelId: "required"
     },
     ub: {
         channelId: "required"
@@ -40,6 +39,10 @@ const rules = {
     },
     es: {
         channelId: "required"
+    },
+    dma: {
+        channelId: "required",
+        set: "required"
     }
 }
 

@@ -235,6 +235,44 @@ async function lastOnlineChannels(client) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+async function conActive(client, channelId, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            var key = config.rkeys.active + channelId + '_' + userChannelId;
+            client.set(key, true);
+
+            resolve();
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+async function conInactive(client, channelId, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            var key = config.rkeys.active + channelId + '_' + userChannelId;
+            client.del(key);
+
+            resolve();
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
@@ -246,5 +284,7 @@ module.exports = {
     onlineChannels,
     lastOnlineChannels,
     isChannelSubscriber,
-    getSubscribedEmojis
+    getSubscribedEmojis,
+    conActive,
+    conInactive
 }

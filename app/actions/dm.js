@@ -112,7 +112,17 @@ const ul        = require('../services/userlist.js');
                 }).catch(function(e) {
                     reject(e);
                 });
-                break;    
+                break;   
+                
+            // Active Conversation
+            case m.type.messaging.active:
+                // Message Search History Handler
+                dm.active(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;
         }
     });
 }

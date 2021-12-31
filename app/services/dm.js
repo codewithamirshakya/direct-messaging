@@ -54,7 +54,7 @@ const setting       = require('../models/setting.js');
                                 reject(response.error(m.errorCode.messaging.validation));
                             });
                         }).catch(function(e) {
-                            reject(response.error(m.errorCode.messaging.validation));
+                            reject(response.error(m.errorCode.messaging.follower));
                         });
                     }).catch(function(e) {
                         reject(response.error(m.errorCode.messaging.banned));
@@ -276,11 +276,40 @@ async function search(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function active(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.dma).then(function() {
+            if(inputJSON.set) {
+                redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                    resolve(response.success(m.successCode.dma.success));
+                }).catch(function() {
+                    resolve(response.success(m.errorCode.dma.error));
+                });
+            } else {
+                redmy.conInactive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                    resolve(response.success(m.successCode.dma.success));
+                }).catch(function() {
+                    resolve(response.success(m.errorCode.dma.error));
+                });
+            }
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.dma.validation));
+        });
+    });
+}
+
 module.exports = {
     messaging,
     history,
     messageList,
     seenStatus,
     deleteMessages,
-    search
+    search,
+    active
 }

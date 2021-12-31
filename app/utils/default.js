@@ -97,15 +97,19 @@ function pubSubKey(channelId) {
  * @returns 
  */
 function dateToUnixTimeStamp(date) {
-  return new Date(date).getTime() / 1000;
+    return new Date(date).getTime() / 1000;
 }
 
+/**
+ * 
+ * @returns 
+ */
 function now()
 {
-  const timeElapsed = Date.now();
-  const today = new Date(timeElapsed);
+    const timeElapsed = Date.now();
+    const today       = new Date(timeElapsed);
 
-  return today.toISOString().split('T')[0];
+    return today.toISOString().split('T')[0];
 }
 
 module.exports = {
