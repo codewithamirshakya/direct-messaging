@@ -119,7 +119,7 @@ const redmy         = require('../helpers/redmy.js');
     
                     resolve(emojiUrlObj);
                 } else if(aliasChannelId == messageChannelId) {
-                    redmy.isChannelSubscriber(connection, aliasChannelId, myChannelId).then(function() {
+                    em.isSubscriber(connection, aliasChannelId, myChannelId).then(function() {
                         var channelId   = aliasChannelId.toString();
                         var emojiPath   = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.emojiAlias;
                         var url         = config.minio.bucket + "/" + emojiPath + "/" + emojiCode + ".gif";

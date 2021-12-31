@@ -183,7 +183,7 @@ async function messageList(initialJSON, inputJSON) {
 async function seenStatus(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.ss).then(function() {
+        validator.validation(inputJSON, validator.rules.dmss).then(function() {
             // Mongo Query Param
             mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
                 // Update seen status

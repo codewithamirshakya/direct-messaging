@@ -202,42 +202,6 @@ async function lastOnlineChannels(client) {
 /**
  * 
  * @param {*} client 
- * @param {*} connection 
- * @param {*} channelId 
- */
- async function isChannelSubscriber(connection, channelId, subscriberId) {
-    return new Promise(async function (resolve, reject) {
-        em.isSubscriber(connection, channelId, subscriberId).then(function() {
-            resolve();
-        }).catch(function(e) {
-            reject();
-        });
-    });
-}
-
-/**
- * 
- * @param {*} client 
- * @param {*} connection 
- * @param {*} channelId 
- */
- async function getSubscribedEmojis(connection, channelId, subscriberId) {
-    return new Promise(async function (resolve, reject) {
-        em.subscribed(connection, channelId, subscriberId).then(function(cs) {
-            response.formatEmojis(cs).then(function(emojis) {
-                if(typeof emojis !== "undefined" ** emojis.length > 0) {
-                    resolve(emojis);
-                } else {
-                    resolve(true);
-                }
-            });
-        });
-    });
-}
-
-/**
- * 
- * @param {*} client 
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
@@ -283,8 +247,6 @@ module.exports = {
     channelOffline,
     onlineChannels,
     lastOnlineChannels,
-    isChannelSubscriber,
-    getSubscribedEmojis,
     conActive,
     conInactive
 }
