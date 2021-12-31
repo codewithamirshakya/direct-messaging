@@ -54,8 +54,7 @@ async function getDMSettings(connection, channelIds){
                 show_last_online
 
                 FROM dm_settings 
-                WHERE channel_id IN (?) 
-                LIMIT 1 
+                WHERE channel_id IN (?)
                 `, 
                 [channelIds.join()]
                 );
@@ -72,7 +71,7 @@ async function getDMSettings(connection, channelIds){
                     conn.release();
 
                     if(typeof results !== "undefined") {
-                        resolve(results[0]);
+                        resolve(results);
                     } else {
                         resolve();
                     }

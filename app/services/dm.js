@@ -133,42 +133,39 @@ async function messageList(initialJSON, inputJSON) {
 
                 // Fetch History
                 model.aggregate(initialJSON.mongoConnection, q, limit, skip).then(function(result) {
-                    redmy.onlineChannels(initialJSON.redis).then(function(onlineChannels) {
-                        redmy.lastOnlineChannels(initialJSON.redis).then(function(onlineChannelTimeStamps) {
-                                // parse channel IDs from following object collection
-                                var channelIds = [];
-                                result.forEach(function (r) {
-                                    channelIds.push(r._id);
-                                });
+                    // parse channel IDs from following object collection
+                    var channelIds = [];
+                    if(typeof result !== "undefined") {
+                        result.forEach(function (r) {
+                            channelIds.push(r._id);
+                        });
+                    }
 
-                                setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
-                                    redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {                    
-                                        // Format Message List
-                                        response.formatMessageList(result, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels).then(function(list) {
-                                            // Prepare Response
-                                            response.paginated(m.response.messaging.messageList, list, inputJSON.page, inputJSON.q).then(function(message) {
-                                                resolve(message);
-                                            }).catch(function(e) {
-                                                reject(response.error(m.errorCode.messaging.messageList));
-                                            });
-                                        }).catch(function(e) {
-                                            reject(response.error(m.errorCode.messaging.messageList));
-                                        });
-                                    }).catch(function(e) {
-                                        reject(response.error(m.errorCode.messaging.messageList));
-                                    });
+                    // Fetch Channel Settings
+                    setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
+                        // Fetch Banned Channels
+                        redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {                    
+                            // Format Message List
+                            response.formatMessageList(result, settings, bannedChannels).then(function(list) {
+                                // Prepare Response
+                                response.paginated(m.response.messaging.messageList, list, inputJSON.page, inputJSON.q).then(function(message) {
+                                    resolve(message);
                                 }).catch(function(e) {
                                     reject(response.error(m.errorCode.messaging.messageList));
                                 });
                             }).catch(function(e) {
                                 reject(response.error(m.errorCode.messaging.messageList));
                             });
+                        }).catch(function(e) {
+                            reject(response.error(m.errorCode.messaging.messageList));
+                        });
                     }).catch(function(e) {
                         reject(response.error(m.errorCode.messaging.messageList));
                     });
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.messageList));
                 });
+                    
             }).catch(function(e) {
                 reject(response.error(m.errorCode.messaging.messageList));
             });

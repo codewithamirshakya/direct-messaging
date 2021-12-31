@@ -76,7 +76,7 @@ var socket = {
             ws.subscribe(messageAdapter);
 
             // Store Channel Online
-            setting.updateOnlineDmSetting(mysqlConnection, parseInt(data.userChannelId), true, null);
+            setting.updateOnlineDmSetting(mysqlConnection, parseInt(data.userChannelId), true, Date.now());
 
             // Store User Info
             storeConnectedUser(ws, data, messageAdapter).then(function() {
@@ -136,15 +136,8 @@ var socket = {
   * @param {*} message 
   */
  function _close(ws, code, message) {
-
-    var queryparam  = ws.url.substr(9);
-    var token       = util.queryParamValue(queryparam, "token");
-
-    // Decode jwt
-    var verifiedJwt = nJwt.verify(token, config.jwt.key, config.jwt.algorithm);
-    var data        = verifiedJwt.body;
     // Store Channel Online
-    setting.updateOnlineDmSetting(mysqlConnection, parseInt(data.userChannelId), false, util.now());
+    setting.updateOnlineDmSetting(mysqlConnection, parseInt(ws['u']), false, Date.now());
  }
 
  /**

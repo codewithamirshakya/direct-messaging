@@ -122,50 +122,41 @@ async function formatHistory(type, result, position, reverse) {
  * @param {*} result 
  * @returns 
  */
-async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels) {
+async function formatMessageList(result, settings, bannedChannels) {
     return new Promise(async function (resolve, reject) {
-        var res = [];
-
-        var settingRes = [];
+        var res         = [];
+        var settingRes  = [];
         if(typeof settings !== "undefined") {
             settings.forEach(function (setting) {
-                if(typeof setting.dm !== "undefined") {
-                    settingRes[setting.channel_id] = setting.dm;
-                }            
+                if(typeof setting !== "undefined") {
+                    settingRes[setting.channel_id] = setting;
+                }           
             });
         }
         
         try {
             for(i=0; i < result.length; i++) {
-                res[i]      = result[i];
-                res[i].c    = result[i]._id;
-                var channelId   = result[i]._id;   
-                var isBanned    = (bannedChannels.indexOf(channelId) != -1) ? true: false;          
+                if(typeof result[i] !== "undefined") {
+                    res[i]          = result[i];
+                    res[i].c        = result[i]._id;
+                    var channelId   = result[i]._id;   
+                    res[i].bn       = (bannedChannels.indexOf(channelId) != -1) ? true: false;          
 
-                var online      = false;
-                var lastOnline  = "";
-                var readReceipt = false;
-
-                if(typeof settingRes[channelId] !== "undefined") {
-                    var dmSetting = settingRes[channelId];
-                    
-                    if(dmSetting.show_online_status == true) {
-                        online      = (onlineChannels.indexOf(channelId.toString()) != -1) ? true: false; 
+                    if(typeof settingRes[channelId] !== "undefined") {
+                        var dmSetting   = settingRes[channelId];
+                        res[i].rr       = dmSetting.show_read_receipts;
+                        
+                        if(dmSetting.show_online_status == true) {
+                            res[i].o      = dmSetting.online; 
+                        }
+        
+                        if(dmSetting.show_last_online == true) {
+                            res[i].lo  = dmSetting.last_online;
+                        }
                     }
-    
-                    if(dmSetting.show_last_online == true && typeof onlineChannelTimeStamps[channelId] !== "undefined") {
-                        lastOnline  = onlineChannelTimeStamps[channelId];
-                    }    
-                    
-                    readReceipt     = dmSetting.show_read_receipts;
-                }   
 
-                res[i].o    =       Boolean(online);
-                res[i].lo   =       lastOnline;
-                res[i].bn   =       isBanned;
-                res[i].rr   =       readReceipt;
-
-                delete res[i]._id;
+                    delete res[i]._id;
+                }
             }
         } catch(e) {
             console.log(e);    
