@@ -73,16 +73,13 @@ function success(successCode) {
  * 
  * @param {*} result 
  */
-async function paginated(type, result, paginated, initialJson, inputJson) {
+async function paginated(type, result, page, q) {
     return new Promise(async function (resolve, reject) {
         var response = JSON.stringify({
-            p: paginated,
             t: type, 
             m: result,
-            pg: typeof inputJson !== 'undefined' && typeof inputJson.page !== 'undefined' ? inputJson.page : "",
-            c: typeof inputJson !== 'undefined' && typeof inputJson.channelId !== 'undefined' ? inputJson.channelId : "",
-            u: typeof initialJson !== 'undefined' && typeof initialJson.userChannelId !== 'undefined' ? initialJson.userChannelId : "",
-            q: typeof initialJson !== 'undefined' && typeof initialJson.userChannqelId !== 'undefined' ? initialJson.q : ""
+            pg: page,
+            q: q
         });
 
         resolve(response);
@@ -94,26 +91,29 @@ async function paginated(type, result, paginated, initialJson, inputJson) {
  * @param {*} result 
  * @returns 
  */
-async function formatHistory(type,result, first, paginated, inputJson) {
+async function formatHistory(type, result, position, reverse) {
     return new Promise(async function (resolve, reject) {
         var res = [];
-        if(first == true || (typeof inputJson.reverse !== "undefined" && inputJson.reverse == true)) {
+        if(typeof position == "undefined" || (typeof reverse !== "undefined" && reverse == true)) {
             res = result.reverse();
         } else {
             res = result;
         }
-        
 
-        var response = JSON.stringify({
-            r: typeof inputJson.reverse !== "undefined" ? inputJson.reverse:false,
-            q: typeof inputJson.q !== "undefined" ? inputJson.q:"",
-            po: typeof inputJson.position !== "undefined" ? inputJson.position:"",
-            p: paginated,
+        var response = {
             t: type, 
             m: res
-        });
+        }
 
-        resolve(response);
+        if(typeof reverse !== "undefined") {
+            response.r = reverse;
+        }
+
+        if(typeof position !== "undefined") {
+            response.po = position;
+        }
+
+        resolve(JSON.stringify(response));
     });
 }
 
@@ -255,33 +255,46 @@ async function formatMessageList(result, onlineChannels, onlineChannelTimeStamps
  * @param {*} onlineChannelTimeStamps 
  * @returns 
  */
- async function formatUserlist(users,bannedChannels) {
+ async function formatUserlist(users, bannedChannels) {
     return new Promise(async function (resolve, reject) {
         var i   = 0;
         var res = [];
 
-        for(var i=0; i<users.length;i++) {
-            var channelId   = users[i].id.toString();
-            var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
-            var avatar      = config.minio.bucket + "/" + avatarPath + "/" + users[i].avatar;   
-            var isBanned    = (bannedChannels.indexOf(channelId) != -1) ? true: false; 
-            var online      = users[i].show_online_status == true ? users[i].online : false; 
-            var lastOnline  = users[i].show_last_online == true ? utils.dateToUnixTimeStamp(users[i].last_online) : ""; 
-            var readReceipt = users[i].show_read_receipts;  
+        for(var i=0; i<users.length; i++) {
+            if(typeof users[i] !== "undefined") {
+                var follower = users[i];
+                if(typeof follower.id !== "undefined") {
+                    var channelId   = follower.id.toString();
 
-            param 	  	= { 
-                c:      parseInt(users[i].id),
-                n:      users[i].name,
-                i:      avatar,
-                y:      users[i].account_type.substring(0,1),
-                d:      utils.dateToUnixTimeStamp(users[i].last_live),
-                o:      Boolean(online),
-                lo:     lastOnline,
-                bn:     isBanned,
-                rr:     readReceipt
-            };
+                    if(typeof follower.avatar !== "undefined") {
+                        var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
+                        var avatar      = config.minio.bucket + "/" + avatarPath + "/" + follower.avatar;
+                    }
 
-            res.push(param)
+                    if(typeof bannedChannels !== "undefined") {
+                        var isBanned    = (bannedChannels.indexOf(channelId) != -1) ? true: false;
+                    }
+                }
+
+                var param  = { 
+                    c:      parseInt(follower.id),
+                    n:      follower.name,
+                    i:      avatar,
+                    y:      follower.account_type.substring(0,1),
+                    bn:     isBanned,
+                    rr:     follower.show_read_receipts
+                };
+
+                if(typeof follower.show_online_status !== "undefined" && follower.show_online_status) {
+                    param.o     = follower.online;
+                }
+
+                if(typeof follower.show_last_online !== "undefined" && follower.show_last_online && typeof follower.last_online !== "undefined") {
+                    param.lo     = utils.dateToUnixTimeStamp(follower.last_online);
+                }
+
+                res.push(param);   
+            }
         }           
 
         resolve(res);

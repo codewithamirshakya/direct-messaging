@@ -108,7 +108,7 @@ const ul        = require('../services/userlist.js');
             // Channel Message Search History
             case m.type.messaging.search:
                 // Message Search History Handler
-                dm.history(initialJSON, inputJSON, true).then(function(message) {
+                dm.search(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
                 }).catch(function(e) {
                     reject(e);

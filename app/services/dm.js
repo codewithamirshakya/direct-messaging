@@ -7,9 +7,7 @@ const mongo         = require('../helpers/mongo.js');
 const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
-const channel       = require('../models/channel.js');
 const setting       = require('../models/setting.js');
-
 
 /**
  * 
@@ -81,22 +79,18 @@ const setting       = require('../models/setting.js');
  * @param {*} inputJSON
  * @returns 
  */
-async function history(initialJSON, inputJSON, search) {
-    var responseType    = search ? m.response.messaging.search : m.response.messaging.history;
-    var errorType       = search ? m.errorCode.messaging.search : m.errorCode.messaging.history;
+async function history(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dch).then(function() {     
+        validator.validation(inputJSON, validator.rules.dch).then(function() {
             // Mongo Query Param
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {  
                 // Limit Pagination
                 var limit   = config.chat.limit; 
-                var first   = true;
                 var sort    = {_id: -1};
 
                 if(typeof inputJSON.position !== "undefined" && inputJSON.position != "") {
                     sort    = {po: -1};
-                    first   = false;
 
                     if(typeof inputJSON.reverse !== "undefined" && inputJSON.reverse == false) {
                         sort    = {po: 1};
@@ -106,17 +100,17 @@ async function history(initialJSON, inputJSON, search) {
                 // Fetch History
                 model.history(initialJSON.mongoConnection, q, limit, sort).then(function(result) {
                     // Prepare Response
-                    response.formatHistory(responseType, result, first, true, inputJSON).then(function(message) {
+                    response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse).then(function(message) {
                         resolve(message);
                     });
                 }).catch(function(e) {
-                    reject(response.error(errorType));
+                    reject(response.error(m.errorCode.messaging.history));
                 });
             }).catch(function(e) {
-                reject(response.error(errorType));
+                reject(response.error(m.errorCode.messaging.history));
             });
         }).catch(function(e) {
-            reject(response.error(errorType));
+            reject(response.error(m.errorCode.messaging.history));
         });
     });
 }
@@ -152,7 +146,7 @@ async function messageList(initialJSON, inputJSON) {
                                         // Format Message List
                                         response.formatMessageList(result, onlineChannels, onlineChannelTimeStamps, settings, bannedChannels).then(function(list) {
                                             // Prepare Response
-                                            response.paginated(m.response.messaging.messageList, list, true, initialJSON, inputJSON).then(function(message) {
+                                            response.paginated(m.response.messaging.messageList, list, inputJSON.page, inputJSON.q).then(function(message) {
                                                 resolve(message);
                                             }).catch(function(e) {
                                                 reject(response.error(m.errorCode.messaging.messageList));
@@ -246,10 +240,52 @@ async function deleteMessages(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function search(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.dch).then(function() {
+            // Mongo Query Param
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {  
+                // Limit Pagination
+                var limit   = config.chat.limit;
+                var sort    = {_id: -1};
+
+                if(typeof inputJSON.position !== "undefined" && inputJSON.position != "") {
+                    sort    = {po: -1};
+
+                    if(typeof inputJSON.reverse !== "undefined" && inputJSON.reverse == false) {
+                        sort    = {po: 1};
+                    }
+                }
+
+                // Fetch History
+                model.history(initialJSON.mongoConnection, q, limit, sort).then(function(result) {
+                    // Prepare Response
+                    response.formatHistory(m.response.messaging.search, result, inputJSON.position, inputJSON.reverse).then(function(message) {
+                        resolve(message);
+                    });
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.search));
+                });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.search));
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.search));
+        });
+    });
+}
+
 module.exports = {
     messaging,
     history,
     messageList,
     seenStatus,
-    deleteMessages
+    deleteMessages,
+    search
 }

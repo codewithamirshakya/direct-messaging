@@ -25,10 +25,10 @@ const DM_COLLECTION = 'channels';
 
             query += `WHERE f.channel_id = ? `;    
 
-            if(typeof q !== 'undefined' && q != '') {
+            if(typeof q !== 'undefined' && q != '' && q.length > 0) {
                 query += ` AND c.name LIKE ? `;
                 params.push('%'+q+'%');
-            }   
+            }
 
             query += 
             `
@@ -81,12 +81,9 @@ const DM_COLLECTION = 'channels';
 async function isFollower(connection, userChannelId, channelId) {
     return new Promise(function (resolve, reject) {
         try {
-            params = [parseInt(userChannelId),parseInt(channelId)];
-            var query = `SELECT * FROM followers where channel_id = ? and follower_id = ? LIMIT 1 `;  
-
-            var sql = mysql.format(query, 
-                params
-                );
+            var params  = [parseInt(userChannelId), parseInt(channelId)];
+            var query   = `SELECT * FROM followers where channel_id = ? and follower_id = ? LIMIT 1 `;  
+            var sql     = mysql.format(query, params);
                 
             connection.getConnection((err, conn) => {
                 if(err) {

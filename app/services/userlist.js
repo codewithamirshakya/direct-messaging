@@ -4,8 +4,6 @@ const validator     = require('../helpers/validator.js');
 const response      = require('../helpers/response.js');
 const redmy         = require('../helpers/redmy.js');
 const channel       = require('../models/channel.js');
-const setting       = require('../models/setting.js');
-
 
 /**
  * 
@@ -17,43 +15,36 @@ async function list(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validation
         validator.validation(inputJSON, validator.rules.ul).then(function() {
-
             // Limit Pagination
             var limit       = config.chat.limit; 
             var page        = parseInt(inputJSON.page);   
             var offset      = ( page - 1 ) * limit;
 
-            // Get Userlist
-            channel.getFollowers(initialJSON.mysqlConnection,initialJSON.userChannelId, inputJSON.q, limit, offset).then(function(followings) { 
-                    // parse channel IDs from following object collection
-                    var channelIds = [];
-                    followings.forEach(function (following) {
-                        channelIds.push(following.id);
-                    });
-
-                    redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {
-                        // Format Userlist
-                        response.formatUserlist(followings, bannedChannels).then(function(followings) {
-                            // Prepare Response
-                            response.paginated(m.response.messaging.userlist, followings, true, initialJSON, inputJSON).then(function(message) {
-                                resolve(message);
-                            }).catch(function(e) {
-                                reject(response.error(m.errorCode.userlist.list));
-                            });
+            // Get Channel Followers
+            channel.getFollowers(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.q, limit, offset).then(function(followings) {
+                // Get Banned Channels
+                redmy.getBanChannels(initialJSON.redis, [initialJSON.userChannelId]).then(function(bannedChannels) {
+                    // Format Userlist
+                    response.formatUserlist(followings, bannedChannels).then(function(list) {
+                        // Prepare Response
+                        response.paginated(m.response.messaging.userlist, list, inputJSON.page, inputJSON.q).then(function(message) {
+                            resolve(message);
                         }).catch(function(e) {
                             reject(response.error(m.errorCode.userlist.list));
                         });
                     }).catch(function(e) {
                         reject(response.error(m.errorCode.userlist.list));
                     });
-                    
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.userlist.list));
-                });               
+                });
             }).catch(function(e) {
                 reject(response.error(m.errorCode.userlist.list));
-            });
+            });               
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.userlist.list));
         });
+    });
 }
 
 /**
