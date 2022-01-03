@@ -147,7 +147,7 @@ async function messageList(initialJSON, inputJSON) {
                             channelIds.push(r._id);
                         });
                     }
-                    mongo.seenCount(channelIds).then(function(cq) {
+                    mongo.seenCount(channelIds, initialJSON.userChannelId).then(function(cq) {
                         model.aggregate(initialJSON.mongoConnection, cq, limit, skip).then(function(resultSeen) {
                             // Fetch Channel Settings
                             setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
