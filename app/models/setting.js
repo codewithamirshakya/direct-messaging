@@ -66,7 +66,6 @@ async function getDMSettings(connection, channelIds){
                 });
             });
         } catch(e) {
-            console.log(e);
             resolve();
         }
     });
