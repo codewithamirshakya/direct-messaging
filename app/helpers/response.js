@@ -275,6 +275,10 @@ async function formatMessageList(result, settings, seens, bannedChannels) {
                     param.lo     = utils.dateToUnixTimeStamp(follower.last_online);
                 }
 
+                if(follower.streaming == true) {
+                    param.s      = true;
+                }
+
                 res.push(param);   
             }
         }           
