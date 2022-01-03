@@ -8,7 +8,6 @@ module.exports = {
             history:        "dch",
             messageList:    "dml",
             userList:       "ul",
-            seenStatus:     "dmss",
             delete:         "dmd",
             search:         "dms",
             active:         "dma"

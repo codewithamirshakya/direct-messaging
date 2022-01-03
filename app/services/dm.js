@@ -289,7 +289,17 @@ async function active(initialJSON, inputJSON) {
             if(inputJSON.set) {
                 // Update Seen Status
                 seenStatus(initialJSON, inputJSON).then(function() {
+                    // Prepare Response
+                    response.typeMessage(m.response.messaging.seenStatus, {c: initialJSON.userChannelId}).then(function(message) {
+                        // Publish
+                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
 
+                        }).catch(function(e) {
+
+                        });
+                    }).catch(function(e) {
+
+                    });
                 }).catch(function(e) {
 
                 });

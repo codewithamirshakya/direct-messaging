@@ -25,10 +25,6 @@ const rules = {
         channelId: "required",
         q: "required"
     },
-    dmss: {
-        type: "required",
-        channelId: "required"
-    },
     ub: {
         channelId: "required"
     },
