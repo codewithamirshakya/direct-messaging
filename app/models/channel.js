@@ -11,7 +11,7 @@ const DM_COLLECTION = 'channels';
         try {
             var params  = [parseInt(userChannelId)];
             var query   = `
-            SELECT c.id, c.name, c.avatar, account_type, ds.online, ds.last_online, 
+            SELECT c.id, c.name, c.avatar, account_type, ds.online, ds.last_online, c.streaming,  
                 allow_message_every_one,
                 allow_message_subscriber,
                 show_read_receipts,
