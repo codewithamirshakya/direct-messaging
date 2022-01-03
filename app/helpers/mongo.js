@@ -172,13 +172,14 @@ async function list(userChannelId, q) {
  * @param {*} q 
  * @returns 
  */
-async function seenCount(channelIds) {
+async function seenCount(channelIds, userChannelId) {
     return new Promise(function (resolve, reject) {
         var match = {
             "$match": {
-                c: {
+                u: {
                     $in: channelIds
                 },
+                c: parseInt(userChannelId),
                 ss: {
                     $exists: false
                 }    
@@ -186,7 +187,7 @@ async function seenCount(channelIds) {
         };
         var group = {
             "$group" : {
-                    _id: "$c",
+                    _id: "$u",
                     us: { $sum: 1 }
                 }
             };
