@@ -181,27 +181,16 @@ async function messageList(initialJSON, inputJSON) {
  */
 async function seenStatus(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
-        // Validate Input
-        validator.validation(inputJSON, validator.rules.dmss).then(function() {
-            // Mongo Query Param
-            mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
-                // Update seen status
-                model.update(initialJSON.mongoConnection, q, { $set: { s: true } }).then(function() {
-                    // Prepare Response
-                    response.typeMessage(m.response.messaging.seenStatus, { c: initialJSON.userChannelId }).then(function(message) {
-                         // Publish Message
-                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-                            resolve(true);
-                        }).catch(function(e) {
-                            resolve(true);
-                        });
-                    });
-                }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.seenStatus));
-                });
+        // Mongo Query Param
+        mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId).then(function(q) { 
+            // Update seen status
+            model.update(initialJSON.mongoConnection, q, { $set: { ss: true } }).then(function() {
+                resolve();
+            }).catch(function(e) {
+                reject(e);
             });
         }).catch(function(e) {
-            reject(response.error(m.errorCode.messaging.seenStatus));
+            reject(e);
         });
     });
 }
@@ -285,6 +274,14 @@ async function active(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dma).then(function() {
             if(inputJSON.set) {
+                // Update Seen Status
+                seenStatus(initialJSON, inputJSON).then(function() {
+
+                }).catch(function(e) {
+
+                });
+
+                // Update Active Conversation
                 redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
                     resolve(response.success(m.successCode.dma.success));
                 }).catch(function() {

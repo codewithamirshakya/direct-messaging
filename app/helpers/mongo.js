@@ -42,7 +42,7 @@ async function message(channelId, userChannelId, position, q, reverse) {
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
-async function seenStatus(channelId, userChannelId, position) {
+async function seenStatus(channelId, userChannelId) {
     return new Promise(function (resolve, reject) {
 
         var params = {            
@@ -55,13 +55,7 @@ async function seenStatus(channelId, userChannelId, position) {
             }]
         };
 
-        if(typeof position !== 'undefined' && position != '') {
-            params.po ={
-                $lte: position
-            };
-        }
-
-        params.s ={
+        params.ss ={
             $exists: false
         };
 
