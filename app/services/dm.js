@@ -8,6 +8,9 @@ const param         = require('../helpers/param.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
 const setting       = require('../models/setting.js');
+const conversation  = require('../models/conversation.js');
+const em            = require('../models/emoji.js');
+const channel       = require('../models/channel.js');
 
 /**
  * 
@@ -25,40 +28,35 @@ const setting       = require('../models/setting.js');
                 validator.validation(inputJSON, validator.rules.dm).then(function() {
                     // Check if user is banned
                     validator.banValidation(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
-                        // allow guest validation
-                        validator.settingValidation(ws, initialJSON, inputJSON).then(function() {
-                            // Get Channel Settings
-                            redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
-                                // Prepare Param
-                                param.dm(initialJSON, inputJSON, settings).then(function(params) {   
-                                    // Save Model                
-                                    model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
-                                        // Prepare Response
-                                        response.typeMessage(m.response.messaging.send, params).then(function(message) {
-                                            // Publish Message
-                                            pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-                                                resolve(true);
-                                            }).catch(function(e) {
-                                                resolve(true);
-                                            });
-
-                                            pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
-                                                resolve(true);
-                                            }).catch(function(e) {
-                                                resolve(true);
-                                            });
+                        // Get Channel Settings
+                        redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
+                            // Prepare Param
+                            param.dm(initialJSON, inputJSON, settings).then(function(params) {   
+                                // Save Model                
+                                model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
+                                    // Prepare Response
+                                    response.typeMessage(m.response.messaging.send, params).then(function(message) {
+                                        // Publish Message
+                                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                                            resolve(true);
+                                        }).catch(function(e) {
+                                            resolve(true);
                                         });
-                                    }).catch(function(e) {
-                                        reject(response.error(m.errorCode.messaging.save));
+
+                                        pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+                                            resolve(true);
+                                        }).catch(function(e) {
+                                            resolve(true);
+                                        });
                                     });
                                 }).catch(function(e) {
-                                    reject(response.error(m.errorCode.messaging.validation));
+                                    reject(response.error(m.errorCode.messaging.save));
                                 });
                             }).catch(function(e) {
                                 reject(response.error(m.errorCode.messaging.validation));
                             });
                         }).catch(function(e) {
-                            reject(response.error(m.errorCode.messaging.follower));
+                            reject(response.error(m.errorCode.messaging.validation));
                         });
                     }).catch(function(e) {
                         reject(response.error(m.errorCode.messaging.banned));
@@ -285,11 +283,15 @@ async function active(initialJSON, inputJSON) {
 
                 });
 
-                // Update Active Conversation
-                redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
-                    resolve(response.success(m.successCode.dma.success));
-                }).catch(function() {
-                    resolve(response.success(m.errorCode.dma.error));
+                // Check if Chat is Allowed
+                allowChat(initialJSON, inputJSON).then(function(allowChat) {
+                    console.log(inputJSON.channelId, initialJSON.userChannelId, allowChat);
+                    // Update Active Conversation
+                    redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, allowChat).then(function() {
+                        resolve(response.success(m.successCode.dma.success));
+                    }).catch(function() {
+                        resolve(response.success(m.errorCode.dma.error));
+                    });
                 });
             } else {
                 redmy.conInactive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
@@ -304,11 +306,53 @@ async function active(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function allowChat(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        mongo.conversation(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
+            conversation.exist(initialJSON.mongoConnection, params).then(function(result) {
+                resolve(true);
+            }).catch(function(e) {
+                setting.getDMSettings(initialJSON.mysqlConnection, [inputJSON.channelId]).then(function(dmSetting) {
+                    if(typeof dmSetting !== "undefined") {
+                        if(typeof dmSetting.allow_message_every_one !== "undefined" && dmSetting.allow_message_every_one == true) {
+                            resolve(true);
+                        } else if(typeof dmSetting.allow_message_subscriber !== "undefined" && dmSetting.allow_message_subscriber == true) {
+                            em.isSubscriber(initialJSON.mysqlConnection, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                                resolve(true);
+                            }).catch(function(e) {
+                                resolve(false);
+                            })
+                        } else {
+                            channel.isFollower(initialJSON.mysqlConnection, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                                resolve(true);
+                            }).catch(function(e) {
+                                resolve(false);
+                            });
+                        }
+                    } else {
+                        channel.isFollower(initialJSON.mysqlConnection, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                            resolve(true);
+                        }).catch(function(e) {
+                            resolve(false);
+                        });
+                    }
+                });
+            });
+        }).catch(function(e) {
+            resolve(false);
+        });
+    });
+}
+
 module.exports = {
     messaging,
     history,
     messageList,
-    seenStatus,
     deleteMessages,
     search,
     active

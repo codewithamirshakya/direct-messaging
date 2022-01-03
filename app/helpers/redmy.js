@@ -205,11 +205,11 @@ async function lastOnlineChannels(client) {
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
-async function conActive(client, channelId, userChannelId) {
+async function conActive(client, channelId, userChannelId, allowChat) {
     return new Promise(async function (resolve, reject) {
         try {
             var key = config.rkeys.active + channelId + '_' + userChannelId;
-            client.set(key, true);
+            client.set(key, allowChat);
 
             resolve();
         } catch(e) {
