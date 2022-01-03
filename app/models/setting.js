@@ -97,12 +97,13 @@ async function updateOnlineDmSetting(connection, channelId, online) {
             var param = [ channelId, online, (new Date()), online, (new Date())];
             var query = `
             INSERT INTO dm_settings 
-                (channel_id, online, last_online)
+                (channel_id, online, last_online, created_at, updated_at)
             VALUES
-                (?, ?, ?)
+                (?, ?, ?, NOW(), NOW())
             ON DUPLICATE KEY UPDATE
                 online = ?,
-                last_online = ? 
+                last_online = ?,
+                updated_at = NOW() 
             `;
             
             var sql = mysql.format(query, param);

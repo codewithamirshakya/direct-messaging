@@ -140,6 +140,7 @@ async function formatMessageList(result, settings, seens, bannedChannels) {
                     
                     res[i]          = result[i];
                     
+                    res[i].c        = res[i]._id; 
                     res[i].bn       = false; 
                     res[i].o        = false; 
                     res[i].lo       = ""; 
