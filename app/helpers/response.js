@@ -133,11 +133,9 @@ async function formatMessageList(result, settings, bannedChannels) {
                 }           
             });
         }
-
-        console.log(settingRes);
         
         try {
-            for(i=0; i < result.length; i++) {
+            /*for(i=0; i < result.length; i++) {
                 if(typeof result[i] !== "undefined") {
                     var u           = result[i].u.toString();
                     var c           = result[i].c.toString();
@@ -164,7 +162,7 @@ async function formatMessageList(result, settings, bannedChannels) {
                     delete res[i].userChannel;
                     delete res[i].uncd;
                 }
-            }
+            }*/
         } catch(e) {
             console.log(e);    
         }
