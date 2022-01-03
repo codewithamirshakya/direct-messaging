@@ -237,6 +237,29 @@ async function conInactive(client, channelId, userChannelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+async function getConStatus(client, channelId, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            var key = config.rkeys.active + channelId + '_' + userChannelId;
+            client.get(key, function(err, status) {
+                if(status == null || err) {
+                    reject();
+                } else {
+                    resolve(status);
+                }
+            });
+        } catch(e) {
+            reject();
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
@@ -248,5 +271,6 @@ module.exports = {
     onlineChannels,
     lastOnlineChannels,
     conActive,
-    conInactive
+    conInactive,
+    getConStatus
 }
