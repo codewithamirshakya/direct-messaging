@@ -74,15 +74,15 @@ const DM_COLLECTION = 'channels';
 /**
  * 
  * @param {*} connection 
- * @param {*} userChannelId 
  * @param {*} channelId 
+ * @param {*} userChannelId 
  * @returns 
  */
-async function isFollower(connection, userChannelId, channelId) {
+async function isFollower(connection, channelId, userChannelId) {
     return new Promise(function (resolve, reject) {
         try {
-            var params  = [parseInt(userChannelId), parseInt(channelId)];
-            var query   = `SELECT * FROM followers where channel_id = ? and follower_id = ? LIMIT 1 `;  
+            var params  = [parseInt(channelId), parseInt(userChannelId)];
+            var query   = `SELECT * FROM followers where channel_id = ? and follower_id = ? LIMIT 1`;  
             var sql     = mysql.format(query, params);
                 
             connection.getConnection((err, conn) => {
@@ -97,42 +97,20 @@ async function isFollower(connection, userChannelId, channelId) {
 
                     conn.release();
 
-                    if(typeof results !== "undefined") {
-                        resolve(results);
-                    } 
-                    
-                    reject();
+                    if(typeof results !== "undefined" && results.length > 0) {
+                        resolve(true);
+                    } else {
+                        reject();
+                    }
                 });
             });
         } catch(e) {
-
+            reject();
         }
-    });
-}
-
-/**
- * 
- * @param {*} connection 
- * @param {*} channelId 
- */
-async function getChannel(connection, channelId) {
-    return new Promise(function (resolve, reject) {
-        try {
-            connection
-                .collection(DM_COLLECTION)
-                .findOne({channel_id: channelId})
-                .then(function(result) {
-                    resolve(result);
-                });
-        } catch(e) {
-            reject(e);
-        }
-        
     });
 }
 
 module.exports = {
     getFollowers,
-    getChannel,
     isFollower
 }

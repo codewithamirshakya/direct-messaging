@@ -73,16 +73,6 @@ const ul        = require('../services/userlist.js');
                     reject(e);
                 });
                 break;
-                
-            // Seen status 
-            case m.type.messaging.seenStatus:
-                // Seen status Handler
-                dm.seenStatus(initialJSON, inputJSON).then(function(message) {
-                    resolve(message);
-                }).catch(function(e) {
-                    reject(e);
-                });
-                break;
 
             // Ban User
             case m.type.user.ban:

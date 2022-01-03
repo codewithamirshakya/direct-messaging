@@ -198,10 +198,31 @@ async function seenCount(channelIds) {
         resolve(params);
     });
 }
+    
+/*
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+async function conversation(channelId, userChannelId) {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            $or: [{
+                c: channelId,
+                u: parseInt(userChannelId)
+            }, {
+                u: channelId,
+                c: parseInt(userChannelId)
+            }]
+        };
+
+        resolve(params);
+    });
+}
 
 module.exports = {
     message,
     list,
     seenStatus,
-    seenCount
+    seenCount,
+    conversation
 }
