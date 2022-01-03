@@ -1,8 +1,6 @@
 module.exports = {
     type: {
-        system: {
-
-        },
+        system          : "system",
         messaging: {
             send:           "dm",
             history:        "dch",
@@ -18,7 +16,7 @@ module.exports = {
         },
         user: {
             ban: "ub"
-        }
+        },
     },
     response: {
         messaging: {
@@ -27,6 +25,7 @@ module.exports = {
             messageList:    "dml",
             userlist:       "ul",
             seenStatus:     "dmss",
+            readStatus:     "dmrs",
             delete:         "dmd",
             search:         "dms"
         },
