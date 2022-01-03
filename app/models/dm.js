@@ -101,6 +101,27 @@ async function aggregate(connection, params, limit, skip) {
     });
 }
 
+async function aggregateCon(connection, params, limit, skip) { 
+    return new Promise(function (resolve, reject) {
+        try {
+            connection.collection('conversation')
+                        .aggregate(params)
+                        .sort({_id: -1})
+                        .skip(skip)
+                        .limit(limit)
+                        .toArray(function(err, result) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            
+                            resolve(result);
+                        });
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
 /**
  * 
  * @param {*} connection 
@@ -162,5 +183,6 @@ module.exports = {
     history,
     aggregate,
     update,
-    remove
+    remove,
+    aggregateCon
 }

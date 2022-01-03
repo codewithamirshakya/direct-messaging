@@ -133,29 +133,36 @@ async function formatMessageList(result, settings, bannedChannels) {
                 }           
             });
         }
+
+        console.log(settingRes);
         
         try {
             for(i=0; i < result.length; i++) {
                 if(typeof result[i] !== "undefined") {
-                    res[i]          = result[i];
-                    res[i].c        = result[i]._id;
-                    var channelId   = result[i]._id;   
-                    res[i].bn       = (bannedChannels.indexOf(channelId) != -1) ? true: false;          
+                    var u           = result[i].u.toString();
+                    var c           = result[i].c.toString();
+                    var avatarPath  = u.substring(0, 1) + "/" + u.substring(0, 2) + "/" + u + "/" + config.minio.avatarAlias;
+                    var avatar      = config.minio.bucket + "/" + avatarPath + "/" + result[i].userChannel[0].avatar;
 
-                    if(typeof settingRes[channelId] !== "undefined") {
-                        var dmSetting   = settingRes[channelId];
-                        res[i].rr       = dmSetting.show_read_receipts;
-                        
-                        if(dmSetting.show_online_status == true) {
-                            res[i].o      = dmSetting.online; 
-                        }
-        
-                        if(dmSetting.show_last_online == true) {
-                            res[i].lo  = dmSetting.last_online;
-                        }
-                    }
+                    var cavatarPath  = c.substring(0, 1) + "/" + c.substring(0, 2) + "/" + c + "/" + config.minio.avatarAlias;
+                    var cavatar      = config.minio.bucket + "/" + cavatarPath + "/" + result[i].userChannel[0].avatar;
+                    
+                    res[i]          = result[i];
+                    res[i].id       = result[i]._id;
+                    res[i].n        = result[i].userChannel[0].name;
+                    res[i].y        = result[i].userChannel[0].account_type.substring(0,1);
+                    res[i].i        = avatar; 
+                    res[i].rn       = result[i].channel[0].name;  
+                    res[i].ri       = cavatar; 
+                    res[i].ry       = result[i].channel[0].account_type.substring(0,1); 
+                    res[i].bn       = false; 
+                    res[i].o        = false; 
+                    res[i].lo       = ""; 
 
                     delete res[i]._id;
+                    delete res[i].channel;
+                    delete res[i].userChannel;
+                    delete res[i].uncd;
                 }
             }
         } catch(e) {
