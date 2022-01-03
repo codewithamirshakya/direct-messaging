@@ -69,7 +69,7 @@ async function seenStatus(channelId, userChannelId) {
  * @returns 
  */
 
-async function list(userChannelId, q) {
+async function list1(userChannelId, q) {
     return new Promise(function (resolve, reject) {
         var params = [
             { $match: {$or: [{ u: parseInt(userChannelId) },{c:parseInt(userChannelId)}]} },
@@ -125,7 +125,14 @@ async function list(userChannelId, q) {
         resolve(params);
     });
 }
-async function list1(userChannelId, q) {
+
+/**
+ * 
+ * @param {*} userChannelId 
+ * @param {*} q 
+ * @returns 
+ */
+async function list(userChannelId, q) {
     return new Promise(function (resolve, reject) {
         var match = {
             "$match" : {
