@@ -300,6 +300,17 @@ async function active(initialJSON, inputJSON) {
                     }).catch(function(e) {
 
                     });
+
+                    response.typeMessage(m.response.messaging.seenStatus, {c: inputJSON.channelId}).then(function(message) {
+                        // Publish
+                        pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+
+                        }).catch(function(e) {
+
+                        });
+                    }).catch(function(e) {
+
+                    });
                 }).catch(function(e) {
 
                 });
