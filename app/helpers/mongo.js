@@ -78,7 +78,7 @@ async function seenStatus(channelId, userChannelId, position) {
 async function list(userChannelId, q) {
     return new Promise(function (resolve, reject) {
         var params = [
-            { $match: { u: parseInt(userChannelId) } },
+            { $match: {$or: [{ u: parseInt(userChannelId) },{c:parseInt(userChannelId)}]} },
             { $lookup: { from: "channels", localField: "c", foreignField: "channel_id", as: "channel" } },
             { $lookup: { from: "channels", localField: "u", foreignField: "channel_id", as: "userChannel" } },
             {
