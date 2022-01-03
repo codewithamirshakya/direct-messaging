@@ -134,10 +134,13 @@ async function list1(userChannelId, q) {
  */
 async function list(userChannelId, q) {
     return new Promise(function (resolve, reject) {
-        var match = {
-            "$match" : {
-                u: parseInt(userChannelId)
-            }
+        var match = { 
+            "$match": { 
+                "$or": [
+                    { u: parseInt(userChannelId) }, 
+                    { c: parseInt(userChannelId) }
+                ] 
+            } 
         };
         var group = {
             "$group" : {
