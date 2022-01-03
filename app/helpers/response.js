@@ -143,7 +143,7 @@ async function formatMessageList(result, settings, seens, bannedChannels) {
                     res[i].bn       = false; 
                     res[i].o        = false; 
                     res[i].lo       = ""; 
-                    res[i].us       = seens[i].us; 
+                    res[i].us       = typeof seens[i] !== "undefined" && typeof seens[i].us !== "undefined" ? seens[i].us : 0; 
 
                     delete res[i]._id;
                     delete res[i].channel;
