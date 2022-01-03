@@ -132,15 +132,14 @@ async function messageList(initialJSON, inputJSON) {
                 skip     = (inputJSON.page - 1) * config.chat.limit; 
 
                 // Fetch History
-                model.aggregate(initialJSON.mongoConnection, q, limit, skip).then(function(result) {
+                model.aggregateCon(initialJSON.mongoConnection, q, limit, skip).then(function(result) {
                     // parse channel IDs from following object collection
                     var channelIds = [];
                     if(typeof result !== "undefined") {
                         result.forEach(function (r) {
-                            channelIds.push(r._id);
+                            channelIds.push(r.c);
                         });
                     }
-
                     // Fetch Channel Settings
                     setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
                         // Fetch Banned Channels
