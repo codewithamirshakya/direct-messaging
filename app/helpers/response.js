@@ -122,7 +122,7 @@ async function formatHistory(type, result, position, reverse) {
  * @param {*} result 
  * @returns 
  */
-async function formatMessageList(result, settings, bannedChannels) {
+async function formatMessageList(result, settings, seens, bannedChannels) {
     return new Promise(async function (resolve, reject) {
         var res         = [];
         var settingRes  = [];
@@ -135,34 +135,22 @@ async function formatMessageList(result, settings, bannedChannels) {
         }
         
         try {
-            /*for(i=0; i < result.length; i++) {
+            for(i=0; i < result.length; i++) {
                 if(typeof result[i] !== "undefined") {
-                    var u           = result[i].u.toString();
-                    var c           = result[i].c.toString();
-                    var avatarPath  = u.substring(0, 1) + "/" + u.substring(0, 2) + "/" + u + "/" + config.minio.avatarAlias;
-                    var avatar      = config.minio.bucket + "/" + avatarPath + "/" + result[i].userChannel[0].avatar;
-
-                    var cavatarPath  = c.substring(0, 1) + "/" + c.substring(0, 2) + "/" + c + "/" + config.minio.avatarAlias;
-                    var cavatar      = config.minio.bucket + "/" + cavatarPath + "/" + result[i].userChannel[0].avatar;
                     
                     res[i]          = result[i];
-                    res[i].id       = result[i]._id;
-                    res[i].n        = result[i].userChannel[0].name;
-                    res[i].y        = result[i].userChannel[0].account_type.substring(0,1);
-                    res[i].i        = avatar; 
-                    res[i].rn       = result[i].channel[0].name;  
-                    res[i].ri       = cavatar; 
-                    res[i].ry       = result[i].channel[0].account_type.substring(0,1); 
+                    
                     res[i].bn       = false; 
                     res[i].o        = false; 
                     res[i].lo       = ""; 
+                    res[i].us       = seens[i].us; 
 
                     delete res[i]._id;
                     delete res[i].channel;
                     delete res[i].userChannel;
                     delete res[i].uncd;
                 }
-            }*/
+            }
         } catch(e) {
             console.log(e);    
         }

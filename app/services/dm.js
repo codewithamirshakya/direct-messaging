@@ -136,35 +136,41 @@ async function messageList(initialJSON, inputJSON) {
                 skip     = (inputJSON.page - 1) * config.chat.limit; 
 
                 // Fetch History
-                model.aggregateCon(initialJSON.mongoConnection, q, limit, skip).then(function(result) {
+                model.aggregate(initialJSON.mongoConnection, q, limit, skip).then(function(result) {
                     // parse channel IDs from following object collection
                     var channelIds = [];
                     if(typeof result !== "undefined") {
                         result.forEach(function (r) {
-                            channelIds.push(r.c);
+                            channelIds.push(r._id);
                         });
                     }
-                    // Fetch Channel Settings
-                    setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
-                        // Fetch Banned Channels
-                        redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {                    
-                            // Format Message List
-                            response.formatMessageList(result, settings, bannedChannels).then(function(list) {
-                                // Prepare Response
-                                response.paginated(m.response.messaging.messageList, list, inputJSON.page, inputJSON.q).then(function(message) {
-                                    resolve(message);
+                    mongo.seenCount(channelIds).then(function(cq) {
+                        model.aggregate(initialJSON.mongoConnection, cq, limit, skip).then(function(resultSeen) {
+                            // Fetch Channel Settings
+                            setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
+                                // Fetch Banned Channels
+                                redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {                    
+                                    // Format Message List
+                                    response.formatMessageList(result, settings, resultSeen, bannedChannels).then(function(list) {
+                                        // Prepare Response
+                                        response.paginated(m.response.messaging.messageList, list, inputJSON.page, inputJSON.q).then(function(message) {
+                                            resolve(message);
+                                        }).catch(function(e) {
+                                            reject(response.error(m.errorCode.messaging.messageList));
+                                        });
+                                    }).catch(function(e) {
+                                        reject(response.error(m.errorCode.messaging.messageList));
+                                    });
                                 }).catch(function(e) {
                                     reject(response.error(m.errorCode.messaging.messageList));
                                 });
                             }).catch(function(e) {
                                 reject(response.error(m.errorCode.messaging.messageList));
                             });
-                        }).catch(function(e) {
-                            reject(response.error(m.errorCode.messaging.messageList));
                         });
-                    }).catch(function(e) {
-                        reject(response.error(m.errorCode.messaging.messageList));
+                        
                     });
+                    
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.messageList));
                 }); 
