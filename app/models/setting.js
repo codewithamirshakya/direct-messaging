@@ -91,10 +91,10 @@ async function getDMSettings(connection, channelIds){
  * @param {*} online
  * @param {*} lastOnline  
  */
-async function updateOnlineDmSetting(connection, channelId, online, lastOnline) {
+async function updateOnlineDmSetting(connection, channelId, online) {
     return new Promise(function (resolve, reject) {
         try {
-            var param = [ channelId, online, lastOnline, online, lastOnline ];
+            var param = [ channelId, online, (new Date()), online, (new Date())];
             var query = `
             INSERT INTO dm_settings 
                 (channel_id, online, last_online)

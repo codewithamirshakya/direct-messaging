@@ -75,7 +75,7 @@ var socket = {
             ws.subscribe(messageAdapter);
 
             // Store Channel Online
-            setting.updateOnlineDmSetting(mysqlConnection, parseInt(data.userChannelId), true, util.now());
+            setting.updateOnlineDmSetting(mysqlConnection, parseInt(data.userChannelId), true);
 
             // Store User Info
             storeConnectedUser(ws, data, messageAdapter).then(function() {
@@ -136,7 +136,7 @@ var socket = {
   */
  function _close(ws, code, message) {
     // Store Channel Online
-    setting.updateOnlineDmSetting(mysqlConnection, parseInt(ws['u']), false, util.now());
+    setting.updateOnlineDmSetting(mysqlConnection, parseInt(ws['u']), false);
  }
 
  /**
