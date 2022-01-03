@@ -134,10 +134,8 @@ async function list1(userChannelId, q) {
  */
 async function list(userChannelId, q) {
     return new Promise(function (resolve, reject) {
-        var match = {
-            "$match" : {
-                u: parseInt(userChannelId)
-            }
+        var match = { 
+            "$match": { u: parseInt(userChannelId) }
         };
         var group = {
             "$group" : {
@@ -150,7 +148,8 @@ async function list(userChannelId, q) {
                     rn: {$last: "$rn"},
                     ri: {$last: "$ri"},
                     ry: {$last: "$ry"},
-                    id: {$last: "$_id"}
+                    id: {$last: "$_id"},
+                    u: {$last: "$u"},
                 }
             };
 
@@ -168,6 +167,39 @@ async function list(userChannelId, q) {
 
 /**
  * 
+ * @param {*} userChannelId 
+ * @param {*} q 
+ * @returns 
+ */
+async function seenCount(channelIds) {
+    return new Promise(function (resolve, reject) {
+        var match = {
+            "$match": {
+                c: {
+                    $in: channelIds
+                },
+                s: {
+                    $exists: false
+                }    
+            }
+        };
+        var group = {
+            "$group" : {
+                    _id: "$c",
+                    us: { $sum: 1 }
+                }
+            };
+            
+
+        var  params = [
+            match,
+            group
+        ];  
+        resolve(params);
+    });
+}
+    
+/*
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
@@ -191,5 +223,6 @@ module.exports = {
     message,
     list,
     seenStatus,
+    seenCount,
     conversation
 }
