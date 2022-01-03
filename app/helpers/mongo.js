@@ -150,6 +150,7 @@ async function list(userChannelId, q) {
                     ry: {$last: "$ry"},
                     id: {$last: "$_id"},
                     u: {$last: "$u"},
+                    ss: {$last: "$ss"},
                 }
             };
 
