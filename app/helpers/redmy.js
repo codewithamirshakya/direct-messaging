@@ -260,6 +260,30 @@ async function getConStatus(client, channelId, userChannelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+async function isDMAllowed(client, channelId, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            getConStatus(client, channelId, userChannelId).then(function(status) {
+                if(status == "true") {
+                    resolve();
+                } else {
+                    reject();
+                }
+            }).catch(function(e) {
+                reject();
+            })
+        } catch(e) {
+            reject();
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
@@ -272,5 +296,6 @@ module.exports = {
     lastOnlineChannels,
     conActive,
     conInactive,
-    getConStatus
+    getConStatus,
+    isDMAllowed
 }

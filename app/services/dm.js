@@ -28,35 +28,40 @@ const channel       = require('../models/channel.js');
                 validator.validation(inputJSON, validator.rules.dm).then(function() {
                     // Check if user is banned
                     validator.banValidation(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
-                        // Get Channel Settings
-                        redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
-                            // Prepare Param
-                            param.dm(initialJSON, inputJSON, settings).then(function(params) {   
-                                // Save Model                
-                                model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
-                                    // Prepare Response
-                                    response.typeMessage(m.response.messaging.send, params).then(function(message) {
-                                        // Publish Message
-                                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-                                            resolve(true);
-                                        }).catch(function(e) {
-                                            resolve(true);
-                                        });
+                        // Is Message Allowed Validation
+                        redmy.isDMAllowed(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                            // Get Channel Settings
+                            redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
+                                // Prepare Param
+                                param.dm(initialJSON, inputJSON, settings).then(function(params) {   
+                                    // Save Model                
+                                    model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
+                                        // Prepare Response
+                                        response.typeMessage(m.response.messaging.send, params).then(function(message) {
+                                            // Publish Message
+                                            pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                                                resolve(true);
+                                            }).catch(function(e) {
+                                                resolve(true);
+                                            });
 
-                                        pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
-                                            resolve(true);
-                                        }).catch(function(e) {
-                                            resolve(true);
+                                            pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+                                                resolve(true);
+                                            }).catch(function(e) {
+                                                resolve(true);
+                                            });
                                         });
+                                    }).catch(function(e) {
+                                        reject(response.error(m.errorCode.messaging.save));
                                     });
                                 }).catch(function(e) {
-                                    reject(response.error(m.errorCode.messaging.save));
+                                    reject(response.error(m.errorCode.messaging.validation));
                                 });
                             }).catch(function(e) {
                                 reject(response.error(m.errorCode.messaging.validation));
                             });
                         }).catch(function(e) {
-                            reject(response.error(m.errorCode.messaging.validation));
+                            reject(response.error(m.errorCode.messaging.follower));
                         });
                     }).catch(function(e) {
                         reject(response.error(m.errorCode.messaging.banned));
@@ -285,7 +290,6 @@ async function active(initialJSON, inputJSON) {
 
                 // Check if Chat is Allowed
                 allowChat(initialJSON, inputJSON).then(function(allowChat) {
-                    console.log(inputJSON.channelId, initialJSON.userChannelId, allowChat);
                     // Update Active Conversation
                     redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, allowChat).then(function() {
                         resolve(response.success(m.successCode.dma.success));
