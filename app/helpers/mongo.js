@@ -178,7 +178,7 @@ async function seenCount(channelIds) {
                 c: {
                     $in: channelIds
                 },
-                s: {
+                ss: {
                     $exists: false
                 }    
             }
