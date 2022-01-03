@@ -150,7 +150,7 @@ async function messageList(initialJSON, inputJSON) {
                     mongo.seenCount(channelIds, initialJSON.userChannelId).then(function(cq) {
                         model.aggregate(initialJSON.mongoConnection, cq, limit, skip).then(function(resultSeen) {
                             // Fetch Channel Settings
-                            setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
+                            setting.getDMSettings(initialJSON.mysqlConnection, channelIds).then(function(settings) {
                                 // Fetch Banned Channels
                                 redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {                    
                                     // Format Message List

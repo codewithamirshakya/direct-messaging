@@ -142,8 +142,13 @@ async function formatMessageList(result, settings, seens, bannedChannels) {
                     
                     res[i].c        = res[i]._id; 
                     res[i].bn       = false; 
-                    res[i].o        = false; 
-                    res[i].lo       = ""; 
+                    if(typeof settingRes[res[i]._id] !== "undefined") {
+                        var sett = settingRes[res[i]._id];
+                        res[i].o        = !!(sett.show_online_status == true ? true: false); 
+                        res[i].lo       = !!(sett.show_last_online == true ? utils.dateToUnixTimeStamp(sett.last_online): false);
+                        res[i].rr       = !!sett.show_read_receipts;
+                    }
+                     
                     res[i].us       = typeof seens[i] !== "undefined" && typeof seens[i].us !== "undefined" ? seens[i].us : 0; 
 
                     delete res[i]._id;
