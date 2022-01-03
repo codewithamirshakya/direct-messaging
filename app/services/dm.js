@@ -42,7 +42,11 @@ const setting       = require('../models/setting.js');
                                                 resolve(true);
                                             });
 
-                                            resolve(message);
+                                            pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+                                                resolve(true);
+                                            }).catch(function(e) {
+                                                resolve(true);
+                                            });
                                         });
                                     }).catch(function(e) {
                                         reject(response.error(m.errorCode.messaging.save));
