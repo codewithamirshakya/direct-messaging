@@ -27,6 +27,7 @@ module.exports = {
             messageList:    "dml",
             userlist:       "ul",
             seenStatus:     "dmss",
+            readStatus:     "dmrs",
             delete:         "dmd",
             search:         "dms"
         },
