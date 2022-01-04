@@ -161,7 +161,7 @@ async function remove(connection, q) {
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(DM_COLLECTION)
-                        .deleteMany(q, function(err, res) {
+                        .deleteMany(q.query, function(err, res) {
                             if (err) {
                                 console.log(err);
                             }
