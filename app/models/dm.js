@@ -46,13 +46,15 @@ async function save(connection, params) {
                             // update counter value
                             counter.updateLatestCounterByType(connection, { type: COUNTER_TYPE }, { $set: { sequence_value: result.sequence_value + 1 }});
 
-                            // update conversation with the latest message
-                            var clause      = convoClause(params.c, params.u);
-                            if(typeof params._id !== "undefined") {
-                                delete params._id;
+                            // prepare update clause and params
+                            var clause          = convoClause(params.c, params.u);
+                            var updateParam     = JSON.parse(JSON.stringify(params));
+                            if(typeof updateParam._id !== "undefined") {
+                                delete updateParam._id;
                             }
 
-                            conversation.update(connection, { $set: params } , clause, { upsert: true });
+                            // update conversation with the latest message
+                            conversation.update(connection, { $set: updateParam } , clause, { upsert: true });
 
                             // resolve insertedId
                             resolve(res.insertedId);
