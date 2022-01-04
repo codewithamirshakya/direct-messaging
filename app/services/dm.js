@@ -268,8 +268,7 @@ async function search(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dms).then(function() {
             // Mongo Query Param
-            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {  
-
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {
                 // Fetch History
                 model.history(initialJSON.mongoConnection, q).then(function(result) {
                     // Prepare Response

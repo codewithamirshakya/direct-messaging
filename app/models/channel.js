@@ -97,7 +97,7 @@ async function isFollower(connection, channelId, followerId) {
 
                     conn.release();
 
-                    if(typeof results !== "undefined" && results.length > 0) {
+                    if(typeof results !== "undefined" && typeof results[0] !== "undefined") {
                         resolve(true);
                     } else {
                         reject();
