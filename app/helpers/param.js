@@ -31,7 +31,7 @@ const redmy         = require('../helpers/redmy.js');
             ry:     typeof(settings.y) === "undefined" ? "" : settings.y,
             i:      typeof(initialJSON.avatar) === "undefined" ? "" : initialJSON.avatar,
             y:      typeof(initialJSON.accountType) === "undefined" ? "" : initialJSON.accountType,
-            s:      typeof(settings.s) === "undefined" ? false : settings.s,
+            s:      typeof(settings.s) === "undefined" ? false : Boolean(settings.s),
             m:      inputJSON.message,
             d:      Date.now() 
         };

@@ -1,6 +1,4 @@
-const config        = require('../config/default.js');
-
-const DM_COLLECTION = 'counters';
+const COUNTER_COLLECTION = 'counters';
 
 /**
  * 
@@ -11,17 +9,16 @@ const DM_COLLECTION = 'counters';
 async function getLatestCounterByType(connection, q) {
     return new Promise(function (resolve, reject) {
         try {
-            connection.collection(DM_COLLECTION)
+            connection.collection(COUNTER_COLLECTION)
                         .findOne(q,function(err, result) {
                             if (err) {
-                                resolve(err);
+                                reject(err);
                             } else {
                                 resolve(result);
-                            }                           
-                            
+                            }
                         });
         } catch(e) {
-            resolve();
+            reject();
         }
     });
 }
@@ -33,20 +30,19 @@ async function getLatestCounterByType(connection, q) {
  * @param {*} params
  * @returns 
  */
-
 async function updateLatestCounterByType(connection, q, params) {
     return new Promise(function (resolve, reject) {
         try {
-            connection.collection(DM_COLLECTION)
+            connection.collection(COUNTER_COLLECTION)
                         .updateOne(q, params, function(err, res) {
                             if (err) {
-                                console.log(err);
+                                reject();
                             };
+                            
                             resolve(res);
-                        })
-                        
+                        });
         } catch(e) {
-            resolve();
+            reject();
         }
     });
 }

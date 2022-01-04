@@ -1,4 +1,4 @@
-const DM_COLLECTION = 'conversation';
+const CONVO_COLLECTION = 'conversation';
 
 /**
  * 
@@ -8,13 +8,14 @@ const DM_COLLECTION = 'conversation';
  * @param {*} options 
  * @returns 
  */
-async function save(connection, params, query, options) {
+async function update(connection, params, query, options) {
     return new Promise(function (resolve, reject) {
         try {
-            const result = connection.collection(DM_COLLECTION).updateOne(query, params, options);
+            connection.collection(CONVO_COLLECTION).updateOne(query, params, options);
+            
             resolve();
         } catch(e) {
-            resolve();
+            reject();
         }
     });
 }
@@ -28,7 +29,7 @@ async function save(connection, params, query, options) {
 async function exist(connection, query) {
     return new Promise(function (resolve, reject) {
         try {
-            connection.collection(DM_COLLECTION).findOne(query,function(err, result) {
+            connection.collection(CONVO_COLLECTION).findOne(query,function(err, result) {
                 if (err) {
                     reject(err);
                 } else {
@@ -46,6 +47,6 @@ async function exist(connection, query) {
 }
 
 module.exports = {
-    save,
+    update,
     exist
 }

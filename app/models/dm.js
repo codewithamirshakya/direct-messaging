@@ -1,7 +1,28 @@
 const counter               = require('../models/counter.js');
 const conversation          = require('../models/conversation.js');
 
-const DM_COLLECTION = 'dm';
+const DM_COLLECTION         = 'dm';
+const COUNTER_TYPE          = 'dm';
+
+/**
+ * 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ * @returns 
+ */
+function convoClause(channelId, userChannelId) {
+    var clause = {
+        $or: [{
+            c: channelId,
+            u: userChannelId
+        }, {
+            u: channelId,
+            c: userChannelId
+        }]
+    };
+
+    return clause;
+}
 
 /**
  * 
@@ -12,35 +33,40 @@ const DM_COLLECTION = 'dm';
 async function save(connection, params) {
     return new Promise(function (resolve, reject) {
         try {
-            counter.getLatestCounterByType(connection,{type: 'dm'}).then(function(result) {
-                params.po = result.sequence_value;
-                connection.collection(DM_COLLECTION).insertOne(params, function(err, res) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    
-                    if(typeof res !== "undefined" && res.insertedId !== "undefined") {
-                        counter.updateLatestCounterByType(connection,{type: 'dm'},{$set: {sequence_value: result.sequence_value + 1 }}).then(function() {
-                            const query = {
-                                $or: [{
-                                    c: params.c,
-                                    u: params.u
-                                }, {
-                                    u: params.c,
-                                    c: params.u
-                                }]
-                            };
-                            conversation.save(connection, { $set: {c: params.c, u: params.u, m: params.m} } ,query, { upsert: true });
+            // get auto incremental id
+            counter.getLatestCounterByType(connection, { type: COUNTER_TYPE }).then(function(result) {
+                if(typeof result !== "undefined") {
+                    // assign incremental id
+                    params.po            = result.sequence_value;
+
+                    // insert dm
+                    connection.collection(DM_COLLECTION).insertOne(params, function(err, res) {
+                        if(typeof res !== "undefined" && res.insertedId !== "undefined") {
+                            // update counter value
+                            counter.updateLatestCounterByType(connection, { type: COUNTER_TYPE }, { $set: { sequence_value: result.sequence_value + 1 }});
+
+                            // update conversation with the latest message
+                            var clause      = convoClause(params.c, params.u);
+                            if(typeof params._id !== "undefined") {
+                                delete params._id;
+                            }
+
+                            conversation.update(connection, { $set: params } , clause, { upsert: true });
+
+                            // resolve insertedId
                             resolve(res.insertedId);
-                        });
-                    } else {
-                        resolve();
-                    }
-                });
+                        } else {
+                            reject();
+                        }
+                    });
+                } else {
+                    reject();
+                }
+            }).catch(function(e) {
+                reject();
             });
-            
         } catch(e) {
-            resolve();
+            reject();
         }
     });
 }
