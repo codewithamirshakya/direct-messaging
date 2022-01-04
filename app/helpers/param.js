@@ -158,6 +158,50 @@ const redmy         = require('../helpers/redmy.js');
     });
 }
 
+/**
+ * 
+ * @param {*} myChannelId 
+ * @param {*} params 
+ */
+async function myConvo(params) {
+    return new Promise(async function (resolve, reject) {
+        var param 	  	= { 
+            c:      parseInt(params.c),
+            u:      parseInt(params.u),
+            rn:     params.rn,
+            ri:     params.ri,
+            ry:     params.ry,
+            m:      params.m,
+            d:      params.d
+        };
+
+        resolve(param);
+    });
+}
+
+/**
+ * 
+ * @param {*} myChannelId 
+ * @param {*} params 
+ */
+ async function theirConvo(params) {
+    return new Promise(async function (resolve, reject) {
+        var param 	  	= { 
+            c:      parseInt(params.u),
+            u:      parseInt(params.c),
+            rn:     params.n,
+            ri:     params.i,
+            ry:     params.y,
+            m:      params.m,
+            d:      params.d
+        };
+
+        resolve(param);
+    });
+}
+
 module.exports = {
-    dm
+    dm,
+    myConvo,
+    theirConvo
 }

@@ -1,6 +1,7 @@
 
 const counter               = require('../models/counter.js');
 const conversation          = require('../models/conversation.js');
+const param                 = require('../helpers/param.js');
 
 const DM_COLLECTION         = 'dm';
 const COUNTER_TYPE          = 'dm';
@@ -11,15 +12,25 @@ const COUNTER_TYPE          = 'dm';
  * @param {*} userChannelId 
  * @returns 
  */
-function convoClause(channelId, userChannelId) {
+function myConvoClause(channelId, userChannelId) {
     var clause = {
-        $or: [{
-            c: channelId,
-            u: userChannelId
-        }, {
-            u: channelId,
-            c: userChannelId
-        }]
+        c: channelId,
+        u: userChannelId
+    };
+
+    return clause;
+}
+
+/**
+ * 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ * @returns 
+ */
+function theirConvoClause(channelId, userChannelId) {
+    var clause = {
+        u: channelId,
+        c: userChannelId
     };
 
     return clause;
@@ -46,16 +57,18 @@ async function save(connection, params) {
                             // update counter value
                             counter.updateLatestCounterByType(connection, { type: COUNTER_TYPE }, { $set: { sequence_value: result.sequence_value + 1 }});
 
-                            // prepare update clause and params
-                            var clause          = convoClause(params.c, params.u);
-                            var updateParam     = JSON.parse(JSON.stringify(params));
-                            if(typeof updateParam._id !== "undefined") {
-                                delete updateParam._id;
-                            }
+                            // update my conversation
+                            param.myConvo(params).then(function(myConvoParams) {
+                                var myClause  = myConvoClause(params.c, params.u);
+                                conversation.update(connection, { $set: myConvoParams } , myClause, { upsert: true });
+                            });
 
-                            // update conversation with the latest message
-                            conversation.update(connection, { $set: updateParam } , clause, { upsert: true });
-
+                            // update their conversation
+                            param.theirConvo(params).then(function(theirConvoParams) {
+                                var theirClause  = theirConvoClause(params.c, params.u);
+                                conversation.update(connection, { $set: theirConvoParams } , theirClause, { upsert: true });
+                            });
+                            
                             // resolve insertedId
                             resolve(res.insertedId);
                         } else {
