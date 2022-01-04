@@ -7,6 +7,7 @@ module.exports = {
             messageList:    "dml",
             userList:       "ul",
             delete:         "dmd",
+            remove:         "dmr",
             search:         "dms",
             active:         "dma"
         },
@@ -27,6 +28,7 @@ module.exports = {
             seenStatus:     "dmss",
             readStatus:     "dmrs",
             delete:         "dmd",
+            remove:         "dmr",
             search:         "dms"
         },
         emotes: {
@@ -46,7 +48,8 @@ module.exports = {
             seenStatus:     "DIRECT_MESSAGING_SEEN_STATUS",
             banned:         "DIRECT_MESSAGING_BANNED",
             delete:         "DIRECT_MESSAGING_DELETE_MESSAGES",
-            search:         "DIRECT_MESSAGING_SEARCH_HISTORY"
+            search:         "DIRECT_MESSAGING_SEARCH_HISTORY",
+            remove:         "DIRECT_MESSAGING_REMOVE_MESSAGE"
         },
         emojis: {
             list:           "EMOTES_LIST",

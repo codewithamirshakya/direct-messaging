@@ -292,24 +292,56 @@ async function seenStatus(initialJSON, inputJSON) {
  * @param {*} inputJSON
  * @returns 
  */
-async function deleteMessages(initialJSON, inputJSON) {
+ async function deleteMessage(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dmd).then(function() {
-            // Mongo Query Param
-            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position).then(function(q) { 
+            // delete by id param
+            mongo.deleteById(inputJSON.messageId).then(function(params) {
                 // Update seen status
-                model.remove(initialJSON.mongoConnection, q).then(function() {
+                model.remove(initialJSON.mongoConnection, params).then(function() {
                     // Prepare Response
-                    response.typeMessage(m.response.messaging.delete, {c: inputJSON.channelId}).then(function(message) {
+                    response.typeMessage(m.response.messaging.delete, {_id: inputJSON.messageId}).then(function(message) {
                         resolve(message);
                     });
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.delete));
                 });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.delete));
             });
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.delete));
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON
+ * @returns 
+ */
+async function removeMessage(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.dmr).then(function() {
+            // channelid params
+            mongo.messageList(inputJSON.channelId).then(function(params) {
+                 // Update seen status
+                conversation.remove(initialJSON.mongoConnection, params).then(function() {
+                    // Prepare Response
+                    response.typeMessage(m.response.messaging.remove, {c: inputJSON.channelId}).then(function(message) {
+                        resolve(message);
+                    });
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.remove));
+                });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.remove));
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.remove));
         });
     });
 }
@@ -439,7 +471,8 @@ module.exports = {
     messaging,
     history,
     messageList,
-    deleteMessages,
+    deleteMessage,
+    removeMessage,
     search,
     active
 }

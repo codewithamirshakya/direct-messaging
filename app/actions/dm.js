@@ -84,10 +84,20 @@ const ul        = require('../services/userlist.js');
                 });
                 break;
 
-            // Seen status 
+            // Remove Message
+            case m.type.messaging.remove:
+                // Remove Message Handler
+                dm.removeMessage(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;
+
+            // Delete Message
             case m.type.messaging.delete:
-                // Seen status Handler
-                dm.deleteMessages(initialJSON, inputJSON).then(function(message) {
+                // Remove Message Handler
+                dm.deleteMessage(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
                 }).catch(function(e) {
                     reject(e);

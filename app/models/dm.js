@@ -1,3 +1,4 @@
+
 const counter               = require('../models/counter.js');
 const conversation          = require('../models/conversation.js');
 
@@ -187,16 +188,12 @@ async function remove(connection, q) {
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(DM_COLLECTION)
-                        .deleteMany(q.query, function(err, res) {
+                        .deleteOne(q, function(err, res) {
                             if (err) {
                                 console.log(err);
                             }
                             
-                            if(typeof res !== "undefined" && res.insertedId !== "undefined") {
-                                resolve(res.deletedCount);
-                            } else {
-                                resolve();
-                            }
+                            resolve();
                         });
         } catch(e) {
             resolve();

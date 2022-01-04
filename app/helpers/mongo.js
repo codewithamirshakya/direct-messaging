@@ -1,4 +1,7 @@
+var mongodb         = require("mongodb");
+var ObjectID        = require('mongodb').ObjectID;
 const config        = require('../config/default.js');
+
 /**
  * 
  * @param {*} channelId 
@@ -249,11 +252,25 @@ async function messageList(channelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} id 
+ * @returns 
+ */
+async function deleteById(id) {
+    return new Promise(function (resolve, reject) {
+        var params = {_id: new mongodb.ObjectID(id)};
+
+        resolve(params);
+    });
+}
+
 module.exports = {
     message,
     list,
     seenStatus,
     seenCount,
     conversation,
-    messageList
+    messageList,
+    deleteById
 }

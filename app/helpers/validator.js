@@ -28,8 +28,11 @@ const rules = {
     ub: {
         channelId: "required"
     },
-    dmd: {
+    dmr: {
         channelId: "required"
+    },
+    dmd: {
+        messageId: "required"
     },
     es: {
         channelId: "required"
