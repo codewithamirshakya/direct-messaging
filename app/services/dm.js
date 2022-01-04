@@ -327,7 +327,7 @@ async function removeMessage(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dmr).then(function() {
             // channelid params
-            mongo.messageList(inputJSON.channelId).then(function(params) {
+            mongo.remove(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
                  // Update seen status
                 conversation.remove(initialJSON.mongoConnection, params).then(function() {
                     // Prepare Response

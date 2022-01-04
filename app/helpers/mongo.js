@@ -241,11 +241,24 @@ async function conversation(channelId, userChannelId) {
 async function messageList(channelId) {
     return new Promise(function (resolve, reject) {
         var params = {
-            $or: [{
-                c: parseInt(channelId),
-            }, {
-                u: parseInt(channelId)
-            }]
+            u: parseInt(channelId)
+        };
+
+        resolve(params);
+    });
+}
+
+/**
+ * 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ * @returns 
+ */
+ async function remove(channelId, userChannelId) {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            c: parseInt(channelId),
+            u: parseInt(userChannelId)
         };
 
         resolve(params);
@@ -272,5 +285,6 @@ module.exports = {
     seenCount,
     conversation,
     messageList,
+    remove,
     deleteById
 }
