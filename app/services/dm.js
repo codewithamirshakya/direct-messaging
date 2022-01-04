@@ -27,7 +27,7 @@ const channel       = require('../models/channel.js');
                 // Validate Input
                 validator.validation(inputJSON, validator.rules.dm).then(function() {
                     // Check if user is banned
-                    validator.banValidation(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                    validator.banValidation(initialJSON.redis, [inputJSON.channelId], initialJSON.userChannelId).then(function() {
                         // Is Message Allowed Validation
                         redmy.isDMAllowed(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
                             // Get Channel Settings
