@@ -320,20 +320,20 @@ async function allowChat(initialJSON, inputJSON) {
                         if(typeof dmSetting.allow_message_every_one !== "undefined" && dmSetting.allow_message_every_one == true) {
                             resolve(true);
                         } else if(typeof dmSetting.allow_message_subscriber !== "undefined" && dmSetting.allow_message_subscriber == true) {
-                            em.isSubscriber(initialJSON.mysqlConnection, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                            em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
                                 resolve(true);
                             }).catch(function(e) {
                                 resolve(false);
-                            })
+                            });
                         } else {
-                            channel.isFollower(initialJSON.mysqlConnection, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                            channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
                                 resolve(true);
                             }).catch(function(e) {
                                 resolve(false);
                             });
                         }
                     } else {
-                        channel.isFollower(initialJSON.mysqlConnection, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                        channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
                             resolve(true);
                         }).catch(function(e) {
                             resolve(false);
