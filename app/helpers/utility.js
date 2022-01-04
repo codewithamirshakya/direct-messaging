@@ -120,10 +120,30 @@ function prepareWithScoreResponse(array, chunk){
     return result;
 }
 
+/**
+ * 
+ * @param {*} results 
+ */
+function getOtherChannelIdsFromResultSet(results, myChannelId) {
+    var channelIds = [];
+    if(typeof results !== "undefined" && results.length > 0) {
+        results.forEach(function (r) {
+            if(r.c == myChannelId) {
+                channelIds.push(r.u);
+            } else if(r.u == myChannelId) {
+                channelIds.push(r.c);
+            }
+        });
+    }
+
+    return channelIds;
+}
+
 module.exports = {
     scoreLimit,
     messageLimit,
     checkSpamming,
     chunker,
-    prepareWithScoreResponse
+    prepareWithScoreResponse,
+    getOtherChannelIdsFromResultSet
 }

@@ -3,6 +3,28 @@ const CONVO_COLLECTION = 'conversation';
 /**
  * 
  * @param {*} connection 
+ * @param {*} query 
+ */
+async function get(connection, query, sort, skip, limit) {
+    return new Promise(function (resolve, reject) {
+        try {
+            connection.collection(CONVO_COLLECTION)
+                        .find(query)
+                        .sort(sort)
+                        .skip(skip)
+                        .limit(limit)
+                        .toArray(function(err, result) {
+                            resolve(result);
+                        });
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} connection 
  * @param {*} params 
  * @param {*} query 
  * @param {*} options 
@@ -47,6 +69,7 @@ async function exist(connection, query) {
 }
 
 module.exports = {
+    get,
     update,
     exist
 }

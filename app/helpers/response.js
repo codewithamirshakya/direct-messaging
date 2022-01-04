@@ -118,7 +118,65 @@ async function formatHistory(type, result, position, reverse) {
  * @param {*} result 
  * @returns 
  */
-async function formatMessageList(result, settings, seens, bannedChannels) {
+async function formatMessageList(myChannelId, results, settings, bannedChannels) {
+    return new Promise(async function (resolve, reject) {
+        var channelSettings = [];
+        if(typeof settings !== "undefined") {
+            settings.forEach(function (setting) {
+                if(typeof setting !== "undefined") {
+                    channelSettings[setting.channel_id] = setting;
+                }           
+            });
+        }
+
+        var list    = results.reduce((unique, element) => {
+            try {
+                if(typeof element.c !== "undefined" && typeof element.u !== "undefined" && element.c == myChannelId) {
+                    if(typeof channelSettings[element.u] !== "undefined") {
+                        var channelSetting = channelSettings[element.u]; 
+                    }
+
+                    element.bn = (bannedChannels.indexOf(element.u) != -1) ? true: false;
+                } else if(typeof element.c !== "undefined" && typeof element.u !== "undefined" && element.u == myChannelId) {
+                    if(typeof channelSettings[element.c] !== "undefined") {
+                        var channelSetting = channelSettings[element.c];
+                    }
+
+                    element.bn = (bannedChannels.indexOf(element.c) != -1) ? true: false;
+                }
+
+                if(typeof channelSetting !== "undefined") {
+                    if(typeof channelSetting.show_online_status !== "undefined" && channelSetting.show_online_status) {
+                        element.o = channelSetting.online;
+                    }
+
+                    if(typeof channelSetting.show_read_receipts !== "undefined" && channelSetting.show_read_receipts) {
+                        element.rr = channelSetting.show_read_receipts;
+                    }
+
+                    if(typeof channelSetting.show_last_online !== "undefined" && channelSetting.show_last_online) {
+                        element.lo =  utils.dateToUnixTimeStamp(channelSetting.last_online);
+                    }
+                }
+                
+                unique.push(element);
+
+                return unique;
+            } catch(e) {
+                
+            }
+        },[]);
+        
+        resolve(list);
+    });
+}
+
+/**
+ * 
+ * @param {*} result 
+ * @returns 
+ */
+async function _formatMessageList(result, settings, seens, bannedChannels) {
     return new Promise(async function (resolve, reject) {
         var res         = [];
         var settingRes  = [];

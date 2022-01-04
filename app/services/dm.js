@@ -5,6 +5,7 @@ const response      = require('../helpers/response.js');
 const redmy         = require('../helpers/redmy.js');
 const mongo         = require('../helpers/mongo.js');
 const param         = require('../helpers/param.js');
+const utility       = require('../helpers/utility.js');
 const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
 const setting       = require('../models/setting.js');
@@ -84,6 +85,7 @@ const channel       = require('../models/channel.js');
  * 
  * @param {*} initialJSON 
  * @param {*} inputJSON
+ * @todo need to refactor
  * @returns 
  */
 async function history(initialJSON, inputJSON) {
@@ -147,10 +149,64 @@ async function history(initialJSON, inputJSON) {
 /**
  * 
  * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function messageList(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.dml).then(function() {
+            // Mongo Query Param
+            mongo.messageList(initialJSON.userChannelId).then(function(params) {
+                // Limit Pagination
+                var limit    = config.chat.limit;   
+                var skip     = (inputJSON.page - 1) * config.chat.limit; 
+                var sort     = {d: -1};
+
+                // Get Conversation
+                conversation.get(initialJSON.mongoConnection, params, sort, skip, limit).then(function(results) {
+                    // Get ChannelIds
+                    var channelIds = utility.getOtherChannelIdsFromResultSet(results, initialJSON.userChannelId);
+
+                    // Fetch Channel Settings
+                    setting.getDMSettings(initialJSON.mysqlConnection, channelIds).then(function(settings) {
+                        // Fetch Banned Channels
+                        redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {   
+                            // Format Message List
+                            response.formatMessageList(initialJSON.userChannelId, results, settings, bannedChannels).then(function(list) {
+                                // Prepare Response
+                                response.paginated(m.response.messaging.messageList, list, inputJSON.page, inputJSON.q).then(function(message) {
+                                    resolve(message);
+                                }).catch(function(e) {
+                                    reject(response.error(m.errorCode.messaging.messageList));
+                                });
+                            }).catch(function(e) {
+                                reject(response.error(m.errorCode.messaging.messageList));
+                            });
+                        }).catch(function(e) {
+                            reject(response.error(m.errorCode.messaging.messageList));
+                        });
+                    }).catch(function(e) {
+                        reject(response.error(m.errorCode.messaging.messageList));
+                    });
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.messageList));
+                });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.messageList));
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.messageList));
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
  * @param {*} inputJSON
  * @returns 
  */
-async function messageList(initialJSON, inputJSON) {
+async function _messageList(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dml).then(function() {

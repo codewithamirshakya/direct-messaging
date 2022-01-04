@@ -230,10 +230,30 @@ async function conversation(channelId, userChannelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} channelId 
+ * @returns 
+ */
+async function messageList(channelId) {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            $or: [{
+                c: parseInt(channelId),
+            }, {
+                u: parseInt(channelId)
+            }]
+        };
+
+        resolve(params);
+    });
+}
+
 module.exports = {
     message,
     list,
     seenStatus,
     seenCount,
-    conversation
+    conversation,
+    messageList
 }
