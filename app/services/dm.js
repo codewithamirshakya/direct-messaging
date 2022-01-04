@@ -91,25 +91,17 @@ async function history(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dch).then(function() {
             // Mongo Query Param
-            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {  
-                // Limit Pagination
-                var limit   = config.chat.limit; 
-                var sort    = {_id: -1};
-
-                if(typeof inputJSON.position !== "undefined" && inputJSON.position != "") {
-                    sort    = {po: -1};
-
-                    if(typeof inputJSON.reverse !== "undefined" && inputJSON.reverse == false) {
-                        sort    = {po: 1};
-                    }
-                }
-
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, true).then(function(q) {                             
                 // Fetch History
-                model.history(initialJSON.mongoConnection, q, limit, sort).then(function(result) {
-                    // Prepare Response
-                    response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse).then(function(message) {
-                        resolve(message);
-                    });
+                model.history(initialJSON.mongoConnection, q).then(function(resultRev) {                     
+                    mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, false).then(function(q) {  
+                        model.history(initialJSON.mongoConnection, q).then(function(resultFor) {                            
+                            // Prepare Response
+                            response.formatHistory(m.response.messaging.history, resultRev,resultFor , inputJSON.position, inputJSON.reverse).then(function(message) {
+                                resolve(message);
+                            });
+                        });                        
+                    });                    
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.history));
                 });
@@ -150,7 +142,7 @@ async function messageList(initialJSON, inputJSON) {
                     mongo.seenCount(channelIds, initialJSON.userChannelId).then(function(cq) {
                         model.aggregate(initialJSON.mongoConnection, cq, limit, skip).then(function(resultSeen) {
                             // Fetch Channel Settings
-                            setting.getDMSettings(initialJSON.mongoConnection, channelIds).then(function(settings) {
+                            setting.getDMSettings(initialJSON.mysqlConnection, channelIds).then(function(settings) {
                                 // Fetch Banned Channels
                                 redmy.getBanChannels(initialJSON.redis, initialJSON.userChannelId).then(function(bannedChannels) {                    
                                     // Format Message List
@@ -247,22 +239,11 @@ async function search(initialJSON, inputJSON) {
         validator.validation(inputJSON, validator.rules.dms).then(function() {
             // Mongo Query Param
             mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {  
-                // Limit Pagination
-                var limit   = config.chat.limit;
-                var sort    = {_id: -1};
-
-                if(typeof inputJSON.position !== "undefined" && inputJSON.position != "") {
-                    sort    = {po: -1};
-
-                    if(typeof inputJSON.reverse !== "undefined" && inputJSON.reverse == false) {
-                        sort    = {po: 1};
-                    }
-                }
 
                 // Fetch History
-                model.history(initialJSON.mongoConnection, q, limit, sort).then(function(result) {
+                model.history(initialJSON.mongoConnection, q).then(function(result) {
                     // Prepare Response
-                    response.formatHistory(m.response.messaging.search, result, inputJSON.position, inputJSON.reverse).then(function(message) {
+                    response.formatHistory(m.response.messaging.search, null, result, inputJSON.position, inputJSON.reverse).then(function(message) {
                         resolve(message);
                     });
                 }).catch(function(e) {
@@ -290,20 +271,9 @@ async function active(initialJSON, inputJSON) {
                 // Update Seen Status
                 seenStatus(initialJSON, inputJSON).then(function() {
                     // Prepare Response
-                    response.typeMessage(m.response.messaging.readStatus, {c: initialJSON.userChannelId}).then(function(message) {
+                    response.typeMessage(m.response.messaging.seenStatus, {c: initialJSON.userChannelId}).then(function(message) {
                         // Publish
                         pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-
-                        }).catch(function(e) {
-
-                        });
-                    }).catch(function(e) {
-
-                    });
-
-                    response.typeMessage(m.response.messaging.seenStatus, {c: inputJSON.channelId}).then(function(message) {
-                        // Publish
-                        pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
 
                         }).catch(function(e) {
 

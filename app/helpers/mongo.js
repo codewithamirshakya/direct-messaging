@@ -1,4 +1,4 @@
-
+const config        = require('../config/default.js');
 /**
  * 
  * @param {*} channelId 
@@ -6,6 +6,8 @@
  */
 async function message(channelId, userChannelId, position, q, reverse) {
     return new Promise(function (resolve, reject) {
+        var limit   = config.chat.limit;
+        var sort    = {_id: -1};
 
         var params = {            
             $or: [{
@@ -22,18 +24,25 @@ async function message(channelId, userChannelId, position, q, reverse) {
         }
 
         if(typeof position !== 'undefined' && position != '') {
+            sort    = {po: -1};
             params.po ={
                 $gte: position
             };
 
             if(typeof reverse !== 'undefined' && reverse == true) {
-                params.po ={
-                    $lte: position
+                params.po = {
+                    $lt: position
                 }; 
+            } else {
+                sort    = {po: 1};
             }
         }
 
-        resolve(params);
+        resolve({
+            query : params,
+            sort: sort,
+            limit: limit
+        });
     });
 }
 

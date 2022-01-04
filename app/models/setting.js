@@ -44,20 +44,8 @@ var mysql       = require('mysql');
 async function getDMSettings(connection, channelIds){
     return new Promise(function (resolve, reject) {
         try {
-            var sql = mysql.format(
-                `
-                SELECT 
-                allow_message_every_one,
-                allow_message_subscriber,
-                show_read_receipts,
-                show_online_status,
-                show_last_online
-
-                FROM dm_settings 
-                WHERE channel_id IN (?)
-                `, 
-                [channelIds.join()]
-                );
+            var sql = mysql.format(`SELECT channel_id, allow_message_every_one, allow_message_subscriber,  show_read_receipts, show_online_status, show_last_online, online, last_online FROM dm_settings WHERE channel_id IN (`+channelIds.join()+`)`, []);
+            
             connection.getConnection((err, conn) => {
                 if(err) {
                     console.log(err);

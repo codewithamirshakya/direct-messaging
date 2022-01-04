@@ -52,13 +52,13 @@ async function save(connection, params) {
  * @param {*} inputJSON 
  * @returns 
  */
-async function history(connection, q, limit, sort) {
+async function history(connection, q) {
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(DM_COLLECTION)
-                        .find(q)
-                        .sort(sort)
-                        .limit(limit)
+                        .find(q.query)
+                        .sort(q.sort)
+                        .limit(q.limit)
                         .toArray(function(err, result) {
                             if (err) {
                                 console.log(err);

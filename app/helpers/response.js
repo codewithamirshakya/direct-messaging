@@ -91,14 +91,14 @@ async function paginated(type, result, page, q) {
  * @param {*} result 
  * @returns 
  */
-async function formatHistory(type, result, position, reverse) {
+async function formatHistory(type, resultRev, resultFor, position, reverse) {
     return new Promise(async function (resolve, reject) {
         var res = [];
-        if(typeof position == "undefined" || (typeof reverse !== "undefined" && reverse == true)) {
-            res = result.reverse();
+        if(resultRev != null) {
+            res = resultRev.reverse().concat(resultFor);
         } else {
-            res = result;
-        }
+            res = resultFor;
+        }        
 
         var response = {
             t: type, 
@@ -142,8 +142,13 @@ async function formatMessageList(result, settings, seens, bannedChannels) {
                     
                     res[i].c        = res[i]._id; 
                     res[i].bn       = false; 
-                    res[i].o        = false; 
-                    res[i].lo       = ""; 
+                    if(typeof settingRes[res[i]._id] !== "undefined") {
+                        var sett = settingRes[res[i]._id];
+                        res[i].o        = !!(sett.show_online_status == true ? true: false); 
+                        res[i].lo       = !!(sett.show_last_online == true ? utils.dateToUnixTimeStamp(sett.last_online): false);
+                        res[i].rr       = !!sett.show_read_receipts;
+                    }
+                     
                     res[i].us       = typeof seens[i] !== "undefined" && typeof seens[i].us !== "undefined" ? seens[i].us : 0; 
 
                     delete res[i]._id;
