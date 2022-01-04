@@ -31,7 +31,7 @@ async function message(channelId, userChannelId, position, q, reverse) {
 
             if(typeof reverse !== 'undefined' && reverse == true) {
                 params.po = {
-                    $lt: position
+                    $lte: position
                 }; 
             } else {
                 sort    = {po: 1};

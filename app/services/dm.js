@@ -91,18 +91,15 @@ async function history(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dch).then(function() {
             // Mongo Query Param
-            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, true).then(function(q) {                             
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {                             
                 // Fetch History
-                model.history(initialJSON.mongoConnection, q).then(function(resultRev) {                     
-                    mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, false).then(function(q) {  
-                        model.history(initialJSON.mongoConnection, q).then(function(resultFor) {                            
-                            // Prepare Response
-                            response.formatHistory(m.response.messaging.history, resultRev,resultFor , inputJSON.position, inputJSON.reverse).then(function(message) {
-                                resolve(message);
-                            });
-                        });                        
-                    });                    
+                model.history(initialJSON.mongoConnection, q).then(function(result) {             
+                    // Prepare Response
+                    response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse).then(function(message) {
+                        resolve(message);
+                    });                   
                 }).catch(function(e) {
+                    console.log(e);
                     reject(response.error(m.errorCode.messaging.history));
                 });
             }).catch(function(e) {

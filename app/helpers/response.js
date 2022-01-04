@@ -91,14 +91,14 @@ async function paginated(type, result, page, q) {
  * @param {*} result 
  * @returns 
  */
-async function formatHistory(type, resultRev, resultFor, position, reverse) {
+async function formatHistory(type, result, position, reverse) {
     return new Promise(async function (resolve, reject) {
         var res = [];
-        if(resultRev != null) {
-            res = resultRev.reverse().concat(resultFor);
+        if(typeof position == "undefined" || (typeof reverse !== "undefined" && reverse == true)) {
+            res = result.reverse();
         } else {
-            res = resultFor;
-        }        
+            res = result;
+        }             
 
         var response = {
             t: type, 
