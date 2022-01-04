@@ -273,7 +273,7 @@ async function search(initialJSON, inputJSON) {
                 // Fetch History
                 model.history(initialJSON.mongoConnection, q).then(function(result) {
                     // Prepare Response
-                    response.formatHistory(m.response.messaging.search, null, result, inputJSON.position, inputJSON.reverse).then(function(message) {
+                    response.formatHistory(m.response.messaging.search, result, inputJSON.position, inputJSON.reverse).then(function(message) {
                         resolve(message);
                     });
                 }).catch(function(e) {
