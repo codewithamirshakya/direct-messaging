@@ -435,16 +435,40 @@ async function allowChat(initialJSON, inputJSON) {
             conversation.exist(initialJSON.mongoConnection, params).then(function(result) {
                 resolve(true);
             }).catch(function(e) {
-                setting.getDMSettings(initialJSON.mysqlConnection, [inputJSON.channelId]).then(function(dmSetting) {
-                    if(typeof dmSetting !== "undefined") {
-                        if(typeof dmSetting.allow_message_every_one !== "undefined" && dmSetting.allow_message_every_one == true) {
-                            resolve(true);
-                        } else if(typeof dmSetting.allow_message_subscriber !== "undefined" && dmSetting.allow_message_subscriber == true) {
-                            em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                model.latest(initialJSON.mongoConnection, params).then(function(result) {
+                    if(typeof result.c !== "undefined" && typeof result.u !== "undefined" && result.u == initialJSON.userChannelId) {
+                        // update my conversation
+                        param.myConvo(result).then(function(myConvoParams) {
+                            var myClause  = mongo.myConvoClause(result.c, result.u);
+                            conversation.update(initialJSON.mongoConnection, { $set: myConvoParams } , myClause, { upsert: true });
+                        });
+                    } else if(typeof result.u !== "undefined" && typeof result.c !== "undefined" && result.c == initialJSON.userChannelId) {
+                        // update my conversation
+                        param.theirConvo(result).then(function(myConvoParams) {
+                            var myClause  = mongo.theirConvoClause(result.c, result.u);
+                            conversation.update(initialJSON.mongoConnection, { $set: myConvoParams } , myClause, { upsert: true });
+                        });
+                    }
+
+                    resolve(true);
+                }).catch(function(e) {
+                    setting.getDMSettings(initialJSON.mysqlConnection, [inputJSON.channelId]).then(function(dmSetting) {
+                        if(typeof dmSetting !== "undefined") {
+                            if(typeof dmSetting.allow_message_every_one !== "undefined" && dmSetting.allow_message_every_one == true) {
                                 resolve(true);
-                            }).catch(function(e) {
-                                resolve(false);
-                            });
+                            } else if(typeof dmSetting.allow_message_subscriber !== "undefined" && dmSetting.allow_message_subscriber == true) {
+                                em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                                    resolve(true);
+                                }).catch(function(e) {
+                                    resolve(false);
+                                });
+                            } else {
+                                channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                                    resolve(true);
+                                }).catch(function(e) {
+                                    resolve(false);
+                                });
+                            }
                         } else {
                             channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
                                 resolve(true);
@@ -452,13 +476,7 @@ async function allowChat(initialJSON, inputJSON) {
                                 resolve(false);
                             });
                         }
-                    } else {
-                        channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                            resolve(true);
-                        }).catch(function(e) {
-                            resolve(false);
-                        });
-                    }
+                    });
                 });
             });
         }).catch(function(e) {

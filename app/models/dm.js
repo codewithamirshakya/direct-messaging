@@ -2,39 +2,10 @@
 const counter               = require('../models/counter.js');
 const conversation          = require('../models/conversation.js');
 const param                 = require('../helpers/param.js');
+const mongo                 = require('../helpers/mongo.js');
 
 const DM_COLLECTION         = 'dm';
 const COUNTER_TYPE          = 'dm';
-
-/**
- * 
- * @param {*} channelId 
- * @param {*} userChannelId 
- * @returns 
- */
-function myConvoClause(channelId, userChannelId) {
-    var clause = {
-        c: channelId,
-        u: userChannelId
-    };
-
-    return clause;
-}
-
-/**
- * 
- * @param {*} channelId 
- * @param {*} userChannelId 
- * @returns 
- */
-function theirConvoClause(channelId, userChannelId) {
-    var clause = {
-        u: channelId,
-        c: userChannelId
-    };
-
-    return clause;
-}
 
 /**
  * 
@@ -59,13 +30,13 @@ async function save(connection, params) {
 
                             // update my conversation
                             param.myConvo(params).then(function(myConvoParams) {
-                                var myClause  = myConvoClause(params.c, params.u);
+                                var myClause  = mongo.myConvoClause(params.c, params.u);
                                 conversation.update(connection, { $set: myConvoParams } , myClause, { upsert: true });
                             });
 
                             // update their conversation
                             param.theirConvo(params).then(function(theirConvoParams) {
-                                var theirClause  = theirConvoClause(params.c, params.u);
+                                var theirClause  = mongo.theirConvoClause(params.c, params.u);
                                 conversation.update(connection, { $set: theirConvoParams } , theirClause, { upsert: true });
                             });
                             
@@ -216,11 +187,65 @@ async function remove(connection, q) {
     });
 }
 
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} query 
+ * @returns 
+ */
+ async function exist(connection, query) {
+    return new Promise(function (resolve, reject) {
+        try {
+            connection.collection(DM_COLLECTION).findOne(query,function(err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    if(typeof result !== "null" && result) {
+                        resolve(result);
+                    } else {
+                        reject();
+                    }
+                }
+            });
+        } catch(e) {
+            reject();
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} query 
+ * @returns 
+ */
+ async function latest(connection, query) {
+    return new Promise(function (resolve, reject) {
+        try {
+            connection.collection(DM_COLLECTION).findOne(query, function(err, result) {
+                if (err) {
+                    reject(err);
+                } else {
+                    if(typeof result !== "null" && result) {
+                        resolve(result);
+                    } else {
+                        reject();
+                    }
+                }
+            });
+        } catch(e) {
+            reject();
+        }
+    });
+}
+
 module.exports = {
     save,
     history,
     aggregate,
     update,
     remove,
-    aggregateCon
+    aggregateCon,
+    exist,
+    latest
 }

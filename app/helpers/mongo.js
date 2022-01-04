@@ -221,11 +221,9 @@ async function conversation(channelId, userChannelId) {
     return new Promise(function (resolve, reject) {
         var params = {
             $or: [{
-                c: channelId,
-                u: parseInt(userChannelId)
+                c: channelId
             }, {
-                u: channelId,
-                c: parseInt(userChannelId)
+                u: userChannelId
             }]
         };
 
@@ -278,6 +276,36 @@ async function deleteById(id) {
     });
 }
 
+/**
+ * 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ * @returns 
+ */
+ function myConvoClause(channelId, userChannelId) {
+    var clause = {
+        c: channelId,
+        u: userChannelId
+    };
+
+    return clause;
+}
+
+/**
+ * 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ * @returns 
+ */
+function theirConvoClause(channelId, userChannelId) {
+    var clause = {
+        u: channelId,
+        c: userChannelId
+    };
+
+    return clause;
+}
+
 module.exports = {
     message,
     list,
@@ -286,5 +314,7 @@ module.exports = {
     conversation,
     messageList,
     remove,
-    deleteById
+    deleteById,
+    myConvoClause,
+    theirConvoClause
 }
