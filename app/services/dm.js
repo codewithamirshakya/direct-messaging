@@ -90,21 +90,54 @@ async function history(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dch).then(function() {
-            // Mongo Query Param
-            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {                             
-                // Fetch History
-                model.history(initialJSON.mongoConnection, q).then(function(result) {             
-                    // Prepare Response
-                    response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse).then(function(message) {
-                        resolve(message);
-                    });                   
+            if(typeof inputJSON.search !== "undefined" && inputJSON.search == true) {
+                // Mongo Query Param
+                mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, true).then(function(qR) {
+
+                    mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, false).then(function(q) {
+                        // Fetch History
+                        model.history(initialJSON.mongoConnection, qR).then(function(resultRev) {   
+                            model.history(initialJSON.mongoConnection, q).then(function(resultFor) {   
+                                // Prepare Response
+                                result = resultRev.reverse().concat(resultFor);
+                                response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse).then(function(message) {
+                                    resolve(message);
+                                }); 
+                            })
+                            .catch(function(e) {
+                                reject(response.error(m.errorCode.messaging.history));
+                            });                 
+                        }).catch(function(e) {
+                            reject(response.error(m.errorCode.messaging.history));
+                        });
+                    }).catch(function(e) {
+                        reject(response.error(m.errorCode.messaging.history));
+                    });                             
+                    
                 }).catch(function(e) {
-                    console.log(e);
                     reject(response.error(m.errorCode.messaging.history));
                 });
-            }).catch(function(e) {
-                reject(response.error(m.errorCode.messaging.history));
-            });
+            } else {
+                // Mongo Query Param
+                mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {                             
+                    // Fetch History
+                    model.history(initialJSON.mongoConnection, q).then(function(result) {             
+                        if(typeof inputJSON.position == "undefined" || (typeof inputJSON.reverse !== "undefined" && inputJSON.reverse == true)) {
+                            result = result.reverse();
+                        } 
+                        // Prepare Response
+                        response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse).then(function(message) {
+                            resolve(message);
+                        });                   
+                    }).catch(function(e) {
+                        console.log(e);
+                        reject(response.error(m.errorCode.messaging.history));
+                    });
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.history));
+                });
+            }
+            
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.history));
         });
