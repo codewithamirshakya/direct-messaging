@@ -125,7 +125,7 @@ async function formatMessageList(myChannelId, results, settings, bannedChannels)
             settings.forEach(function (setting) {
                 if(typeof setting !== "undefined") {
                     channelSettings[setting.channel_id] = setting;
-                }           
+                }        
             });
         }
 

@@ -39,7 +39,8 @@ const redmy         = require('../helpers/redmy.js');
             y:      typeof(initialJSON.accountType) === "undefined" ? "" : initialJSON.accountType,
             s:      typeof(settings.s) === "undefined" ? false : Boolean(settings.s),
             m:      inputJSON.message,
-            d:      Date.now() 
+            d:      Date.now(),
+            v:      typeof(settings.v) === "undefined" ? false : settings.v,
         };
 
         // Get Emoji Url
