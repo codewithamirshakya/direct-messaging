@@ -101,7 +101,7 @@ async function history(initialJSON, inputJSON) {
                             model.history(initialJSON.mongoConnection, q).then(function(resultFor) {   
                                 // Prepare Response
                                 result = resultRev.reverse().concat(resultFor);
-                                response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse).then(function(message) {
+                                response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse, inputJSON.channelId).then(function(message) {
                                     resolve(message);
                                 }); 
                             })
@@ -127,7 +127,7 @@ async function history(initialJSON, inputJSON) {
                             result = result.reverse();
                         } 
                         // Prepare Response
-                        response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse).then(function(message) {
+                        response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse, inputJSON.channelId).then(function(message) {
                             resolve(message);
                         });                   
                     }).catch(function(e) {

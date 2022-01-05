@@ -82,15 +82,15 @@ async function getDMSettings(connection, channelIds){
 async function updateOnlineDmSetting(connection, channelId, online) {
     return new Promise(function (resolve, reject) {
         try {
-            var param = [ channelId, online, (new Date()), online, (new Date())];
+            var param = [channelId, online, online];
             var query = `
             INSERT INTO dm_settings 
                 (channel_id, online, last_online, created_at, updated_at)
             VALUES
-                (?, ?, ?, NOW(), NOW())
+                (?, ?, NOW(), NOW(), NOW())
             ON DUPLICATE KEY UPDATE
                 online = ?,
-                last_online = ?,
+                last_online = NOW(),
                 updated_at = NOW() 
             `;
             

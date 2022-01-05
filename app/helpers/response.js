@@ -91,7 +91,7 @@ async function paginated(type, result, page, q) {
  * @param {*} result 
  * @returns 
  */
-async function formatHistory(type, result, position, reverse) {
+async function formatHistory(type, result, position, reverse, channelId) {
     return new Promise(async function (resolve, reject) {
         var res = [];       
         res = result;
@@ -107,6 +107,10 @@ async function formatHistory(type, result, position, reverse) {
 
         if(typeof position !== "undefined") {
             response.po = position;
+        }
+
+        if(typeof channelId !== "undefined") {
+            response.c = channelId;
         }
 
         resolve(JSON.stringify(response));
