@@ -301,7 +301,18 @@ async function seenStatus(initialJSON, inputJSON) {
                 model.remove(initialJSON.mongoConnection, params).then(function() {
                     // Prepare Response
                     response.typeMessage(m.response.messaging.delete, {_id: inputJSON.messageId}).then(function(message) {
-                        resolve(message);
+                        // Publish Message
+                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                            resolve(true);
+                        }).catch(function(e) {
+                            resolve(true);
+                        });
+
+                        pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+                            resolve(true);
+                        }).catch(function(e) {
+                            resolve(true);
+                        });
                     });
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.delete));
