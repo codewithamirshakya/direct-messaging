@@ -97,7 +97,7 @@ function pubSubKey(channelId) {
  * @returns 
  */
 function dateToUnixTimeStamp(date) {
-    return new Date(date).getTime() / 1000;
+    return new Date(date).getTime();
 }
 
 /**
