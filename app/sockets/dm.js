@@ -164,6 +164,7 @@ function storeConnectedUser(ws, info, adapter) {
         ws["d"]    = info.registeredDate;
         ws["l"]              = info.lang;
         ws["a"]             = info.admin;
+        ws["v"]          = info.verified;
 
         resolve();
     });
@@ -196,7 +197,8 @@ function getConnectedUser(ws) {
         registeredDate  : ws["d"],
         lang            : ws["l"],
         admin           : ws["a"],
-        bot             : false
+        bot             : false,
+        verified        : ws["v"]
     };
 
     return initialJSON;

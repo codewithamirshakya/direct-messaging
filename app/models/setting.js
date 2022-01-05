@@ -96,8 +96,6 @@ async function updateOnlineDmSetting(connection, channelId, online) {
             
             var sql = mysql.format(query, param);
 
-            console.log(sql);
-
             connection.getConnection((err, conn) => {
                 if(err) {
                     console.log(err);
