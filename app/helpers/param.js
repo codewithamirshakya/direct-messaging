@@ -10,10 +10,16 @@ const redmy         = require('../helpers/redmy.js');
  */
  async function dm(initialJSON, inputJSON, settings) {
     return new Promise(async function (resolve, reject) {
-        if(inputJSON.message.length > 255) {
-            inputJSON.message = inputJSON.message.substr(0, 255);
+        if(initialJSON.accountType == config.accountType.premium) {
+            if(inputJSON.message.length > config.chat.premiumMessageLength) {
+                inputJSON.message = inputJSON.message.substr(0, config.chat.premiumMessageLength);
+            }
+        } else {
+            if(inputJSON.message.length > config.chat.defaultMessageLength) {
+                inputJSON.message = inputJSON.message.substr(0, config.chat.defaultMessageLength);
+            }
         }
-
+        
         var ri = "";
         if(typeof settings.i !== "undefined" && typeof settings.c !== "undefined") {
             var channelId   = settings.c.toString();

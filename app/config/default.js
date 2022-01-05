@@ -50,7 +50,9 @@ module.exports = {
     },
     chat: {
         limit: 25, // number of message to be fetched at once
-        rateLimit: process.env.RATE_LIMIT || 10 // Rate Limit
+        rateLimit: process.env.RATE_LIMIT || 10, // Rate Limit
+        defaultMessageLength: 255,
+        premiumMessageLength: 4000
     },
     rkeys: {
         emojis:             'emojis_',
@@ -72,5 +74,8 @@ module.exports = {
     },
     hlimit: {
         banned:     process.env.BANNED_LIMIT || 5000
+    },
+    accountType: {
+        premium: 'P'
     }
 };
