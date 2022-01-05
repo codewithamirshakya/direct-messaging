@@ -40,7 +40,7 @@ const redmy         = require('../helpers/redmy.js');
             s:      typeof(settings.s) === "undefined" ? false : Boolean(settings.s),
             m:      inputJSON.message,
             d:      Date.now(),
-            v:      typeof(settings.v) === "undefined" ? false : settings.v,
+            f:      typeof(settings.v) === "undefined" ? false : settings.v,
         };
 
         // Get Emoji Url
