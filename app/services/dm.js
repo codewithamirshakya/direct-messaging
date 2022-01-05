@@ -10,8 +10,7 @@ const pub           = require('../publishers/redis.js');
 const model         = require('../models/dm.js');
 const setting       = require('../models/setting.js');
 const conversation  = require('../models/conversation.js');
-const em            = require('../models/emoji.js');
-const channel       = require('../models/channel.js');
+const dmh           = require('../helpers/dm.js');
 
 /**
  * 
@@ -30,7 +29,7 @@ const channel       = require('../models/channel.js');
                     // Check if user is banned
                     validator.banValidation(initialJSON.redis, [inputJSON.channelId], initialJSON.userChannelId).then(function() {
                         // Is Message Allowed Validation
-                        redmy.isDMAllowed(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                        dmh.isDMAllowed(initialJSON, inputJSON).then(function() {
                             // Get Channel Settings
                             redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
                                 // Prepare Param
@@ -402,9 +401,9 @@ async function active(initialJSON, inputJSON) {
             });
 
             // Check if Chat is Allowed
-            allowChat(initialJSON, inputJSON).then(function(allowChat) {
+            dmh.allowChat(initialJSON, inputJSON).then(function(status) {
                 // Update Active Conversation
-                redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, allowChat).then(function() {
+                redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, status).then(function() {
                     resolve(response.success(m.successCode.dma.success));
                 }).catch(function() {
                     resolve(response.success(m.errorCode.dma.error));
@@ -412,67 +411,6 @@ async function active(initialJSON, inputJSON) {
             });
         }).catch(function(e) {
             reject(response.error(m.errorCode.dma.validation));
-        });
-    });
-}
-
-/**
- * 
- * @param {*} initialJSON 
- * @param {*} inputJSON 
- */
-async function allowChat(initialJSON, inputJSON) {
-    return new Promise(async function (resolve, reject) {
-        mongo.conversation(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
-            conversation.exist(initialJSON.mongoConnection, params).then(function(result) {
-                resolve(true);
-            }).catch(function(e) {
-                model.latest(initialJSON.mongoConnection, params).then(function(result) {
-                    if(typeof result.c !== "undefined" && typeof result.u !== "undefined" && result.u == initialJSON.userChannelId) {
-                        // update my conversation
-                        param.myConvo(result).then(function(myConvoParams) {
-                            var myClause  = mongo.myConvoClause(result.c, result.u);
-                            conversation.update(initialJSON.mongoConnection, { $set: myConvoParams } , myClause, { upsert: true });
-                        });
-                    } else if(typeof result.u !== "undefined" && typeof result.c !== "undefined" && result.c == initialJSON.userChannelId) {
-                        // update my conversation
-                        param.theirConvo(result).then(function(myConvoParams) {
-                            var myClause  = mongo.theirConvoClause(result.c, result.u);
-                            conversation.update(initialJSON.mongoConnection, { $set: myConvoParams } , myClause, { upsert: true });
-                        });
-                    }
-
-                    resolve(true);
-                }).catch(function(e) {
-                    setting.getDMSettings(initialJSON.mysqlConnection, [inputJSON.channelId]).then(function(dmSetting) {
-                        if(typeof dmSetting !== "undefined") {
-                             if(typeof dmSetting.allow_message_subscriber !== "undefined" && dmSetting.allow_message_subscriber == true) {
-                                em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                                    resolve(true);
-                                }).catch(function(e) {
-                                    resolve(false);
-                                });
-                            } else if(typeof dmSetting.allow_message_every_one !== "undefined" && dmSetting.allow_message_every_one == true) {
-                                resolve(true);
-                            } else {
-                                channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                                    resolve(true);
-                                }).catch(function(e) {
-                                    resolve(false);
-                                });
-                            }
-                        } else {
-                            channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                                resolve(true);
-                            }).catch(function(e) {
-                                resolve(false);
-                            });
-                        }
-                    });
-                });
-            });
-        }).catch(function(e) {
-            resolve(false);
         });
     });
 }
