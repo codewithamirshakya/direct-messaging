@@ -38,8 +38,7 @@ const rules = {
         channelId: "required"
     },
     dma: {
-        channelId: "required",
-        set: "required"
+        channelId: "required"
     }
 }
 

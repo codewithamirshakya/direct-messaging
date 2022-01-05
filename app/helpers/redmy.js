@@ -209,7 +209,7 @@ async function conActive(client, channelId, userChannelId, allowChat) {
     return new Promise(async function (resolve, reject) {
         try {
             var key = config.rkeys.active + channelId + '_' + userChannelId;
-            client.set(key, allowChat);
+            client.set(key, allowChat, 'EX', config.expire.active);
 
             resolve();
         } catch(e) {

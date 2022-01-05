@@ -384,40 +384,32 @@ async function active(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dma).then(function() {
-            if(inputJSON.set) {
-                // Update Seen Status
-                seenStatus(initialJSON, inputJSON).then(function() {
-                    // Prepare Response
-                    response.typeMessage(m.response.messaging.seenStatus, {c: initialJSON.userChannelId}).then(function(message) {
-                        // Publish
-                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+            // Update Seen Status
+            seenStatus(initialJSON, inputJSON).then(function() {
+                // Prepare Response
+                response.typeMessage(m.response.messaging.seenStatus, {c: initialJSON.userChannelId}).then(function(message) {
+                    // Publish
+                    pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
 
-                        }).catch(function(e) {
-
-                        });
                     }).catch(function(e) {
 
                     });
                 }).catch(function(e) {
 
                 });
+            }).catch(function(e) {
 
-                // Check if Chat is Allowed
-                allowChat(initialJSON, inputJSON).then(function(allowChat) {
-                    // Update Active Conversation
-                    redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, allowChat).then(function() {
-                        resolve(response.success(m.successCode.dma.success));
-                    }).catch(function() {
-                        resolve(response.success(m.errorCode.dma.error));
-                    });
-                });
-            } else {
-                redmy.conInactive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function() {
+            });
+
+            // Check if Chat is Allowed
+            allowChat(initialJSON, inputJSON).then(function(allowChat) {
+                // Update Active Conversation
+                redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, allowChat).then(function() {
                     resolve(response.success(m.successCode.dma.success));
                 }).catch(function() {
                     resolve(response.success(m.errorCode.dma.error));
                 });
-            }
+            });
         }).catch(function(e) {
             reject(response.error(m.errorCode.dma.validation));
         });

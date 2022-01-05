@@ -66,6 +66,7 @@ module.exports = {
     expire: {
         settings: 3600,
         emojis: 3600,
+        active: 3600
     },
     minio: {
         bucket      : process.env.MINIO_BUCKET || 'ptvimages',
