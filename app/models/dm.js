@@ -236,17 +236,18 @@ async function remove(connection, q) {
  async function latest(connection, query) {
     return new Promise(function (resolve, reject) {
         try {
-            connection.collection(DM_COLLECTION).findOne(query, function(err, result) {
-                if (err) {
-                    reject(err);
-                } else {
-                    if(typeof result !== "null" && result) {
-                        resolve(result);
-                    } else {
-                        reject();
-                    }
-                }
-            });
+            connection.collection(DM_COLLECTION)
+                        .findOne(query, { sort: { _id: -1 } }, function(err, result) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                if(typeof result !== "null" && result) {
+                                    resolve(result);
+                                } else {
+                                    reject();
+                                }
+                            }
+                        });
         } catch(e) {
             reject();
         }
