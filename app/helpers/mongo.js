@@ -306,6 +306,22 @@ function theirConvoClause(channelId, userChannelId) {
     return clause;
 }
 
+/**
+ * 
+ * @param {*} channelId 
+ * @param {*} messageId 
+ * @returns 
+ */
+function selfMessage(channelId, userChannelId, messageId) {
+    var clause = {
+        c: parseInt(channelId),
+        u: parseInt(userChannelId),
+        _id: new mongodb.ObjectID(messageId)
+    };
+
+    return clause;
+}
+
 module.exports = {
     message,
     list,
@@ -316,5 +332,6 @@ module.exports = {
     remove,
     deleteById,
     myConvoClause,
-    theirConvoClause
+    theirConvoClause,
+    selfMessage
 }

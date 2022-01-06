@@ -28,17 +28,8 @@ async function save(connection, params) {
                             // update counter value
                             counter.updateLatestCounterByType(connection, { type: COUNTER_TYPE }, { $set: { sequence_value: result.sequence_value + 1 }});
 
-                            // update my conversation
-                            param.myConvo(params).then(function(myConvoParams) {
-                                var myClause  = mongo.myConvoClause(params.c, params.u);
-                                conversation.update(connection, { $set: myConvoParams } , myClause, { upsert: true });
-                            });
-
-                            // update their conversation
-                            param.theirConvo(params).then(function(theirConvoParams) {
-                                var theirClause  = mongo.theirConvoClause(params.c, params.u);
-                                conversation.update(connection, { $set: theirConvoParams } , theirClause, { upsert: true });
-                            });
+                            // Update Conversation
+                            updateConversation(connection, params);
                             
                             // resolve insertedId
                             resolve(res.insertedId);
@@ -55,6 +46,29 @@ async function save(connection, params) {
         } catch(e) {
             reject();
         }
+    });
+}
+
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} params 
+ */
+async function updateConversation(connection, params) {
+    return new Promise(function (resolve, reject) {
+        // update my conversation
+        param.myConvo(params).then(function(myConvoParams) {
+            var myClause  = mongo.myConvoClause(params.c, params.u);
+            conversation.update(connection, { $set: myConvoParams } , myClause, { upsert: true });
+        });
+
+        // update their conversation
+        param.theirConvo(params).then(function(theirConvoParams) {
+            var theirClause  = mongo.theirConvoClause(params.c, params.u);
+            conversation.update(connection, { $set: theirConvoParams } , theirClause, { upsert: true });
+        });
+
+        resolve();
     });
 }
 
@@ -241,6 +255,7 @@ async function remove(connection, q) {
 
 module.exports = {
     save,
+    updateConversation,
     history,
     aggregate,
     update,

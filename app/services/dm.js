@@ -231,12 +231,66 @@ async function seenStatus(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dmd).then(function() {
-            // delete by id param
-            mongo.deleteById(inputJSON.messageId).then(function(params) {
-                // Update seen status
-                model.remove(initialJSON.mongoConnection, params).then(function() {
+            // Self Message Validation Param
+            var selfClause = mongo.selfMessage(inputJSON.channelId, initialJSON.userChannelId, inputJSON.messageId);
+
+            // Check if Self Message
+            model.exist(initialJSON.mongoConnection, selfClause).then(function() {
+                // delete by id param
+                mongo.deleteById(inputJSON.messageId).then(function(params) {
+                    // Update seen status
+                    model.remove(initialJSON.mongoConnection, params).then(function() {
+                        // Prepare Response
+                        response.typeMessage(m.response.messaging.delete, {_id: inputJSON.messageId}).then(function(message) {
+                            // Publish Message
+                            pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                                resolve(true);
+                            }).catch(function(e) {
+                                resolve(true);
+                            });
+
+                            pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+                                resolve(true);
+                            }).catch(function(e) {
+                                resolve(true);
+                            });
+                        });
+
+                        // Is Last Message; need to update conversation
+                        if(typeof inputJSON.last !== 'undefined' && inputJSON.last == true) {
+                            lastMessageDeletion(initialJSON, inputJSON);
+                        }
+                    }).catch(function(e) {
+                        reject(response.error(m.errorCode.messaging.delete));
+                    });
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.delete));
+                });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.delete));
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.delete));
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ * @returns 
+ */
+async function lastMessageDeletion(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Convo Param
+        mongo.conversation(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
+            // Latest Message
+            model.latest(initialJSON.mongoConnection, params).then(function(result) {
+                // Update Conversation
+                model.updateConversation(initialJSON.mongoConnection, result).then(function() {
                     // Prepare Response
-                    response.typeMessage(m.response.messaging.delete, {_id: inputJSON.messageId}).then(function(message) {
+                    response.typeMessage(m.response.messaging.updatelist, result).then(function(message) {
                         // Publish Message
                         pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
                             resolve(true);
@@ -251,14 +305,16 @@ async function seenStatus(initialJSON, inputJSON) {
                         });
                     });
                 }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.delete));
+                    
                 });
             }).catch(function(e) {
-                reject(response.error(m.errorCode.messaging.delete));
+            
             });
         }).catch(function(e) {
-            reject(response.error(m.errorCode.messaging.delete));
+            
         });
+
+        resolve(true);
     });
 }
 

@@ -29,7 +29,8 @@ module.exports = {
             readStatus:     "dmrs",
             delete:         "dmd",
             remove:         "dmr",
-            search:         "dms"
+            search:         "dms",
+            updatelist:     "dmu"
         },
         emotes: {
             list: "el",
