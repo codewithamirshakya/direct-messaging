@@ -418,6 +418,32 @@ async function active(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function typing(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Validate Input
+        validator.validation(inputJSON, validator.rules.dmt).then(function() {
+            // Prepare Response
+            response.typeMessage(m.response.messaging.typing, {n: initialJSON.displayName}).then(function(message) {
+                // Publish
+                pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                    resolve(true);
+                }).catch(function(e) {
+                    resolve(true);
+                });
+            }).catch(function(e) {
+                resolve(true);
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.dmt.validation));
+        });
+    });
+}
+
 module.exports = {
     messaging,
     history,
@@ -425,5 +451,6 @@ module.exports = {
     deleteMessage,
     removeMessage,
     search,
-    active
+    active,
+    typing
 }

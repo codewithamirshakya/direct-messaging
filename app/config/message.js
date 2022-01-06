@@ -9,7 +9,8 @@ module.exports = {
             delete:         "dmd",
             remove:         "dmr",
             search:         "dms",
-            active:         "dma"
+            active:         "dma",
+            typing:         "dmt"
         },
         emotes: {
             list: "el",
@@ -30,7 +31,8 @@ module.exports = {
             delete:         "dmd",
             remove:         "dmr",
             search:         "dms",
-            updatelist:     "dmu"
+            updatelist:     "dmu",
+            typing:         "dmt"
         },
         emotes: {
             list: "el",
@@ -68,6 +70,9 @@ module.exports = {
         dma: {
             validation: "DIRECT_MESSAGING_ACTIVE_VALIDATION",
             error:      "DIRECT_MESSAGING_ACTIVE_ERROR"
+        },
+        dmt: {
+            validation:     "DIRECT_MESSSAGING_TYPING"
         }
     },
     successCode : {
@@ -76,6 +81,9 @@ module.exports = {
         },
         dma: {
             success:    "ACTIVE_CONVERSATION"
+        },
+        dmt: {
+            sucess:     "TYPING_SUCCESS"
         }
     },
     system: {

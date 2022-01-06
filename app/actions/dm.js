@@ -123,6 +123,16 @@ const ul        = require('../services/userlist.js');
                     reject(e);
                 });
                 break;
+
+            // Someone is Typing
+            case m.type.messaging.typing:
+                // Message Search History Handler
+                dm.typing(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;
         }
     });
 }
