@@ -41,7 +41,8 @@ const rules = {
         channelId: "required"
     },
     dmt: {
-        channelId: "required"
+        channelId: "required",
+        set: "required"
     }
 }
 
