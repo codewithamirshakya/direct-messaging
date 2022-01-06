@@ -177,51 +177,6 @@ async function formatMessageList(myChannelId, results, settings, bannedChannels)
 
 /**
  * 
- * @param {*} result 
- * @returns 
- */
-async function _formatMessageList(result, settings, seens, bannedChannels) {
-    return new Promise(async function (resolve, reject) {
-        var res         = [];
-        var settingRes  = [];
-        if(typeof settings !== "undefined") {
-            settings.forEach(function (setting) {
-                if(typeof setting !== "undefined") {
-                    settingRes[setting.channel_id] = setting;
-                }           
-            });
-        }
-        
-        try {
-            for(i=0; i < result.length; i++) {
-                if(typeof result[i] !== "undefined") {
-                    
-                    res[i]          = result[i];
-                    
-                    res[i].c        = res[i]._id; 
-                    res[i].bn       = false; 
-                    if(typeof settingRes[res[i]._id] !== "undefined") {
-                        var sett = settingRes[res[i]._id];
-                        res[i].o        = !!(sett.show_online_status == true ? true: false); 
-                        res[i].lo       = !!(sett.show_last_online == true ? utils.dateToUnixTimeStamp(sett.last_online): false);
-                        res[i].rr       = !!sett.show_read_receipts;
-                    }
-                     
-                    res[i].us       = typeof seens[i] !== "undefined" && typeof seens[i].us !== "undefined" ? seens[i].us : 0; 
-
-                    delete res[i]._id;
-                }
-            }
-        } catch(e) {
-            console.log(e);    
-        }
-        
-        resolve(res);
-    });
-}
-
-/**
- * 
  * @param {*} settings 
  */
  async function formatSettings(settings) {
