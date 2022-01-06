@@ -284,7 +284,7 @@ async function seenStatus(initialJSON, inputJSON) {
 async function lastMessageDeletion(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Convo Param
-        mongo.conversation(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
+        mongo.remove(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
             // Latest Message
             model.latest(initialJSON.mongoConnection, params).then(function(result) {
                 // Update Conversation
