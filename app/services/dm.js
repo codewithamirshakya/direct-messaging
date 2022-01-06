@@ -428,7 +428,7 @@ async function typing(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dmt).then(function() {
             // Prepare Response
-            response.typeMessage(m.response.messaging.typing, {n: initialJSON.displayName}).then(function(message) {
+            response.typeMessage(m.response.messaging.typing, {c: initialJSON.userChannelId}).then(function(message) {
                 // Publish
                 pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
                     resolve(true);
