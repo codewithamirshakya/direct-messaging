@@ -308,13 +308,58 @@ async function lastMessageDeletion(initialJSON, inputJSON) {
                     
                 });
             }).catch(function(e) {
-            
+                // Remove My Conversation
+                removeConversation(initialJSON.mongoConnection, inputJSON.channelId, initialJSON.userChannelId).then(function(message) {
+                    // Publish Message
+                    pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+                        resolve(true);
+                    }).catch(function(e) {
+                        resolve(true);
+                    });
+                });
+
+                // Remove their Conversation
+                removeConversation(initialJSON.mongoConnection, initialJSON.userChannelId, inputJSON.channelId).then(function(message) {
+                    // Publish Message
+                    pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                        resolve(true);
+                    }).catch(function(e) {
+                        resolve(true);
+                    });
+                });
             });
         }).catch(function(e) {
             
         });
 
         resolve(true);
+    });
+}
+
+/**
+ * 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ * @returns 
+ */
+async function removeConversation(connection, channelId, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        // channelid params
+        mongo.remove(channelId, userChannelId).then(function(params) {
+            // Update seen status
+            conversation.remove(connection, params).then(function() {
+                // Prepare Response
+                response.typeMessage(m.response.messaging.remove, {c: channelId}).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(response.error(m.errorCode.messaging.remove));
+                });
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.remove));
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.remove));
+        });
     });
 }
 
@@ -328,20 +373,12 @@ async function removeMessage(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dmr).then(function() {
-            // channelid params
-            mongo.remove(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
-                 // Update seen status
-                conversation.remove(initialJSON.mongoConnection, params).then(function() {
-                    // Prepare Response
-                    response.typeMessage(m.response.messaging.remove, {c: inputJSON.channelId}).then(function(message) {
-                        resolve(message);
-                    });
-                }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.remove));
-                });
+            // Remove Conversation
+            removeConversation(initialJSON.mongoConnection, inputJSON.channelId, initialJSON.userChannelId).then(function(message) {
+                resolve(message);
             }).catch(function(e) {
-                reject(response.error(m.errorCode.messaging.remove));
-            });
+                reject(e);
+            })
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.remove));
         });
