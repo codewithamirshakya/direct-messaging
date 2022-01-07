@@ -31,7 +31,7 @@ module.exports = {
         user: process.env.MONGO_DB_USERNAME || "root",
         pass: process.env.MONGO_DB_PASSWORD || "root",
         db:  process.env.MONGO_DB_DATABASE || "picarto",
-        connection: process.env.CONNECTION_LIMIT || 1
+        connection: process.env.MONGO_CONNECTION_LIMIT || 1
     },
     mysql: {
         host: process.env.MYSQL_HOST || "localhost",
@@ -39,7 +39,7 @@ module.exports = {
         user: process.env.MYSQL_USER || "root",
         pass: process.env.MYSQL_PASS || "root",
         db:  process.env.MYSQL_DB || "picarto",
-        connection: process.env.CONNECTION_LIMIT || 1
+        connection: process.env.MYSQL_CONNECTION_LIMIT || 1
     },
     jwt: {
         key: process.env.JWT_KEY || "DiaG0N12OhKTdglPqS",
