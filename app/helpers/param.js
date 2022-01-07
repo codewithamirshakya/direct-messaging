@@ -42,8 +42,12 @@ const redmy         = require('../helpers/redmy.js');
             d:      Date.now(),
             f:      initialJSON.verified,   // Verified
             po:     Date.now(), // Position
-            dv:     isOnline    // Delivered
         };
+
+        // Delivered
+        if(typeof isOnline !== "undefined" && isOnline) {
+            param.dv = isOnline;
+        }
 
         // Get Emoji Url
         fetchEmojiUrl(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId, inputJSON.message).then(function(url) {
@@ -53,20 +57,20 @@ const redmy         = require('../helpers/redmy.js');
 
             redmy.getConStatus(initialJSON.redis, initialJSON.userChannelId, inputJSON.channelId).then(function(status) {
                 param.ss = true;
-            }).catch(function(e) {
-               
-            });
 
-            resolve(param);
+                resolve(param);
+            }).catch(function(e) {
+                resolve(param);
+            });
         }).catch(function(e) {
             redmy.getConStatus(initialJSON.redis, initialJSON.userChannelId, inputJSON.channelId).then(function(status) {
                 param.ss = true;
-            }).catch(function(e) {
-                
-            });
 
-            resolve(param);
-        })
+                resolve(param);
+            }).catch(function(e) {
+                resolve(param);
+            });
+        });
     });
 }
 

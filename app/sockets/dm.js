@@ -7,6 +7,7 @@ const util          = require('../utils/default.js');
 const ma            = require('../actions/dm.js');
 const setting       = require('../models/setting.js');
 const redmy         = require('../helpers/redmy.js');
+const ss            = require('../services/ss.js');
 
 let redisClient;
 let redisSub;
@@ -82,9 +83,10 @@ var socket = {
             redmy.channelOnline(redisClient, data.userChannelId);
 
             // Store User Info
-            storeConnectedUser(ws, data, messageAdapter).then(function() {
+            storeConnectedUser(ws, data, messageAdapter);
 
-            });
+            // Update Delivered Status
+            ss.deliveredStatus(mongoConnection, data.userChannelId);
         }
     } catch(e) {
         try {

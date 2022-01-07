@@ -51,6 +51,24 @@ async function message(channelId, userChannelId, position, q, reverse) {
 
 /**
  * 
+ * @param {*} userChannelId 
+ */
+ async function deliveredStatus(userChannelId) {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            c: parseInt(userChannelId)
+        };
+
+        params.dv = {
+            $exists: false
+        };
+
+        resolve(params);
+    });
+}
+
+/**
+ * 
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
@@ -180,6 +198,7 @@ function selfMessage(channelId, userChannelId, messageId) {
 
 module.exports = {
     message,
+    deliveredStatus,
     seenStatus,
     conversation,
     messageList,
