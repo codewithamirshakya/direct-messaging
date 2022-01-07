@@ -1,11 +1,8 @@
-
-const counter               = require('../models/counter.js');
 const conversation          = require('../models/conversation.js');
 const param                 = require('../helpers/param.js');
 const mongo                 = require('../helpers/mongo.js');
 
 const DM_COLLECTION         = 'dm';
-const COUNTER_TYPE          = 'dm';
 
 /**
  * 
@@ -16,32 +13,20 @@ const COUNTER_TYPE          = 'dm';
 async function save(connection, params) {
     return new Promise(function (resolve, reject) {
         try {
-            // get auto incremental id
-            counter.getLatestCounterByType(connection, { type: COUNTER_TYPE }).then(function(result) {
-                if(typeof result !== "undefined") {
-                    // assign incremental id
-                    params.po            = result.sequence_value;
+            // assign incremental id
+            params.po            = Date.now();
 
-                    // insert dm
-                    connection.collection(DM_COLLECTION).insertOne(params, function(err, res) {
-                        if(typeof res !== "undefined" && res.insertedId !== "undefined") {
-                            // update counter value
-                            counter.updateLatestCounterByType(connection, { type: COUNTER_TYPE }, { $set: { sequence_value: result.sequence_value + 1 }});
-
-                            // Update Conversation
-                            updateConversation(connection, params);
-                            
-                            // resolve insertedId
-                            resolve(res.insertedId);
-                        } else {
-                            reject();
-                        }
-                    });
+            // insert dm
+            connection.collection(DM_COLLECTION).insertOne(params, function(err, res) {
+                if(typeof res !== "undefined" && res.insertedId !== "undefined") {
+                    // Update Conversation
+                    updateConversation(connection, params);
+                    
+                    // resolve insertedId
+                    resolve(res.insertedId);
                 } else {
                     reject();
                 }
-            }).catch(function(e) {
-                reject();
             });
         } catch(e) {
             reject();
