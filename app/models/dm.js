@@ -13,9 +13,6 @@ const DM_COLLECTION         = 'dm';
 async function save(connection, params) {
     return new Promise(function (resolve, reject) {
         try {
-            // assign incremental id
-            params.po            = Date.now();
-
             // insert dm
             connection.collection(DM_COLLECTION).insertOne(params, function(err, res) {
                 if(typeof res !== "undefined" && res.insertedId !== "undefined") {
