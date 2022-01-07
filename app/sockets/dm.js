@@ -75,8 +75,11 @@ var socket = {
             // Socket Subscribe
             ws.subscribe(messageAdapter);
 
-            // Store Channel Online
+            // Store Channel Online [mySQL]
             setting.updateOnlineDmSetting(mysqlConnection, parseInt(data.userChannelId), true);
+
+            // Store Channel Online [Redis]
+            redmy.channelOnline(redisClient, data.userChannelId);
 
             // Store User Info
             storeConnectedUser(ws, data, messageAdapter).then(function() {
@@ -138,6 +141,9 @@ var socket = {
  function _close(ws, code, message) {
     // Store Channel Online
     setting.updateOnlineDmSetting(mysqlConnection, parseInt(ws['u']), false);
+
+    // Store Channel Online [Redis]
+    redmy.channelOffline(redisClient, ws['u']);
 
     // Cleanup Socket Inactive
     cleanupSocketInactive(ws);

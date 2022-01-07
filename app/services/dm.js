@@ -32,27 +32,32 @@ const dmh           = require('../helpers/dm.js');
                         dmh.isDMAllowed(initialJSON, inputJSON).then(function() {
                             // Get Channel Settings
                             redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
-                                // Prepare Param
-                                param.dm(initialJSON, inputJSON, settings).then(function(params) {   
-                                    // Save Model                
-                                    model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
-                                        // Prepare Response
-                                        response.typeMessage(m.response.messaging.send, params).then(function(message) {
-                                            // Publish Message
-                                            pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-                                                resolve(true);
-                                            }).catch(function(e) {
-                                                resolve(true);
-                                            });
+                                // Is Channel Online
+                                redmy.isChannelOnline(initialJSON.redis, inputJSON.channelId).then(function(isOnline) {
+                                    // Prepare Param
+                                    param.dm(initialJSON, inputJSON, settings, isOnline).then(function(params) {
+                                        // Save Model                
+                                        model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
+                                            // Prepare Response
+                                            response.typeMessage(m.response.messaging.send, params).then(function(message) {
+                                                // Publish Message
+                                                pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                                                    resolve(true);
+                                                }).catch(function(e) {
+                                                    resolve(true);
+                                                });
 
-                                            pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
-                                                resolve(true);
-                                            }).catch(function(e) {
-                                                resolve(true);
+                                                pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+                                                    resolve(true);
+                                                }).catch(function(e) {
+                                                    resolve(true);
+                                                });
                                             });
+                                        }).catch(function(e) {
+                                            reject(response.error(m.errorCode.messaging.save));
                                         });
                                     }).catch(function(e) {
-                                        reject(response.error(m.errorCode.messaging.save));
+                                        reject(response.error(m.errorCode.messaging.validation));
                                     });
                                 }).catch(function(e) {
                                     reject(response.error(m.errorCode.messaging.validation));
@@ -419,7 +424,7 @@ async function search(initialJSON, inputJSON) {
 
         // Mongo Query Param   
         var myClause  = mongo.myConvoClause(inputJSON.channelId, initialJSON.userChannelId);
-        
+
         // Unset Unread Count
         conversation.update(initialJSON.mongoConnection, myClause, { $unset: { uc: 1 } }, { upsert: true }).then(function() {
             resolve();

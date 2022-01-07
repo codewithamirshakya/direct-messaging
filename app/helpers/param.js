@@ -8,7 +8,7 @@ const redmy         = require('../helpers/redmy.js');
  * @param {*} initialJSON 
  * @param {*} inputJSON 
  */
- async function dm(initialJSON, inputJSON, settings) {
+ async function dm(initialJSON, inputJSON, settings, isOnline) {
     return new Promise(async function (resolve, reject) {
         if(initialJSON.accountType == config.accountType.premium) {
             if(inputJSON.message.length > config.chat.premiumMessageLength) {
@@ -40,8 +40,9 @@ const redmy         = require('../helpers/redmy.js');
             s:      typeof(initialJSON.streamer) === "undefined" ? false : Boolean(initialJSON.streamer),
             m:      inputJSON.message,
             d:      Date.now(),
-            f:      initialJSON.verified,
-            po:     Date.now(),
+            f:      initialJSON.verified,   // Verified
+            po:     Date.now(), // Position
+            dv:     isOnline    // Delivered
         };
 
         // Get Emoji Url

@@ -125,14 +125,6 @@ async function banUser(client, channelId, banChannelId) {
             client.lpush(config.rkeys.online, userChannelId, function(err, items) {
 
             });
-
-            // Remove Existing Timestamp
-            client.zremrangebyscore(config.rkeys.lastOnline, userChannelId, userChannelId, function(err, items) {
-                // Add New Timestamp
-                client.zadd(config.rkeys.lastOnline, userChannelId, Date.now(), function(err, items) {
-                    resolve();
-                });
-            })
         } catch(e) {
             resolve();
         }
@@ -333,6 +325,31 @@ async function isDMAllowed(client, channelId, userChannelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ */
+async function isChannelOnline(client, channelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            client.lrange(config.rkeys.online, 0, -1,function(err, items) {
+                if (err) {
+                    console.log(err);
+                }
+
+                if(typeof items !== "undefined" && Array.isArray(items) && items.includes(channelId.toString())) {
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            });
+        } catch(e) {
+            resolve(false);
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
@@ -348,5 +365,6 @@ module.exports = {
     isDMAllowed,
     conActive,
     conInactive,
-    getConStatus
+    getConStatus,
+    isChannelOnline
 }
