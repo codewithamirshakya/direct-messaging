@@ -224,7 +224,7 @@ async function lastOnlineChannels(client) {
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
-async function getConStatus(client, channelId, userChannelId) {
+async function getAllowStatus(client, channelId, userChannelId) {
     return new Promise(async function (resolve, reject) {
         try {
             var key = config.rkeys.allow + channelId + '_' + userChannelId;
@@ -303,6 +303,36 @@ async function isDMAllowed(client, channelId, userChannelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} sender 
+ * @param {*} receiver 
+ * @returns 
+ */
+ async function getConStatus(client, sender, receiver) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            client.lrange(config.rkeys.active, 0, -1,function(err, items) {
+                if (err) {
+                    console.log(err);
+                }
+
+                // Stored Value Format
+                var value = sender + "_" + receiver;
+                
+                if(typeof items !== "undefined" && Array.isArray(items) && items.includes(value)) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
+        } catch(e) {
+            reject();
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
@@ -314,8 +344,9 @@ module.exports = {
     onlineChannels,
     lastOnlineChannels,
     conStatus,
-    getConStatus,
+    getAllowStatus,
     isDMAllowed,
     conActive,
-    conInactive
+    conInactive,
+    getConStatus
 }

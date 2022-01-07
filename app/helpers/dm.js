@@ -77,7 +77,7 @@ const redmy         = require('../helpers/redmy.js');
  async function isDMAllowed(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         try {
-            redmy.getConStatus(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function(status) {
+            redmy.getAllowStatus(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function(status) {
                 if(status == "true") {
                     resolve();
                 } else {
@@ -86,7 +86,7 @@ const redmy         = require('../helpers/redmy.js');
             }).catch(function(e) {
                 allowChat(initialJSON, inputJSON).then(function(status) {
                     // Update Active Conversation
-                    redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, status).then(function() {
+                    redmy.conStatus(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, status).then(function() {
                         resolve();
                     }).catch(function() {
                         resolve();

@@ -50,7 +50,7 @@ const redmy         = require('../helpers/redmy.js');
                 param.e = url;
             }
 
-            redmy.getConStatus(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function(status) {
+            redmy.getConStatus(initialJSON.redis, initialJSON.userChannelId, inputJSON.channelId).then(function(status) {
                 param.ss = true;
             }).catch(function(e) {
                 param.ss = false;
@@ -58,7 +58,7 @@ const redmy         = require('../helpers/redmy.js');
 
             resolve(param);
         }).catch(function(e) {
-            redmy.getConStatus(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function(status) {
+            redmy.getConStatus(initialJSON.redis, initialJSON.userChannelId, inputJSON.channelId).then(function(status) {
                 param.ss = true;
             }).catch(function(e) {
                 param.ss = false;

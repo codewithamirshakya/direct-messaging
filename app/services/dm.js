@@ -468,6 +468,8 @@ async function active(initialJSON, inputJSON, ws) {
 
                 // Update Socket for Inactive Channel
                 updateSocketInactive(ws, inputJSON.channelId);
+
+                resolve(response.success(m.successCode.dma.success));
             }
         }).catch(function(e) {
             reject(response.error(m.errorCode.dma.validation));
