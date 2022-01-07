@@ -221,7 +221,6 @@ function selfMessage(channelId, userChannelId, messageId) {
 
 module.exports = {
     message,
-    list,
     seenStatus,
     seenCount,
     conversation,
