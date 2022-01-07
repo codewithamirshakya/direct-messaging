@@ -188,7 +188,12 @@ async function messageList(initialJSON, inputJSON) {
                         reject(response.error(m.errorCode.messaging.messageList));
                     });
                 }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.messageList));
+                    // Prepare Response
+                    response.paginated(m.response.messaging.messageList, [], inputJSON.page, inputJSON.q).then(function(message) {
+                        resolve(message);
+                    }).catch(function(e) {
+                        reject(response.error(m.errorCode.messaging.messageList));
+                    });
                 });
             }).catch(function(e) {
                 reject(response.error(m.errorCode.messaging.messageList));

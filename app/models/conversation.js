@@ -14,7 +14,11 @@ async function get(connection, query, sort, skip, limit) {
                         .skip(skip)
                         .limit(limit)
                         .toArray(function(err, result) {
-                            resolve(result);
+                            if(typeof result !== "null" && result) {
+                                resolve(result);
+                            } else {
+                                reject();
+                            }
                         });
         } catch(e) {
             resolve();
