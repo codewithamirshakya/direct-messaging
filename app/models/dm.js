@@ -102,56 +102,6 @@ async function history(connection, q) {
 /**
  * 
  * @param {*} connection 
- * @param {*} params 
- * @param {*} limit 
- * @param {*} skip
- * @returns 
- */
-async function aggregate(connection, params, limit, skip) { 
-    return new Promise(function (resolve, reject) {
-        try {
-            connection.collection(DM_COLLECTION)
-                        .aggregate(params)
-                        .sort({_id: -1})
-                        .skip(skip)
-                        .limit(limit)
-                        .toArray(function(err, result) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            
-                            resolve(result);
-                        });
-        } catch(e) {
-            resolve();
-        }
-    });
-}
-
-async function aggregateCon(connection, params, limit, skip) { 
-    return new Promise(function (resolve, reject) {
-        try {
-            connection.collection('conversation')
-                        .aggregate(params)
-                        .sort({_id: -1})
-                        .skip(skip)
-                        .limit(limit)
-                        .toArray(function(err, result) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            
-                            resolve(result);
-                        });
-        } catch(e) {
-            resolve();
-        }
-    });
-}
-
-/**
- * 
- * @param {*} connection 
  * @param {*} q 
  * @param {*} params 
  * @returns 
@@ -258,10 +208,8 @@ module.exports = {
     save,
     updateConversation,
     history,
-    aggregate,
     update,
     remove,
-    aggregateCon,
     exist,
     latest
 }
