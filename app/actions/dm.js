@@ -117,7 +117,7 @@ const ul        = require('../services/userlist.js');
             // Active Conversation
             case m.type.messaging.active:
                 // Message Search History Handler
-                dm.active(initialJSON, inputJSON).then(function(message) {
+                dm.active(initialJSON, inputJSON, ws).then(function(message) {
                     resolve(message);
                 }).catch(function(e) {
                     reject(e);

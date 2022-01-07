@@ -61,7 +61,8 @@ module.exports = {
         moderators:         'moderators_',
         online:             'dm_online',
         lastOnline:         'dm_last_online',
-        active:             'dm_active_',
+        allow:              'dm_allow_',
+        active:             'dm_active'
     },
     expire: {
         settings: 3600,

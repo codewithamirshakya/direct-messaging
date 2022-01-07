@@ -424,40 +424,90 @@ async function search(initialJSON, inputJSON) {
  * @param {*} initialJSON 
  * @param {*} inputJSON 
  */
-async function active(initialJSON, inputJSON) {
+async function active(initialJSON, inputJSON, ws) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dma).then(function() {
-            // Update Seen Status
-            seenStatus(initialJSON, inputJSON).then(function() {
-                // Prepare Response
-                response.typeMessage(m.response.messaging.seenStatus, {c: initialJSON.userChannelId}).then(function(message) {
-                    // Publish
-                    pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+            // If Active is Set
+            if(inputJSON.set) {
+                // Update Seen Status
+                seenStatus(initialJSON, inputJSON).then(function() {
+                    // Prepare Response
+                    response.typeMessage(m.response.messaging.seenStatus, {c: initialJSON.userChannelId}).then(function(message) {
+                        // Publish
+                        pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
 
+                        }).catch(function(e) {
+
+                        });
                     }).catch(function(e) {
 
                     });
                 }).catch(function(e) {
 
                 });
-            }).catch(function(e) {
 
-            });
+                // Active Conversation
+                redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId);
 
-            // Check if Chat is Allowed
-            dmh.allowChat(initialJSON, inputJSON).then(function(status) {
-                // Update Active Conversation
-                redmy.conActive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, status).then(function() {
-                    resolve(response.success(m.successCode.dma.success));
-                }).catch(function() {
-                    resolve(response.success(m.errorCode.dma.error));
+                // Store Active Conversation in Socket
+                storeSocketActive(ws, inputJSON.channelId);
+
+                // Check if Chat is Allowed
+                dmh.allowChat(initialJSON, inputJSON).then(function(status) {
+                    // Update Active Conversation
+                    redmy.conStatus(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, status).then(function() {
+                        resolve(response.success(m.successCode.dma.success));
+                    }).catch(function() {
+                        resolve(response.success(m.errorCode.dma.error));
+                    });
                 });
-            });
+            } else {
+                // InActive Conversation
+                redmy.conInactive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId);
+
+                // Update Socket for Inactive Channel
+                updateSocketInactive(ws, inputJSON.channelId);
+            }
         }).catch(function(e) {
             reject(response.error(m.errorCode.dma.validation));
         });
     });
+}
+
+/**
+ * 
+ * @param {*} ws 
+ * @param {*} channelId 
+ */
+async function storeSocketActive(ws, channelId) {
+    if(typeof ws['ac'] !== "undefined" && ws['ac'].length > 0) {
+        var activeArray  = ws['ac'];
+        if(Array.isArray(activeArray)) {
+            activeArray.push(channelId);
+        } else {
+            activeArray = [channelId];
+        }
+
+        ws['ac']     = activeArray;
+    } else {
+        ws['ac']     = [channelId];
+    }
+}
+
+/**
+ * 
+ * @param {*} ws 
+ * @param {*} channelId 
+ */
+async function updateSocketInactive(ws, channelId) {
+    if(typeof ws['ac'] !== "undefined" && ws['ac'].length > 0) {
+        if(Array.isArray(ws['ac'])) {
+            ws['ac'] = ws['ac'].filter(function(item) {
+                return item !== channelId
+            });
+        }
+    }
 }
 
 /**

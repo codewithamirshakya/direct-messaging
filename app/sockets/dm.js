@@ -6,6 +6,7 @@ const response      = require('../helpers/response.js');
 const util          = require('../utils/default.js');
 const ma            = require('../actions/dm.js');
 const setting       = require('../models/setting.js');
+const redmy         = require('../helpers/redmy.js');
 
 let redisClient;
 let redisSub;
@@ -137,6 +138,24 @@ var socket = {
  function _close(ws, code, message) {
     // Store Channel Online
     setting.updateOnlineDmSetting(mysqlConnection, parseInt(ws['u']), false);
+
+    // Cleanup Socket Inactive
+    cleanupSocketInactive(ws);
+ }
+
+ /**
+  * 
+  * @param {*} ws 
+  */
+ function cleanupSocketInactive(ws) {
+    if(typeof ws !== "undefined" && typeof ws['ac'] !== "undefined" && Array.isArray(ws['ac'])) {
+        var userChannelId   = ws['u'];
+        var stillActive     = ws['ac'];
+
+        stillActive.forEach(ac => {
+            redmy.conInactive(redisClient, ac, userChannelId);
+        });
+    }
  }
 
  /**

@@ -205,30 +205,11 @@ async function lastOnlineChannels(client) {
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
-async function conActive(client, channelId, userChannelId, allowChat) {
+ async function conStatus(client, channelId, userChannelId, allowChat) {
     return new Promise(async function (resolve, reject) {
         try {
-            var key = config.rkeys.active + channelId + '_' + userChannelId;
+            var key = config.rkeys.allow + channelId + '_' + userChannelId;
             client.set(key, allowChat, 'EX', config.expire.active);
-
-            resolve();
-        } catch(e) {
-            resolve();
-        }
-    });
-}
-
-/**
- * 
- * @param {*} client 
- * @param {*} channelId 
- * @param {*} userChannelId 
- */
-async function conInactive(client, channelId, userChannelId) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            var key = config.rkeys.active + channelId + '_' + userChannelId;
-            client.del(key);
 
             resolve();
         } catch(e) {
@@ -246,7 +227,7 @@ async function conInactive(client, channelId, userChannelId) {
 async function getConStatus(client, channelId, userChannelId) {
     return new Promise(async function (resolve, reject) {
         try {
-            var key = config.rkeys.active + channelId + '_' + userChannelId;
+            var key = config.rkeys.allow + channelId + '_' + userChannelId;
             client.get(key, function(err, status) {
                 if(status == null || err) {
                     reject();
@@ -284,6 +265,44 @@ async function isDMAllowed(client, channelId, userChannelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+ async function conActive(client, channelId, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            var value = channelId + '_' + userChannelId;
+            client.lpush(config.rkeys.active, value, function(err, items) {
+                resolve();
+            });
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+ async function conInactive(client, channelId, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            var value = channelId + '_' + userChannelId;
+            client.lrem(config.rkeys.active, 1, value);
+
+            resolve();
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
@@ -294,8 +313,9 @@ module.exports = {
     channelOffline,
     onlineChannels,
     lastOnlineChannels,
-    conActive,
-    conInactive,
+    conStatus,
     getConStatus,
-    isDMAllowed
+    isDMAllowed,
+    conActive,
+    conInactive
 }
