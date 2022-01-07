@@ -56,56 +56,15 @@ async function message(channelId, userChannelId, position, q, reverse) {
  */
 async function seenStatus(channelId, userChannelId) {
     return new Promise(function (resolve, reject) {
-
-        var params = {            
-            $or: [{
-                c: parseInt(channelId),
-                u: parseInt(userChannelId)
-            }, {
-                c: parseInt(userChannelId),
-                u: parseInt(channelId)
-            }]
+        var params = {
+            c: parseInt(userChannelId),
+            u: parseInt(channelId)
         };
 
-        params.ss ={
+        params.ss = {
             $exists: false
         };
 
-        resolve(params);
-    });
-}
-
-/**
- * 
- * @param {*} userChannelId 
- * @param {*} q 
- * @returns 
- */
-async function seenCount(channelIds, userChannelId) {
-    return new Promise(function (resolve, reject) {
-        var match = {
-            "$match": {
-                u: {
-                    $in: channelIds
-                },
-                c: parseInt(userChannelId),
-                ss: {
-                    $exists: false
-                }    
-            }
-        };
-        var group = {
-            "$group" : {
-                    _id: "$u",
-                    us: { $sum: 1 }
-                }
-            };
-            
-
-        var  params = [
-            match,
-            group
-        ];  
         resolve(params);
     });
 }
@@ -181,8 +140,8 @@ async function deleteById(id) {
  */
  function myConvoClause(channelId, userChannelId) {
     var clause = {
-        c: channelId,
-        u: userChannelId
+        c: parseInt(channelId),
+        u: parseInt(userChannelId)
     };
 
     return clause;
@@ -196,8 +155,8 @@ async function deleteById(id) {
  */
 function theirConvoClause(channelId, userChannelId) {
     var clause = {
-        u: channelId,
-        c: userChannelId
+        u: parseInt(channelId),
+        c: parseInt(userChannelId)
     };
 
     return clause;
@@ -222,7 +181,6 @@ function selfMessage(channelId, userChannelId, messageId) {
 module.exports = {
     message,
     seenStatus,
-    seenCount,
     conversation,
     messageList,
     remove,

@@ -29,12 +29,12 @@ async function get(connection, query, sort, skip, limit) {
 /**
  * 
  * @param {*} connection 
- * @param {*} params 
  * @param {*} query 
+ * @param {*} params 
  * @param {*} options 
  * @returns 
  */
-async function update(connection, params, query, options) {
+async function update(connection, query, params, options) {
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(CONVO_COLLECTION).updateOne(query, params, options);

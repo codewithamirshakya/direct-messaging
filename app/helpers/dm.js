@@ -23,13 +23,13 @@ const redmy         = require('../helpers/redmy.js');
                         // update my conversation
                         param.myConvo(result).then(function(myConvoParams) {
                             var myClause  = mongo.myConvoClause(result.c, result.u);
-                            conversation.update(initialJSON.mongoConnection, { $set: myConvoParams } , myClause, { upsert: true });
+                            conversation.update(initialJSON.mongoConnection, myClause, { $set: myConvoParams }, { upsert: true });
                         });
                     } else if(typeof result.u !== "undefined" && typeof result.c !== "undefined" && result.c == initialJSON.userChannelId) {
                         // update my conversation
                         param.theirConvo(result).then(function(myConvoParams) {
                             var myClause  = mongo.theirConvoClause(result.c, result.u);
-                            conversation.update(initialJSON.mongoConnection, { $set: myConvoParams } , myClause, { upsert: true });
+                            conversation.update(initialJSON.mongoConnection, myClause, { $set: myConvoParams }, { upsert: true });
                         });
                     }
 

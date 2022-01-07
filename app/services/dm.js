@@ -210,28 +210,6 @@ async function messageList(initialJSON, inputJSON) {
  * @param {*} inputJSON
  * @returns 
  */
-async function seenStatus(initialJSON, inputJSON) {
-    return new Promise(async function (resolve, reject) {
-        // Mongo Query Param
-        mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId).then(function(q) { 
-            // Update seen status
-            model.update(initialJSON.mongoConnection, q, { $set: { ss: true } }).then(function() {
-                resolve();
-            }).catch(function(e) {
-                reject(e);
-            });
-        }).catch(function(e) {
-            reject(e);
-        });
-    });
-}
-
-/**
- * 
- * @param {*} initialJSON 
- * @param {*} inputJSON
- * @returns 
- */
  async function deleteMessage(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
@@ -415,6 +393,38 @@ async function search(initialJSON, inputJSON) {
             });
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.search));
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON
+ * @returns 
+ */
+ async function seenStatus(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Mongo Query Param
+        mongo.seenStatus(inputJSON.channelId, initialJSON.userChannelId).then(function(q) { 
+            // Update seen status
+            model.update(initialJSON.mongoConnection, q, { $set: { ss: true } }).then(function() {
+                resolve();
+            }).catch(function(e) {
+                reject(e);
+            });
+        }).catch(function(e) {
+            reject(e);
+        });
+
+        // Mongo Query Param   
+        var myClause  = mongo.myConvoClause(inputJSON.channelId, initialJSON.userChannelId);
+        
+        // Unset Unread Count
+        conversation.update(initialJSON.mongoConnection, myClause, { $unset: { uc: 1 } }, { upsert: true }).then(function() {
+            resolve();
+        }).catch(function(e) {
+            reject(e);
         });
     });
 }

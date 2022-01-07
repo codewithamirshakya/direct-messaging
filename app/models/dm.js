@@ -41,13 +41,18 @@ async function updateConversation(connection, params) {
         // update my conversation
         param.myConvo(params).then(function(myConvoParams) {
             var myClause  = mongo.myConvoClause(params.c, params.u);
-            conversation.update(connection, { $set: myConvoParams } , myClause, { upsert: true });
+            conversation.update(connection, myClause, { $set: myConvoParams }, { upsert: true });
         });
 
         // update their conversation
         param.theirConvo(params).then(function(theirConvoParams) {
             var theirClause  = mongo.theirConvoClause(params.c, params.u);
-            conversation.update(connection, { $set: theirConvoParams } , theirClause, { upsert: true });
+
+            if(typeof params.ss !== "undefined" && params.ss) {
+                conversation.update(connection, theirClause, { $set: theirConvoParams }, { upsert: true });
+            } else {
+                conversation.update(connection, theirClause, { $set: theirConvoParams, $inc: { uc: 1 } }, { upsert: true });
+            }
         });
 
         resolve();
