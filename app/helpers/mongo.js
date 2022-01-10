@@ -129,8 +129,13 @@ async function messageList(channelId) {
  async function remove(channelId, userChannelId) {
     return new Promise(function (resolve, reject) {
         var params = {
-            c: parseInt(channelId),
-            u: parseInt(userChannelId)
+            $or: [{
+                c: parseInt(channelId),
+                u: parseInt(userChannelId)
+            }, {
+                c: parseInt(userChannelId),
+                u: parseInt(channelId)
+            }]
         };
 
         resolve(params);
