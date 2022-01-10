@@ -9,7 +9,7 @@ const config        = require('../config/default.js');
  */
 async function message(channelId, userChannelId, position, q, reverse) {
     return new Promise(function (resolve, reject) {
-        var limit   = config.chat.limit;
+        var limit   = config.chat.conversation;
         var sort    = {_id: -1};
 
         var params = {            

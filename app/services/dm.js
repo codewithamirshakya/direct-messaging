@@ -97,53 +97,84 @@ async function history(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dch).then(function() {
             if(typeof inputJSON.search !== "undefined" && inputJSON.search == true) {
-                // Mongo Query Param
-                mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, true).then(function(qR) {
-
-                    mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, false).then(function(q) {
-                        // Fetch History
-                        model.history(initialJSON.mongoConnection, qR).then(function(resultRev) {   
-                            model.history(initialJSON.mongoConnection, q).then(function(resultFor) {   
-                                // Prepare Response
-                                result = resultRev.reverse().concat(resultFor);
-                                response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse, inputJSON.channelId).then(function(message) {
-                                    resolve(message);
-                                }); 
-                            })
-                            .catch(function(e) {
-                                reject(response.error(m.errorCode.messaging.history));
-                            });                 
-                        }).catch(function(e) {
-                            reject(response.error(m.errorCode.messaging.history));
-                        });
-                    }).catch(function(e) {
-                        reject(response.error(m.errorCode.messaging.history));
-                    });                             
-                    
+                searchHistory(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
                 }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.history));
+                    reject(e);
                 });
             } else {
-                // Mongo Query Param
-                mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {                             
-                    // Fetch History
-                    model.history(initialJSON.mongoConnection, q).then(function(result) {             
-                        if(typeof inputJSON.position == "undefined" || (typeof inputJSON.reverse !== "undefined" && inputJSON.reverse == true)) {
-                            result = result.reverse();
-                        } 
+                conversationHistory(initialJSON, inputJSON).then(function(message) {
+                    resolve(message)
+                }).catch(function(e) {
+                    reject(e);
+                });
+            }
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.history));
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function searchHistory(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Mongo Query Param Reverse
+        mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, true).then(function(qR) {
+            // Mongo Query Param
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, false).then(function(q) {
+                // Fetch History Reverse
+                model.history(initialJSON.mongoConnection, qR).then(function(resultRev) {  
+                    // Fetch History 
+                    model.history(initialJSON.mongoConnection, q).then(function(resultFor) {   
+                        // Concat Response
+                        var result = resultRev.reverse().concat(resultFor);
+
                         // Prepare Response
                         response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse, inputJSON.channelId).then(function(message) {
                             resolve(message);
-                        });                   
+                        });
                     }).catch(function(e) {
-                        console.log(e);
                         reject(response.error(m.errorCode.messaging.history));
-                    });
+                    });          
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.history));
                 });
-            }
-            
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.history));
+            });
+        }).catch(function(e) {
+            reject(response.error(m.errorCode.messaging.history));
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function conversationHistory(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Mongo Query Param
+        mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {                             
+            // Fetch History
+            model.history(initialJSON.mongoConnection, q).then(function(result) { 
+                // Reverse Result            
+                if(typeof inputJSON.position == "undefined" || (typeof inputJSON.reverse !== "undefined" && inputJSON.reverse == true)) {
+                    result = result.reverse();
+                } 
+
+                // Prepare Response
+                response.formatHistory(m.response.messaging.history, result, inputJSON.position, inputJSON.reverse, inputJSON.channelId).then(function(message) {
+                    resolve(message);
+                });                   
+            }).catch(function(e) {
+                reject(response.error(m.errorCode.messaging.history));
+            });
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.history));
         });

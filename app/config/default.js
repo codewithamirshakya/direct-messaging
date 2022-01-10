@@ -52,7 +52,8 @@ module.exports = {
         limit: 25, // number of message to be fetched at once
         rateLimit: process.env.RATE_LIMIT || 10, // Rate Limit
         defaultMessageLength: 255,
-        premiumMessageLength: 4000
+        premiumMessageLength: 4000,
+        conversation: 50
     },
     rkeys: {
         emojis:             'emojis_',
