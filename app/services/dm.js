@@ -448,7 +448,19 @@ async function active(initialJSON, inputJSON, ws) {
                 // Update Seen Status
                 seenStatus(initialJSON, inputJSON).then(function() {
                     // Prepare Response
-                    response.typeMessage(m.response.messaging.seenStatus, {c: initialJSON.userChannelId}).then(function(message) {
+                    response.typeMessage(m.response.messaging.seenStatus, {c: inputJSON.channelId}).then(function(message) {
+                        // Publish
+                        pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+
+                        }).catch(function(e) {
+
+                        });
+                    }).catch(function(e) {
+
+                    });
+
+                    // Prepare Response
+                    response.typeMessage(m.response.messaging.readStatus, {c: initialJSON.userChannelId}).then(function(message) {
                         // Publish
                         pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
 
