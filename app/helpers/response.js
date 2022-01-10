@@ -151,11 +151,11 @@ async function formatMessageList(myChannelId, results, settings, bannedChannels)
 
                 if(typeof channelSetting !== "undefined") {
                     if(typeof channelSetting.show_online_status !== "undefined" && channelSetting.show_online_status) {
-                        element.o = channelSetting.online;
+                        element.o = Boolean(channelSetting.online);
                     }
 
                     if(typeof channelSetting.show_read_receipts !== "undefined" && channelSetting.show_read_receipts) {
-                        element.rr = channelSetting.show_read_receipts;
+                        element.rr = Boolean(channelSetting.show_read_receipts);
                     }
 
                     if(typeof channelSetting.show_last_online !== "undefined" && channelSetting.show_last_online) {
