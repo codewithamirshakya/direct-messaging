@@ -31,7 +31,6 @@ services:
     restart: always
 
     networks:
-      - ptvdm
       - webapp
     labels:
       - traefik.backend=ptv-dm-stg
@@ -43,6 +42,5 @@ volumes:
   mongodump:
 
 networks:
-  ptvdm:
   webapp:
     external: true
