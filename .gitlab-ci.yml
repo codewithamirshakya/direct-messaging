@@ -16,6 +16,7 @@ install-dependencies:
   only:
     refs:
       - develop
+      - staging
 
   artifacts:
     paths:
@@ -25,7 +26,20 @@ install-dependencies:
   cache:
     paths:
       - node_modules
-
+deploy)stage:
+  stage: deploy
+  dependencies:
+    - install-dependencies
+  script:
+    - docker-compose -f docker-compose.stg.yml down && docker-compose -f docker-compose.stg.yml up -d
+  environment:
+    name: staging
+    url: ${STG_PROJECT_URL}
+  tags:
+    - ptvdm-deploy
+  only:
+   refs:
+      - staging
 deploy:
   stage: deploy
   dependencies:
