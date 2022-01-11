@@ -457,7 +457,7 @@ async function search(initialJSON, inputJSON) {
         var myClause  = mongo.myConvoClause(inputJSON.channelId, initialJSON.userChannelId);
 
         // Unset Unread Count
-        conversation.update(initialJSON.mongoConnection, myClause, { $unset: { uc: 1 } }, { upsert: true }).then(function() {
+        conversation.update(initialJSON.mongoConnection, myClause, { $unset: { uc: 1 } }, { upsert: false }).then(function() {
             resolve();
         }).catch(function(e) {
             reject(e);
