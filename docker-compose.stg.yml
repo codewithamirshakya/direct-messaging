@@ -1,0 +1,49 @@
+
+version: "3"
+services:
+ 
+  ptv-dm-stg:
+    image: node:16-stretch
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_SUB_HOST: ${REDIS_HOST}
+      REDIS_SUB_PORT: ${REDIS_PORT}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PUB_HOST: ${REDIS_HOST}
+      REDIS_PUB_PORT: ${REDIS_PORT}
+      MONGO_DB_HOST: ${MONGO_DB_HOST}
+      MONGO_PORT: ${MONGO_PORT}
+      MONGO_DB_DATABASE: gallery_stage
+      MONGO_CONNECTION_LIMIT: ${MONGO_CONNECTION_LIMIT}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_USER: ${MYSQL_USERNAME}
+      MYSQL_PASS: ${MYSQL_PASSWORD}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_CONNECTION_LIMIT: ${MYSQL_CONNECTION_LIMIT}
+      MYSQL_DB: "picarto_stg"
+      REDIS_SUB_PREFIX: ptv_stg_
+      REDIS_PUB_PREFIX: ptv_stg_
+      REDIS_PREFIX: ptv_stg_
+    working_dir: /app
+    command: npm start
+    container_name: ptv-dm-stg
+    volumes:
+      - ./:/app
+    restart: always
+
+    networks:
+      - ptvdm
+      - webapp
+    labels:
+      - traefik.backend=ptv-dm-stg
+      - traefik.normal.frontend.rule=Host:ptvdm.diagonal.solutions
+      - traefik.docker.network=webapp
+      - traefik.port=9001
+
+volumes:
+  mongodump:
+
+networks:
+  ptvdm:
+  webapp:
+    external: true
