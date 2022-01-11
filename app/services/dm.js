@@ -123,9 +123,9 @@ async function history(initialJSON, inputJSON) {
 async function searchHistory(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Mongo Query Param Reverse
-        mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, true).then(function(qR) {
+        mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, true, true).then(function(qR) {
             // Mongo Query Param
-            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, false).then(function(q) {
+            mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, false, true).then(function(q) {
                 // Fetch History Reverse
                 model.history(initialJSON.mongoConnection, qR).then(function(resultRev) {  
                     // Fetch History 
@@ -160,7 +160,7 @@ async function searchHistory(initialJSON, inputJSON) {
 async function conversationHistory(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Mongo Query Param
-        mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse).then(function(q) {                             
+        mongo.message(inputJSON.channelId, initialJSON.userChannelId, inputJSON.position, inputJSON.q, inputJSON.reverse, false).then(function(q) {                             
             // Fetch History
             model.history(initialJSON.mongoConnection, q).then(function(result) { 
                 // Reverse Result            
