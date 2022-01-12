@@ -36,14 +36,14 @@ const redmy         = require('../helpers/redmy.js');
                     resolve(true);
                 }).catch(function(e) {
                     setting.getDMSettings(initialJSON.mysqlConnection, [inputJSON.channelId]).then(function(dmSetting) {
-                        if(typeof dmSetting !== "undefined") {
-                             if(typeof dmSetting.allow_message_subscriber !== "undefined" && dmSetting.allow_message_subscriber == true) {
+                        if(typeof dmSetting !== "undefined" && typeof dmSetting[0] !== "undefined") {
+                            if(typeof dmSetting[0].allow_message_subscriber !== "undefined" && dmSetting[0].allow_message_subscriber == true) {
                                 em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
                                     resolve(true);
                                 }).catch(function(e) {
                                     resolve(false);
                                 });
-                            } else if(typeof dmSetting.allow_message_every_one !== "undefined" && dmSetting.allow_message_every_one == true) {
+                            } else if(typeof dmSetting[0].allow_message_every_one !== "undefined" && dmSetting[0].allow_message_every_one == true) {
                                 resolve(true);
                             } else {
                                 channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
