@@ -88,5 +88,6 @@ module.exports = {
     },
     system: {
         SLOW_DOWN:      "Woah there! Slow down!",
+        SELF_MESSAGE:   "You cannot send message to yourself"
     }
 };

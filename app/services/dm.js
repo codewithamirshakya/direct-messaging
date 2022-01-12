@@ -11,6 +11,7 @@ const model         = require('../models/dm.js');
 const setting       = require('../models/setting.js');
 const conversation  = require('../models/conversation.js');
 const dmh           = require('../helpers/dm.js');
+const access        = require('../helpers/access.js');
 
 /**
  * 
@@ -26,35 +27,40 @@ const dmh           = require('../helpers/dm.js');
             validator.rateLimitValidation(ws).then(function() {
                 // Validate Input
                 validator.validation(inputJSON, validator.rules.dm).then(function() {
-                    // Check if user is banned
-                    validator.banValidation(initialJSON.redis, [inputJSON.channelId], initialJSON.userChannelId).then(function() {
-                        // Is Message Allowed Validation
-                        dmh.isDMAllowed(initialJSON, inputJSON).then(function() {
-                            // Get Channel Settings
-                            redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
-                                // Is Channel Online
-                                redmy.isChannelOnline(initialJSON.redis, inputJSON.channelId).then(function(isOnline) {
-                                    // Prepare Param
-                                    param.dm(initialJSON, inputJSON, settings, isOnline).then(function(params) {
-                                        // Save Model                
-                                        model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
-                                            // Prepare Response
-                                            response.typeMessage(m.response.messaging.send, params).then(function(message) {
-                                                // Publish Message
-                                                pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-                                                    resolve(true);
-                                                }).catch(function(e) {
-                                                    resolve(true);
-                                                });
+                    // Cannot Send Self Message
+                    access.exceptSelfAccess(inputJSON.channelId, initialJSON.userChannelId).then(function() {
+                        // Check if user is banned
+                        validator.banValidation(initialJSON.redis, [inputJSON.channelId], initialJSON.userChannelId).then(function() {
+                            // Is Message Allowed Validation
+                            dmh.isDMAllowed(initialJSON, inputJSON).then(function() {
+                                // Get Channel Settings
+                                redmy.getChannelSetting(initialJSON.redis, initialJSON.mysqlConnection, inputJSON.channelId).then(function(settings) {
+                                    // Is Channel Online
+                                    redmy.isChannelOnline(initialJSON.redis, inputJSON.channelId).then(function(isOnline) {
+                                        // Prepare Param
+                                        param.dm(initialJSON, inputJSON, settings, isOnline).then(function(params) {
+                                            // Save Model                
+                                            model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
+                                                // Prepare Response
+                                                response.typeMessage(m.response.messaging.send, params).then(function(message) {
+                                                    // Publish Message
+                                                    pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                                                        resolve(true);
+                                                    }).catch(function(e) {
+                                                        resolve(true);
+                                                    });
 
-                                                pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
-                                                    resolve(true);
-                                                }).catch(function(e) {
-                                                    resolve(true);
+                                                    pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+                                                        resolve(true);
+                                                    }).catch(function(e) {
+                                                        resolve(true);
+                                                    });
                                                 });
+                                            }).catch(function(e) {
+                                                reject(response.error(m.errorCode.messaging.save));
                                             });
                                         }).catch(function(e) {
-                                            reject(response.error(m.errorCode.messaging.save));
+                                            reject(response.error(m.errorCode.messaging.validation));
                                         });
                                     }).catch(function(e) {
                                         reject(response.error(m.errorCode.messaging.validation));
@@ -63,13 +69,15 @@ const dmh           = require('../helpers/dm.js');
                                     reject(response.error(m.errorCode.messaging.validation));
                                 });
                             }).catch(function(e) {
-                                reject(response.error(m.errorCode.messaging.validation));
+                                reject(response.error(m.errorCode.messaging.follower));
                             });
                         }).catch(function(e) {
-                            reject(response.error(m.errorCode.messaging.follower));
+                            reject(response.error(m.errorCode.messaging.banned));
                         });
                     }).catch(function(e) {
-                        reject(response.error(m.errorCode.messaging.banned));
+                        response.systemMessage(m.system.SELF_MESSAGE).then(function(alertMessage) {
+                            resolve(alertMessage);
+                        });
                     });
                 }).catch(function(e) {
                     reject(response.error(m.errorCode.messaging.validation));
