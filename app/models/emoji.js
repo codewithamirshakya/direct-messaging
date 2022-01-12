@@ -107,10 +107,10 @@ var mysql       = require('mysql');
  * @param {*} subscriberId 
  * @returns 
  */
- async function subscribed(connection, channelId, subscriberId) {
+ async function subscribed(connection, subscriberId) {
     return new Promise(function (resolve, reject) {
         try {
-            var sql = mysql.format('SELECT e.channel_id, e.alias, c.name from emojis e inner join channels c on c.id = e.channel_id WHERE e.deleted_at is null and e.channel_id in (select channel_id from subscribers where channel_id = ? and subscriber_id = ? and deleted_at is null)', [channelId, subscriberId]);
+            var sql = mysql.format('SELECT e.channel_id, e.alias, c.name from emojis e inner join channels c on c.id = e.channel_id WHERE e.deleted_at is null and e.channel_id in (select channel_id from subscribers where subscriber_id = ? and deleted_at is null)', [subscriberId]);
             
             connection.getConnection((err, conn) => {
                 if(err) {

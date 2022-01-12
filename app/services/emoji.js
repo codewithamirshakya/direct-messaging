@@ -28,18 +28,13 @@ const em            = require('../models/emoji.js');
  */
  async function subscribed(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
-        // Validate Input
-        validator.validation(inputJSON, validator.rules.es).then(function() {
-            // Get Existing Emojis
-            em.subscribed(initialJSON.mysqlConnection, inputJSON.channelId, initialJSON.userChannelId).then(function(es) {
-                // Format Emojis
-                response.formatEmojis(es).then(function(emojis) {
-                    // Prepare Response
-                    response.typeMessage(m.response.emotes.subscribed, emojis).then(function(message) {
-                        resolve(message);
-                    });
-                }).catch(function(e) {
-                    reject(response.error(m.errorCode.emojis.subscribed));
+        // Get Existing Emojis
+        em.subscribed(initialJSON.mysqlConnection, initialJSON.userChannelId).then(function(es) {
+            // Format Emojis
+            response.formatEmojis(es).then(function(emojis) {
+                // Prepare Response
+                response.typeMessage(m.response.emotes.subscribed, emojis).then(function(message) {
+                    resolve(message);
                 });
             }).catch(function(e) {
                 reject(response.error(m.errorCode.emojis.subscribed));

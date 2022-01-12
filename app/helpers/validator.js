@@ -34,9 +34,6 @@ const rules = {
     dmd: {
         messageId: "required"
     },
-    es: {
-        channelId: "required"
-    },
     dma: {
         channelId: "required"
     },
