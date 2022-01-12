@@ -23,10 +23,10 @@ const access        = require('../helpers/access.js');
     return new Promise(async function (resolve, reject) {
         // Antispam Check; message limit 2/s
         validator.canSendMessage(ws).then(function() {
-            // RateLimit Validation
-            validator.rateLimitValidation(ws).then(function() {
-                // Validate Input
-                validator.validation(inputJSON, validator.rules.dm).then(function() {
+            // Validate Input
+            validator.validation(inputJSON, validator.rules.dm).then(function() {
+                // RateLimit Validation
+                validator.rateLimitValidation(ws).then(function() {
                     // Cannot Send Self Message
                     access.exceptSelfAccess(inputJSON.channelId, initialJSON.userChannelId).then(function() {
                         // Check if user is banned
@@ -75,17 +75,17 @@ const access        = require('../helpers/access.js');
                             reject(response.error(m.errorCode.messaging.banned));
                         });
                     }).catch(function(e) {
-                        response.systemMessage(m.system.SELF_MESSAGE).then(function(alertMessage) {
+                        response.systemMessage(m.system.SELF_MESSAGE, inputJSON.channelId).then(function(alertMessage) {
                             resolve(alertMessage);
                         });
                     });
                 }).catch(function(e) {
-                    reject(response.error(m.errorCode.messaging.validation));
+                    response.systemMessage(m.system.SLOW_DOWN, inputJSON.channelId).then(function(alertMessage) {
+                        resolve(alertMessage);
+                    });
                 });
             }).catch(function(e) {
-                response.systemMessage(m.system.SLOW_DOWN).then(function(alertMessage) {
-                    resolve(alertMessage);
-                });
+                reject(response.error(m.errorCode.messaging.validation));
             });
         }).catch(function(e) {
             reject(response.error(m.errorCode.messaging.restricted));

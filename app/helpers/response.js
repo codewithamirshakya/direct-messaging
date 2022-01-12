@@ -50,7 +50,7 @@ function success(successCode) {
  * 
  * @param {*} message 
  */
- async function systemMessage(message, links, icons, append, cat, whisper) {
+ async function systemMessage(message, receiverId, links, icons, append, cat, whisper) {
     return new Promise(async function (resolve, reject) {
         var response = JSON.stringify({
                             t:       m.type.system,
@@ -62,7 +62,8 @@ function success(successCode) {
                             }],
                             z: append,
                             c: cat,
-                            w: whisper
+                            w: whisper,
+                            r: receiverId
                         });
 
         resolve(response);
