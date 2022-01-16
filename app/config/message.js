@@ -32,7 +32,10 @@ module.exports = {
             remove:         "dmr",
             search:         "dms",
             updatelist:     "dmu",
-            typing:         "dmt"
+            typing:         "dmt",
+            request:        "dmr",
+            requestlist:    "drl",
+            requesthistory: "drh"
         },
         emotes: {
             list: "el",

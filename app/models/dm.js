@@ -1,7 +1,3 @@
-const conversation          = require('../models/conversation.js');
-const param                 = require('../helpers/param.js');
-const mongo                 = require('../helpers/mongo.js');
-
 const DM_COLLECTION         = 'dm';
 
 /**
@@ -16,9 +12,6 @@ async function save(connection, params) {
             // insert dm
             connection.collection(DM_COLLECTION).insertOne(params, function(err, res) {
                 if(typeof res !== "undefined" && res.insertedId !== "undefined") {
-                    // Update Conversation
-                    updateConversation(connection, params);
-                    
                     // resolve insertedId
                     resolve(res.insertedId);
                 } else {
@@ -28,34 +21,6 @@ async function save(connection, params) {
         } catch(e) {
             reject();
         }
-    });
-}
-
-/**
- * 
- * @param {*} connection 
- * @param {*} params 
- */
-async function updateConversation(connection, params) {
-    return new Promise(function (resolve, reject) {
-        // update my conversation
-        param.myConvo(params).then(function(myConvoParams) {
-            var myClause  = mongo.myConvoClause(params.c, params.u);
-            conversation.update(connection, myClause, { $set: myConvoParams }, { upsert: true });
-        });
-
-        // update their conversation
-        param.theirConvo(params).then(function(theirConvoParams) {
-            var theirClause  = mongo.theirConvoClause(params.c, params.u);
-
-            if(typeof params.ss !== "undefined" && params.ss) {
-                conversation.update(connection, theirClause, { $set: theirConvoParams }, { upsert: true });
-            } else {
-                conversation.update(connection, theirClause, { $set: theirConvoParams, $inc: { uc: 1 } }, { upsert: true });
-            }
-        });
-
-        resolve();
     });
 }
 
@@ -193,7 +158,6 @@ async function remove(connection, q) {
 
 module.exports = {
     save,
-    updateConversation,
     history,
     update,
     remove,
