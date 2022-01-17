@@ -11,17 +11,17 @@ async function accept(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dmr).then(function() {
-            let query = {c: parseInt(inputJSON.channelId), u: parseInt(initialJSON.userChannelId)};
+            let query = {c: parseInt(inputJSON.channelId), u: parseInt(initialJSON.userChannelId)};            
             mrequest.findOne(initialJSON.mongoConnection,query).then((result) => {
                 delete result._id;
                 conversation.update(initialJSON.mongoConnection, query, {$set: result}, {upsert: true}).then(() => {
                     mrequest.remove(initialJSON.mongoConnection, query);
 
-                    response.typeMessage(m.response.messaging.requestAccept, {c: inputJSON.channelId}).then(function() {
-                        resolve(true);
-                    }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));});
+                    response.typeMessage(m.response.messaging.requestAccept, {c: inputJSON.channelId}).then(function(message) {
+                        resolve(message);
+                    }).catch(e => {console.log(e);reject(response.error(m.errorCode.messaging.requestAccept));});
                 }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));});         
-            }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));})
+            }).catch(e => {console.log(e);reject(response.error(m.errorCode.messaging.requestAccept));})
         }).catch(function(e) {            
             reject(response.error(m.errorCode.messaging.requestAccept));
         });
@@ -76,8 +76,7 @@ async function messageList(initialJSON, inputJSON) {
 async function deleteMessageRequest(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         validator.validation(inputJSON, validator.rules.dr).then(function() {
-            let params = {u: parseInt(initialJSON.channelId), c: parseInt(inputJSON.channelId)};
-            console.log(params);
+            let params = {u: parseInt(initialJSON.userChannelId), c: parseInt(inputJSON.channelId)};
             mrequest.removeMany(initialJSON.mongoConnection, params)
             .then((res) => {
                 response.typeMessage(m.response.messaging.deleteRequest, {c: inputJSON.channelId})
@@ -100,10 +99,10 @@ async function deleteMessageRequest(initialJSON, inputJSON) {
 async function deleteAllMessageRequest(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         validator.validation(inputJSON, validator.rules.dar).then(function() {
-            let params = {u: parseInt(initialJSON.channelId)};
+            let params = {u: parseInt(initialJSON.userChannelId)};
             mrequest.removeMany(initialJSON.mongoConnection, params)
             .then((res) => {
-                response.typeMessage(m.response.messaging.deleteRequest)
+                response.typeMessage(m.response.messaging.daRequest)
                 .then((message) => {
                     dm.removeMany(initialJSON.mongoConnection, params);
                     resolve(message);
