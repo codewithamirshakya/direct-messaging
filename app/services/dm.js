@@ -50,12 +50,21 @@ const access        = require('../helpers/access.js');
                                     reject(e);
                                 });
                             }).catch(function(e) {
-                                 // Message Request
-                                 dmh.messageRequest(initialJSON, inputJSON).then(function(message) {
-                                    resolve(message)
-                                }).catch(function(e) {
-                                    reject(e);
-                                });
+                                setting.getDMSettings(initialJSON.mysqlConnection, [parseInt(inputJSON.channelId)])
+                                .then((result) => {
+                                    if(typeof result !== "undefined" && typeof result[0] !== "undefined" && result[0].allow_message_every_one == true) {
+                                        // Message Request
+                                        dmh.messageRequest(initialJSON, inputJSON).then(function(message) {
+                                            resolve(message)
+                                        }).catch(function(e) {
+                                            reject(e);
+                                        });
+                                    } else {
+                                        reject(response.error(m.errorCode.messaging.restricted));  
+                                    }                                                                     
+                                })
+                                .catch(e => {reject(e);});
+                                 
                             });
                         }).catch(function(e) {
                             reject(response.error(m.errorCode.messaging.banned));
