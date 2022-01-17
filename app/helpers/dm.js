@@ -384,7 +384,7 @@ async function updateSocketInactive(ws, channelId) {
             // Latest Message
             model.latest(initialJSON.mongoConnection, params).then(function(result) {
                 // Update Conversation
-                dmh.updateConversation(initialJSON.mongoConnection, result).then(function() {
+                updateConversation(initialJSON.mongoConnection, result).then(function() {
                     // Prepare Response
                     response.typeMessage(m.response.messaging.updatelist, result).then(function(message) {
                         // Publish Message
@@ -405,7 +405,7 @@ async function updateSocketInactive(ws, channelId) {
                 });
             }).catch(function(e) {
                 // Remove My Conversation
-                dmh.removeConversation(initialJSON.mongoConnection, inputJSON.channelId, initialJSON.userChannelId).then(function(message) {
+                removeConversation(initialJSON.mongoConnection, inputJSON.channelId, initialJSON.userChannelId).then(function(message) {
                     // Publish Message
                     pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
                         resolve(true);
@@ -415,7 +415,7 @@ async function updateSocketInactive(ws, channelId) {
                 });
 
                 // Remove their Conversation
-                dmh.removeConversation(initialJSON.mongoConnection, initialJSON.userChannelId, inputJSON.channelId).then(function(message) {
+                removeConversation(initialJSON.mongoConnection, initialJSON.userChannelId, inputJSON.channelId).then(function(message) {
                     // Publish Message
                     pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
                         resolve(true);
