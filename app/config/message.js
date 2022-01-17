@@ -33,7 +33,7 @@ module.exports = {
             search:         "dms",
             updatelist:     "dmu",
             typing:         "dmt",
-            request:        "dmr",
+            request:        "dmmr",
             requestlist:    "drl",
             requesthistory: "drh"
         },
