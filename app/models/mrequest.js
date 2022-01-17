@@ -77,7 +77,6 @@ async function findOne(connection, query) {
  * 
  * @param {*} connection 
  * @param {*} q 
- * @param {*} params 
  * @returns 
  */
 async function remove(connection, q) { 
@@ -97,9 +96,33 @@ async function remove(connection, q) {
     });
 }
 
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} q 
+ * @returns 
+ */
+async function removeMany(connection, q) { 
+    return new Promise(function (resolve, reject) {
+        try {
+            connection.collection(MREQUEST_COLLECTION)
+                        .deleteMany(q, function(err, res) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            
+                            resolve();
+                        });
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     update,
     findOne,
     remove,
-    get
+    get,
+    removeMany
 }

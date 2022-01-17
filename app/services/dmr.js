@@ -2,6 +2,7 @@ const m             = require('../config/message.js');
 const validator     = require('../helpers/validator.js');
 const response      = require('../helpers/response.js');
 const mrequest      = require('../models/mrequest.js');
+const dm            = require('../models/dm.js');
 const conversation  = require('../models/conversation.js');
 const config        = require('../config/default.js');
 const mongo         = require('../helpers/mongo.js');
@@ -16,13 +17,13 @@ async function accept(initialJSON, inputJSON) {
                 conversation.update(initialJSON.mongoConnection, query, {$set: result}, {upsert: true}).then(() => {
                     mrequest.remove(initialJSON.mongoConnection, query);
 
-                    response.typeMessage(m.response.messaging.requestaccept, {c: inputJSON.channelId}).then(function() {
+                    response.typeMessage(m.response.messaging.requestAccept, {c: inputJSON.channelId}).then(function() {
                         resolve(true);
-                    }).catch(e => {reject(response.error(m.errorCode.messaging.requestaccept));});
-                }).catch(e => {reject(response.error(m.errorCode.messaging.requestaccept));});         
-            }).catch(e => {reject(response.error(m.errorCode.messaging.requestaccept));})
+                    }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));});
+                }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));});         
+            }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));})
         }).catch(function(e) {            
-            reject(response.error(m.errorCode.messaging.requestaccept));
+            reject(response.error(m.errorCode.messaging.requestAccept));
         });
     });
 }
@@ -67,7 +68,56 @@ async function messageList(initialJSON, inputJSON) {
     });
 }
 
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function deleteMessageRequest(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        validator.validation(inputJSON, validator.rules.dr).then(function() {
+            let params = {u: parseInt(initialJSON.channelId), c: parseInt(inputJSON.channelId)};
+            console.log(params);
+            mrequest.removeMany(initialJSON.mongoConnection, params)
+            .then((res) => {
+                response.typeMessage(m.response.messaging.deleteRequest, {c: inputJSON.channelId})
+                    .then((message) => {
+                        dm.removeMany(initialJSON.mongoConnection, params);
+                        resolve(message);
+                    })
+                    .catch(e => {reject(response.error(m.errorCode.messaging.deleteRequest))});
+            })
+            .catch(e => {reject(response.error(m.errorCode.messaging.deleteRequest));});
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function deleteAllMessageRequest(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        validator.validation(inputJSON, validator.rules.dar).then(function() {
+            let params = {u: parseInt(initialJSON.channelId)};
+            mrequest.removeMany(initialJSON.mongoConnection, params)
+            .then((res) => {
+                response.typeMessage(m.response.messaging.deleteRequest)
+                .then((message) => {
+                    dm.removeMany(initialJSON.mongoConnection, params);
+                    resolve(message);
+                })
+                .catch(e => {reject(response.error(m.errorCode.messaging.deleteRequest))});
+            })
+            .catch(e => {reject(response.error(m.errorCode.messaging.deleteRequest))});
+        });
+    });
+}
+
 module.exports = {
     accept,
-    messageList
+    messageList,
+    deleteMessageRequest,
+    deleteAllMessageRequest
 };

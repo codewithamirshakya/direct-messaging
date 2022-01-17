@@ -48,6 +48,13 @@ const rules = {
         type: "required",
         page: "required"
     },
+    dar: {
+        type: "required"
+    },
+    dr: {
+        type: "required",
+        channelId: "required"
+    },
 }
 
 /**

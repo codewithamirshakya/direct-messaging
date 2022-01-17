@@ -13,6 +13,8 @@ module.exports = {
             typing:         "dmt",
             accept:         "dmra",
             mrList:         "drl",
+            mrDeleteAll:    "dar",
+            mrDelete:       "dr",
         },
         emotes: {
             list: "el",
@@ -38,7 +40,8 @@ module.exports = {
             request:        "dmr",
             requestlist:    "drl",
             requesthistory: "drh",
-            requestaccept:  "dra"
+            requestaccept:  "dra",
+            deleteRequest:  "dr"
         },
         emotes: {
             list: "el",
@@ -60,6 +63,8 @@ module.exports = {
             search:         "DIRECT_MESSAGING_SEARCH_HISTORY",
             remove:         "DIRECT_MESSAGING_REMOVE_MESSAGE",
             requestList:    "DIRECT_REQUEST_LIST",
+            requestAccept:  "DIRECT_REQUEST_ACCEPT",
+            deleteRequest:  "DIRECT_REQUEST_DELETE"
         },
         emojis: {
             list:           "EMOTES_LIST",

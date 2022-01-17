@@ -106,6 +106,30 @@ async function remove(connection, q) {
 /**
  * 
  * @param {*} connection 
+ * @param {*} q 
+ * @param {*} params 
+ * @returns 
+ */
+async function removeMany(connection, q) { 
+    return new Promise(function (resolve, reject) {
+        try {
+            connection.collection(DM_COLLECTION)
+                        .deleteMany(q, function(err, res) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            
+                            resolve();
+                        });
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} connection 
  * @param {*} query 
  * @returns 
  */
@@ -162,5 +186,6 @@ module.exports = {
     update,
     remove,
     exist,
-    latest
+    latest,
+    removeMany
 }

@@ -152,6 +152,23 @@ const dmr       = require('../services/dmr.js');
                     reject(e);
                 });
                 break;
+            // Delete all message request
+            case m.type.messaging.mrDeleteAll:
+                // Delete all message request Handler
+                dmr.deleteAllMessageRequest(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;    
+            case m.type.messaging.mrDelete:
+                // Delete message request Handler
+                dmr.deleteMessageRequest(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;      
         }
     });
 }
