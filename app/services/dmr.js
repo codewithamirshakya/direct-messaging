@@ -11,17 +11,17 @@ async function accept(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dmr).then(function() {
-            let query = {c: parseInt(inputJSON.channelId), u: parseInt(initialJSON.userChannelId)};
+            let query = {c: parseInt(inputJSON.channelId), u: parseInt(initialJSON.userChannelId)};            
             mrequest.findOne(initialJSON.mongoConnection,query).then((result) => {
                 delete result._id;
                 conversation.update(initialJSON.mongoConnection, query, {$set: result}, {upsert: true}).then(() => {
                     mrequest.remove(initialJSON.mongoConnection, query);
 
-                    response.typeMessage(m.response.messaging.requestAccept, {c: inputJSON.channelId}).then(function() {
-                        resolve(true);
-                    }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));});
+                    response.typeMessage(m.response.messaging.requestAccept, {c: inputJSON.channelId}).then(function(message) {
+                        resolve(message);
+                    }).catch(e => {console.log(e);reject(response.error(m.errorCode.messaging.requestAccept));});
                 }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));});         
-            }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));})
+            }).catch(e => {console.log(e);reject(response.error(m.errorCode.messaging.requestAccept));})
         }).catch(function(e) {            
             reject(response.error(m.errorCode.messaging.requestAccept));
         });
