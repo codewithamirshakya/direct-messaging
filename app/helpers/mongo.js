@@ -90,11 +90,8 @@ async function seenStatus(channelId, userChannelId) {
 async function conversation(channelId, userChannelId) {
     return new Promise(function (resolve, reject) {
         var params = {
-            $or: [{
-                c: channelId
-            }, {
-                u: userChannelId
-            }]
+            c: channelId,
+            u: userChannelId
         };
 
         resolve(params);
