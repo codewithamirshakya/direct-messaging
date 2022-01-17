@@ -40,7 +40,10 @@ const rules = {
     dmt: {
         channelId: "required",
         set: "required"
-    }
+    },
+    dra: {
+        channelId: "required"
+    },
 }
 
 /**

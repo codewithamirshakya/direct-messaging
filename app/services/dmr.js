@@ -7,7 +7,7 @@ const conversation  = require('../models/conversation.js');
 async function accept(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dmr).then(function() {
+        validator.validation(inputJSON, validator.rules.dra).then(function() {
             let query = {c: parseInt(inputJSON.channelId), u: parseInt(initialJSON.userChannelId)};
             mrequest.findOne(initialJSON.mongoConnection,query).then((result) => {
                 delete result._id;
