@@ -48,7 +48,11 @@ const pub           = require('../publishers/redis.js');
                                     em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
                                         resolve(true);
                                     }).catch(function(e) {
-                                        resolve(false);
+                                        channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                                            resolve(true);
+                                        }).catch(function(e) {
+                                            resolve(false);
+                                        });
                                     });
                                 } else if(typeof dmSetting[0].allow_message_every_one !== "undefined" && dmSetting[0].allow_message_every_one == true) {
                                     resolve(true);
