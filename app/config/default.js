@@ -30,14 +30,14 @@ module.exports = {
         port: process.env.MONGO_PORT || "27017",
         user: process.env.MONGO_DB_USERNAME || "root",
         pass: process.env.MONGO_DB_PASSWORD || "root",
-        db:  process.env.MONGO_DB_DATABASE || "picarto",
+        db:  process.env.MONGO_DB_DATABASE || "gallery-stage",
         connection: process.env.MONGO_CONNECTION_LIMIT || 1
     },
     mysql: {
         host: process.env.MYSQL_HOST || "localhost",
         port: process.env.MYSQL_PORT || "3306",
-        user: process.env.MYSQL_USER || "root",
-        pass: process.env.MYSQL_PASS || "root",
+        user: process.env.MYSQL_USER || "amir",
+        pass: process.env.MYSQL_PASS || "password",
         db:  process.env.MYSQL_DB || "picarto",
         connection: process.env.MYSQL_CONNECTION_LIMIT || 1
     },

@@ -44,6 +44,10 @@ const rules = {
     dra: {
         channelId: "required"
     },
+    drl: {
+        type: "required",
+        page: "required"
+    },
 }
 
 /**
