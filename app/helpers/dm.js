@@ -22,33 +22,43 @@ const pub           = require('../publishers/redis.js');
             conversation.exist(initialJSON.mongoConnection, params).then(function(result) {
                 resolve(true);
             }).catch(function(e) {
-                model.latest(initialJSON.mongoConnection, params).then(function(result) {
-                    if(typeof result.c !== "undefined" && typeof result.u !== "undefined" && result.u == initialJSON.userChannelId) {
-                        // update my conversation
-                        param.myConvo(result).then(function(myConvoParams) {
-                            var myClause  = mongo.myConvoClause(result.c, result.u);
-                            conversation.update(initialJSON.mongoConnection, myClause, { $set: myConvoParams }, { upsert: true });
-                        });
-                    } else if(typeof result.u !== "undefined" && typeof result.c !== "undefined" && result.c == initialJSON.userChannelId) {
-                        // update my conversation
-                        param.theirConvo(result).then(function(myConvoParams) {
-                            var myClause  = mongo.theirConvoClause(result.c, result.u);
-                            conversation.update(initialJSON.mongoConnection, myClause, { $set: myConvoParams }, { upsert: true });
-                        });
-                    }
-
-                    resolve(true);
+                mrequest.exist(initialJSON.mongoConnection, params).then(function(result) {
+                    resolve(false);
                 }).catch(function(e) {
-                    setting.getDMSettings(initialJSON.mysqlConnection, [inputJSON.channelId]).then(function(dmSetting) {
-                        if(typeof dmSetting !== "undefined" && typeof dmSetting[0] !== "undefined") {
-                            if(typeof dmSetting[0].allow_message_subscriber !== "undefined" && dmSetting[0].allow_message_subscriber == true) {
-                                em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                    model.latest(initialJSON.mongoConnection, params).then(function(result) {
+                        if(typeof result.c !== "undefined" && typeof result.u !== "undefined" && result.u == initialJSON.userChannelId) {
+                            // update my conversation
+                            param.myConvo(result).then(function(myConvoParams) {
+                                var myClause  = mongo.myConvoClause(result.c, result.u);
+                                conversation.update(initialJSON.mongoConnection, myClause, { $set: myConvoParams }, { upsert: true });
+                            });
+                        } else if(typeof result.u !== "undefined" && typeof result.c !== "undefined" && result.c == initialJSON.userChannelId) {
+                            // update my conversation
+                            param.theirConvo(result).then(function(myConvoParams) {
+                                var myClause  = mongo.theirConvoClause(result.c, result.u);
+                                conversation.update(initialJSON.mongoConnection, myClause, { $set: myConvoParams }, { upsert: true });
+                            });
+                        }
+    
+                        resolve(true);
+                    }).catch(function(e) {
+                        setting.getDMSettings(initialJSON.mysqlConnection, [inputJSON.channelId]).then(function(dmSetting) {
+                            if(typeof dmSetting !== "undefined" && typeof dmSetting[0] !== "undefined") {
+                                if(typeof dmSetting[0].allow_message_subscriber !== "undefined" && dmSetting[0].allow_message_subscriber == true) {
+                                    em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                                        resolve(true);
+                                    }).catch(function(e) {
+                                        resolve(false);
+                                    });
+                                } else if(typeof dmSetting[0].allow_message_every_one !== "undefined" && dmSetting[0].allow_message_every_one == true) {
                                     resolve(true);
-                                }).catch(function(e) {
-                                    resolve(false);
-                                });
-                            } else if(typeof dmSetting[0].allow_message_every_one !== "undefined" && dmSetting[0].allow_message_every_one == true) {
-                                resolve(true);
+                                } else {
+                                    channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                                        resolve(true);
+                                    }).catch(function(e) {
+                                        resolve(false);
+                                    });
+                                }
                             } else {
                                 channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
                                     resolve(true);
@@ -56,13 +66,7 @@ const pub           = require('../publishers/redis.js');
                                     resolve(false);
                                 });
                             }
-                        } else {
-                            channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                                resolve(true);
-                            }).catch(function(e) {
-                                resolve(false);
-                            });
-                        }
+                        });
                     });
                 });
             });

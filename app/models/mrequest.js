@@ -26,7 +26,7 @@ const MREQUEST_COLLECTION = 'mrequest';
  * @param {*} query 
  * @returns 
  */
-async function findOne(connection, query) {
+ async function exist(connection, query) {
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(MREQUEST_COLLECTION).findOne(query,function(err, result) {
@@ -41,7 +41,7 @@ async function findOne(connection, query) {
                 }
             });
         } catch(e) {
-            reject(e);
+            reject();
         }
     });
 }
@@ -72,6 +72,6 @@ async function remove(connection, q) {
 
 module.exports = {
     update,
-    findOne,
+    exist,
     remove
 }
