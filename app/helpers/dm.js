@@ -19,10 +19,10 @@ const pub           = require('../publishers/redis.js');
  async function allowChat(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         mongo.conversation(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
-            conversation.exist(initialJSON.mongoConnection, params).then(function(result) {
+            conversation.findOne(initialJSON.mongoConnection, params).then(function(result) {
                 resolve(true);
             }).catch(function(e) {
-                mrequest.exist(initialJSON.mongoConnection, params).then(function(result) {
+                mrequest.findOne(initialJSON.mongoConnection, params).then(function(result) {
                     resolve(false);
                 }).catch(function(e) {
                     model.latest(initialJSON.mongoConnection, params).then(function(result) {

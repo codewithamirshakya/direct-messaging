@@ -9,7 +9,7 @@ async function accept(initialJSON, inputJSON) {
         // Validate Input
         validator.validation(inputJSON, validator.rules.dmr).then(function() {
             let query = {c: parseInt(inputJSON.channelId), u: parseInt(initialJSON.userChannelId)};
-            mrequest.exist(initialJSON.mongoConnection,query).then((result) => {
+            mrequest.findOne(initialJSON.mongoConnection,query).then((result) => {
                 delete result._id;
                 conversation.update(initialJSON.mongoConnection, query, {$set: result}, {upsert: true}).then(() => {
                     mrequest.remove(initialJSON.mongoConnection, query);

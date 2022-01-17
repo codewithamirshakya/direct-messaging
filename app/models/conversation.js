@@ -52,7 +52,7 @@ async function update(connection, query, params, options) {
  * @param {*} query 
  * @returns 
  */
-async function exist(connection, query) {
+async function findOne(connection, query) {
     return new Promise(function (resolve, reject) {
         try {
             connection.collection(CONVO_COLLECTION).findOne(query,function(err, result) {
@@ -99,6 +99,6 @@ async function exist(connection, query) {
 module.exports = {
     get,
     update,
-    exist,
+    findOne,
     remove
 }
