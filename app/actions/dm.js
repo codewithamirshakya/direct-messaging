@@ -2,6 +2,7 @@ const m         = require('../config/message.js');
 const dm        = require('../services/dm.js');
 const em        = require('../services/emoji.js');
 const ul        = require('../services/userlist.js');
+const dmr       = require('../services/dmr.js');
 
 /**
  * 
@@ -128,6 +129,15 @@ const ul        = require('../services/userlist.js');
             case m.type.messaging.typing:
                 // Message Search History Handler
                 dm.typing(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;
+            // Accept dm request
+            case m.type.messaging.accept:
+                // Message Search History Handler
+                dmr.accept(initialJSON, inputJSON).then(function(message) {
                     resolve(message);
                 }).catch(function(e) {
                     reject(e);

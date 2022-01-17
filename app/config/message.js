@@ -10,7 +10,8 @@ module.exports = {
             remove:         "dmr",
             search:         "dms",
             active:         "dma",
-            typing:         "dmt"
+            typing:         "dmt",
+            accept:         "dmra"
         },
         emotes: {
             list: "el",
@@ -35,7 +36,8 @@ module.exports = {
             typing:         "dmt",
             request:        "dmr",
             requestlist:    "drl",
-            requesthistory: "drh"
+            requesthistory: "drh",
+            requestaccept:  "dra"
         },
         emotes: {
             list: "el",
