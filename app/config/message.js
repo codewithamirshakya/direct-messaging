@@ -41,7 +41,8 @@ module.exports = {
             requestlist:    "drl",
             requesthistory: "drh",
             requestAccept:  "dmra",
-            deleteRequest:  "dr"
+            deleteRequest:  "dr",
+            daRequest:      "dar"
         },
         emotes: {
             list: "el",

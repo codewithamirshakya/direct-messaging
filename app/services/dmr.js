@@ -76,8 +76,7 @@ async function messageList(initialJSON, inputJSON) {
 async function deleteMessageRequest(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         validator.validation(inputJSON, validator.rules.dr).then(function() {
-            let params = {u: parseInt(initialJSON.channelId), c: parseInt(inputJSON.channelId)};
-            console.log(params);
+            let params = {u: parseInt(initialJSON.userChannelId), c: parseInt(inputJSON.channelId)};
             mrequest.removeMany(initialJSON.mongoConnection, params)
             .then((res) => {
                 response.typeMessage(m.response.messaging.deleteRequest, {c: inputJSON.channelId})
@@ -100,10 +99,10 @@ async function deleteMessageRequest(initialJSON, inputJSON) {
 async function deleteAllMessageRequest(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         validator.validation(inputJSON, validator.rules.dar).then(function() {
-            let params = {u: parseInt(initialJSON.channelId)};
+            let params = {u: parseInt(initialJSON.userChannelId)};
             mrequest.removeMany(initialJSON.mongoConnection, params)
             .then((res) => {
-                response.typeMessage(m.response.messaging.deleteRequest)
+                response.typeMessage(m.response.messaging.daRequest)
                 .then((message) => {
                     dm.removeMany(initialJSON.mongoConnection, params);
                     resolve(message);
