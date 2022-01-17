@@ -11,7 +11,8 @@ module.exports = {
             search:         "dms",
             active:         "dma",
             typing:         "dmt",
-            accept:         "dmra"
+            accept:         "dmra",
+            mrList:         "drl",
         },
         emotes: {
             list: "el",
@@ -57,7 +58,8 @@ module.exports = {
             banned:         "DIRECT_MESSAGING_BANNED",
             delete:         "DIRECT_MESSAGING_DELETE_MESSAGES",
             search:         "DIRECT_MESSAGING_SEARCH_HISTORY",
-            remove:         "DIRECT_MESSAGING_REMOVE_MESSAGE"
+            remove:         "DIRECT_MESSAGING_REMOVE_MESSAGE",
+            requestList:    "DIRECT_REQUEST_LIST",
         },
         emojis: {
             list:           "EMOTES_LIST",

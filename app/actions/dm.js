@@ -143,6 +143,15 @@ const dmr       = require('../services/dmr.js');
                     reject(e);
                 });
                 break;
+            // DR Message list
+            case m.type.messaging.mrList:
+                // Message channels list history Handler
+                dmr.messageList(initialJSON, inputJSON).then(function(message) {
+                    resolve(message);
+                }).catch(function(e) {
+                    reject(e);
+                });
+                break;
         }
     });
 }
