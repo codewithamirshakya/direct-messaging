@@ -94,7 +94,6 @@ async function deleteMessageRequest(initialJSON, inputJSON) {
             .then((res) => {
                 response.typeMessage(m.response.messaging.deleteRequest, {c: inputJSON.channelId})
                     .then((message) => {
-                        dm.removeMany(initialJSON.mongoConnection, params);
                         resolve(message);
                     })
                     .catch(e => {reject(response.error(m.errorCode.messaging.deleteRequest))});
@@ -117,7 +116,6 @@ async function deleteAllMessageRequest(initialJSON, inputJSON) {
             .then((res) => {
                 response.typeMessage(m.response.messaging.daRequest)
                 .then((message) => {
-                    dm.removeMany(initialJSON.mongoConnection, params);
                     resolve(message);
                 })
                 .catch(e => {reject(response.error(m.errorCode.messaging.deleteRequest))});
