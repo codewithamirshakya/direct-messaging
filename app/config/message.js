@@ -100,7 +100,9 @@ module.exports = {
         }
     },
     system: {
-        SLOW_DOWN:      "Woah there! Slow down!",
-        SELF_MESSAGE:   "You cannot send message to yourself"
+        SLOW_DOWN:              "Woah there! Slow down!",
+        SELF_MESSAGE:           "You cannot send message to yourself",
+        BANNED_MESSAGE:         "You are forbidden to send message to this channel",
+        RESTRICTED_MESSAGE:     "You are not allowed to send message to this channel"
     }
 };

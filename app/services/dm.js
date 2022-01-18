@@ -31,43 +31,50 @@ const access        = require('../helpers/access.js');
                         // Check if user is banned
                         validator.banValidation(initialJSON.redis, [inputJSON.channelId], initialJSON.userChannelId).then(function() {
                             // Is Message Allowed Validation
-                            dmh.isDMAllowed(initialJSON, inputJSON).then(function() {
-                                // Conversation Message
-                                dmh.conversationMessage(initialJSON, inputJSON).then(function(message) {
-                                    // Publish Message
-                                    pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
-                                        resolve(true);
-                                    }).catch(function(e) {
-                                        resolve(true);
-                                    });
+                            dmh.isDMAllowed(initialJSON, inputJSON).then(function(status) {
+                                switch(status) {
+                                    case dmh.DMSTATUS.allowed:
+                                        // Conversation Message
+                                        dmh.conversationMessage(initialJSON, inputJSON).then(function(message) {
+                                            // Publish Message
+                                            pub.publish(initialJSON, inputJSON.channelId, message).then(function() {
+                                                resolve(true);
+                                            }).catch(function(e) {
+                                                resolve(true);
+                                            });
 
-                                    pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
-                                        resolve(true);
-                                    }).catch(function(e) {
-                                        resolve(true);
-                                    });
-                                }).catch(function(e) {
-                                    reject(e);
-                                });
-                            }).catch(function(e) {
-                                setting.getDMSettings(initialJSON.mysqlConnection, [parseInt(inputJSON.channelId)])
-                                .then((result) => {
-                                    if(typeof result !== "undefined" && typeof result[0] !== "undefined" && result[0].allow_message_every_one == true) {
-                                        // Message Request
-                                        dmh.messageRequest(initialJSON, inputJSON).then(function(message) {
-                                            resolve(message)
+                                            pub.publish(initialJSON, initialJSON.userChannelId, message).then(function() {
+                                                resolve(true);
+                                            }).catch(function(e) {
+                                                resolve(true);
+                                            });
                                         }).catch(function(e) {
                                             reject(e);
                                         });
-                                    } else {
-                                        reject(response.error(m.errorCode.messaging.restricted));  
-                                    }                                                                     
-                                })
-                                .catch(e => {reject(e);});
-                                 
+                                        break;
+                                        case dmh.DMSTATUS.request:
+                                            // Message Request
+                                            dmh.messageRequest(initialJSON, inputJSON).then(function(message) {
+                                                resolve(message)
+                                            }).catch(function(e) {
+                                                reject(e);
+                                            });
+                                            break;
+                                            default:
+                                                response.systemMessage(m.system.RESTRICTED_MESSAGE, inputJSON.channelId).then(function(alertMessage) {
+                                                    resolve(alertMessage);
+                                                });
+                                                break;
+                                }
+                            }).catch(function(e) {
+                                response.systemMessage(m.system.RESTRICTED_MESSAGE, inputJSON.channelId).then(function(alertMessage) {
+                                    resolve(alertMessage);
+                                });
                             });
                         }).catch(function(e) {
-                            reject(response.error(m.errorCode.messaging.banned));
+                            response.systemMessage(m.system.BANNED_MESSAGE, inputJSON.channelId).then(function(alertMessage) {
+                                resolve(alertMessage);
+                            });
                         });
                     }).catch(function(e) {
                         response.systemMessage(m.system.SELF_MESSAGE, inputJSON.channelId).then(function(alertMessage) {
