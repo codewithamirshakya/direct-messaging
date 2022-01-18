@@ -42,12 +42,16 @@ const redmy         = require('../helpers/redmy.js');
             d:      Date.now(),
             f:      initialJSON.verified,   // Verified
             po:     Date.now(), // Position
-            ir:     isRequest
         };
 
         // Delivered
         if(typeof isOnline !== "undefined" && isOnline) {
             param.dv = isOnline;
+        }
+
+        // Message Request
+        if(typeof isRequest !== "undefined" && isRequest) {
+            param.ir = isRequest;
         }
 
         // Get Emoji Url
