@@ -134,6 +134,7 @@ const dmr       = require('../services/dmr.js');
                     reject(e);
                 });
                 break;
+
             // Accept dm request
             case m.type.messaging.accept:
                 // Message Search History Handler
@@ -143,6 +144,7 @@ const dmr       = require('../services/dmr.js');
                     reject(e);
                 });
                 break;
+
             // DR Message list
             case m.type.messaging.mrList:
                 // Message channels list history Handler
@@ -152,6 +154,7 @@ const dmr       = require('../services/dmr.js');
                     reject(e);
                 });
                 break;
+
             // Delete all message request
             case m.type.messaging.mrDeleteAll:
                 // Delete all message request Handler
@@ -161,6 +164,7 @@ const dmr       = require('../services/dmr.js');
                     reject(e);
                 });
                 break;    
+                
             case m.type.messaging.mrDelete:
                 // Delete message request Handler
                 dmr.deleteMessageRequest(initialJSON, inputJSON).then(function(message) {
