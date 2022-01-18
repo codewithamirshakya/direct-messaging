@@ -357,6 +357,23 @@ async function deleteActiveChannels(client) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+ async function deleteAllowStatus(client, channelId, userChannelId) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            var key = config.rkeys.allow + channelId + '_' + userChannelId;
+            client.del(key);
+        } catch(e) {
+            reject();
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
@@ -374,5 +391,6 @@ module.exports = {
     getConStatus,
     isChannelOnline,
     deleteOnlineChannels,
-    deleteActiveChannels
+    deleteActiveChannels,
+    deleteAllowStatus
 }

@@ -4,7 +4,7 @@ const validator     = require('../helpers/validator.js');
 const response      = require('../helpers/response.js');
 const mrequest      = require('../models/mrequest.js');
 const mongo         = require('../helpers/mongo.js');
-const dm            = require('../models/dm.js');
+const redmy         = require('../helpers/redmy.js');
 const conversation  = require('../models/conversation.js');
 
 /**
@@ -16,7 +16,7 @@ const conversation  = require('../models/conversation.js');
 async function accept(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Validate Input
-        validator.validation(inputJSON, validator.rules.dmr).then(function() {
+        validator.validation(inputJSON, validator.rules.dmra).then(function() {
             let query = {c: parseInt(inputJSON.channelId), u: parseInt(initialJSON.userChannelId)}; 
             
             // Find Request
@@ -28,12 +28,21 @@ async function accept(initialJSON, inputJSON) {
                     // Remove Request
                     mrequest.remove(initialJSON.mongoConnection, query);
 
+                    // Reset Redis Status
+                    redmy.deleteAllowStatus(initialJSON.redis, initialJSON.userChannelId, inputJSON.channelId);
+
                     // Prepare Response
                     response.typeMessage(m.response.messaging.requestAccept, {c: inputJSON.channelId}).then(function(message) {
                         resolve(message);
-                    }).catch(e => {console.log(e);reject(response.error(m.errorCode.messaging.requestAccept));});
-                }).catch(e => {reject(response.error(m.errorCode.messaging.requestAccept));});         
-            }).catch(e => {console.log(e);reject(response.error(m.errorCode.messaging.requestAccept));})
+                    }).catch(function(e) { 
+                        reject(response.error(m.errorCode.messaging.requestAccept));
+                    });
+                }).catch(function(e) { 
+                    reject(response.error(m.errorCode.messaging.requestAccept));
+                });         
+            }).catch(function(e) { 
+                reject(response.error(m.errorCode.messaging.requestAccept));
+            });
         }).catch(function(e) {            
             reject(response.error(m.errorCode.messaging.requestAccept));
         });

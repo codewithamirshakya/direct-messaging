@@ -41,7 +41,7 @@ const rules = {
         channelId: "required",
         set: "required"
     },
-    dra: {
+    dmra: {
         channelId: "required"
     },
     drl: {
