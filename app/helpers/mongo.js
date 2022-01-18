@@ -120,13 +120,22 @@ async function request(channelId, userChannelId) {
 async function directMessage(channelId, userChannelId) {
     return new Promise(function (resolve, reject) {
         var params = {
-            $or: [{
-                c: parseInt(channelId),
-                u: parseInt(userChannelId)
-            }, {
-                c: parseInt(userChannelId),
-                u: parseInt(channelId)
-            }]
+            $and: [
+                {
+                    $or: [{
+                        c: parseInt(channelId),
+                        u: parseInt(userChannelId)
+                    }, {
+                        c: parseInt(userChannelId),
+                        u: parseInt(channelId)
+                    }]
+                },
+                {
+                    ir: {
+                        $exists: false
+                    }
+                }
+            ]
         };
 
         resolve(params);
