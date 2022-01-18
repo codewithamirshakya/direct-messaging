@@ -23,68 +23,135 @@ const DMSTATUS      = {
  */
  async function allowChat(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
-        mongo.conversation(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
-            conversation.findOne(initialJSON.mongoConnection, params).then(function(result) {
-                resolve(DMSTATUS.allowed);
+        // Check for Conversation
+        haveConversation(initialJSON, inputJSON).then(function() {
+            resolve(DMSTATUS.allowed);
+        }).catch(function(e) {
+            // Check for Request
+            haveRequest(initialJSON, inputJSON).then(function() {
+                resolve(DMSTATUS.request);
             }).catch(function(e) {
-                mrequest.findOne(initialJSON.mongoConnection, params).then(function(result) {
-                    resolve(DMSTATUS.request);
+                // Check for Previous Direct Messages
+                haveDirectMessages(initialJSON, inputJSON).then(function() {
+                    resolve(DMSTATUS.allowed);
                 }).catch(function(e) {
-                    model.latest(initialJSON.mongoConnection, params).then(function(result) {
-                        if(typeof result.c !== "undefined" && typeof result.u !== "undefined" && result.u == initialJSON.userChannelId) {
-                            // update my conversation
-                            param.myConvo(result).then(function(myConvoParams) {
-                                var myClause  = mongo.myConvoClause(result.c, result.u);
-                                conversation.update(initialJSON.mongoConnection, myClause, { $set: myConvoParams }, { upsert: true });
-                            });
-                        } else if(typeof result.u !== "undefined" && typeof result.c !== "undefined" && result.c == initialJSON.userChannelId) {
-                            // update my conversation
-                            param.theirConvo(result).then(function(myConvoParams) {
-                                var myClause  = mongo.theirConvoClause(result.c, result.u);
-                                conversation.update(initialJSON.mongoConnection, myClause, { $set: myConvoParams }, { upsert: true });
-                            });
-                        }
-    
-                        resolve(DMSTATUS.allowed);
-                    }).catch(function(e) {
-                        setting.getDMSettings(initialJSON.mysqlConnection, [inputJSON.channelId]).then(function(dmSetting) {
-                            if(typeof dmSetting !== "undefined" && typeof dmSetting[0] !== "undefined") {
-                                if(typeof dmSetting[0].allow_message_subscriber !== "undefined" && dmSetting[0].allow_message_subscriber == true) {
-                                    em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                                        resolve(DMSTATUS.allowed);
-                                    }).catch(function(e) {
-                                        channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                                            resolve(DMSTATUS.allowed);
-                                        }).catch(function(e) {
-                                            resolve(DMSTATUS.forbidden);
-                                        });
-                                    });
-                                } else if(typeof dmSetting[0].allow_message_every_one !== "undefined" && dmSetting[0].allow_message_every_one == true) {
-                                    channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                                        resolve(DMSTATUS.allowed);
-                                    }).catch(function(e) {
-                                        resolve(DMSTATUS.request);
-                                    });
-                                } else {
-                                    channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                                        resolve(DMSTATUS.allowed);
-                                    }).catch(function(e) {
-                                        resolve(DMSTATUS.forbidden);
-                                    });
-                                }
-                            } else {
-                                channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
-                                    resolve(DMSTATUS.allowed);
-                                }).catch(function(e) {
-                                    resolve(DMSTATUS.forbidden);
-                                });
-                            }
-                        });
+                    // Check for Settings
+                    settingCheck(initialJSON, inputJSON).then(function(status) {
+                        resolve(status);
+                    }).catch(function() {
+                        resolve(DMSTATUS.forbidden);
                     });
-                });
+                })
+            });
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ * @returns 
+ */
+ async function haveConversation(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Conversation Param
+        mongo.conversation(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
+            // Find Conversation
+            conversation.findOne(initialJSON.mongoConnection, params).then(function(result) {
+                resolve();
+            }).catch(function(e) {
+                reject();
             });
         }).catch(function(e) {
-            resolve(DMSTATUS.forbidden);
+            reject();
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function haveRequest(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Request Param
+        mongo.request(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
+            // Find Request
+            mrequest.findOne(initialJSON.mongoConnection, params).then(function(result) {
+                resolve();
+            }).catch(function(e) {
+                reject();
+            });
+        }).catch(function(e) {
+            reject();
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ * @returns 
+ */
+async function haveDirectMessages(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // Direct Message Param
+        mongo.directMessage(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
+            // Latest Message
+            model.latest(initialJSON.mongoConnection, params).then(function(result) {
+                if(typeof result.c !== "undefined" && typeof result.u !== "undefined" && result.u == initialJSON.userChannelId) {
+                    // update my conversation
+                    updateMyConversation(initialJSON.mongoConnection, result);
+                } else if(typeof result.u !== "undefined" && typeof result.c !== "undefined" && result.c == initialJSON.userChannelId) {
+                    // update my conversation
+                    updateTheirConversation(initialJSON.mongoConnection, result);
+                }
+
+                resolve();
+            }).catch(function(e) {
+                reject();
+            });
+        }).catch(function(e) {
+            reject();
+        });
+    });
+}
+
+/**
+ * 
+ * @param {*} initialJSON 
+ * @param {*} inputJSON 
+ */
+async function settingCheck(initialJSON, inputJSON) {
+    return new Promise(async function (resolve, reject) {
+        // If Follower; Allow
+        channel.isFollower(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+            resolve(DMSTATUS.allowed);
+        }).catch(function(e) {
+            // Fetch Settings
+            setting.getDMSettings(initialJSON.mysqlConnection, [inputJSON.channelId]).then(function(dmSetting) {
+                // If has Settings
+                if(typeof dmSetting !== "undefined" && typeof dmSetting[0] !== "undefined") {
+                    // If Subscriber Mode
+                    if(typeof dmSetting[0].allow_message_subscriber !== "undefined" && dmSetting[0].allow_message_subscriber == true) {
+                        // Subscriber and Follower are allowed
+                        em.isSubscriber(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId).then(function() {
+                            resolve(DMSTATUS.allowed);
+                        }).catch(function(e) {
+                            resolve(DMSTATUS.forbidden);
+                        });
+                    } else if(typeof dmSetting[0].allow_message_every_one !== "undefined" && dmSetting[0].allow_message_every_one == true) {
+                        resolve(DMSTATUS.request);
+                    } else {
+                        resolve(DMSTATUS.forbidden);
+                    }
+                } else {
+                    resolve(DMSTATUS.forbidden);
+                }
+            });
         });
     });
 }
@@ -154,6 +221,24 @@ async function updateMyConversation(connection, params) {
         param.myConvo(params).then(function(myConvoParams) {
             var myClause  = mongo.myConvoClause(params.c, params.u);
             conversation.update(connection, myClause, { $set: myConvoParams }, { upsert: true });
+        });
+
+        resolve();
+    });
+}
+
+/**
+ * 
+ * @param {*} connection 
+ * @param {*} params 
+ * @returns 
+ */
+ async function updateTheirConversation(connection, params) {
+    return new Promise(function (resolve, reject) {
+        // update their conversation
+        param.theirConvo(params).then(function(theirConvoParams) {
+            var theirClause  = mongo.theirConvoClause(params.c, params.u);
+            conversation.update(connection, theirClause, { $set: theirConvoParams }, { upsert: true });
         });
 
         resolve();
@@ -263,7 +348,7 @@ async function updateTheirRequest(connection, params) {
             // Is Channel Online
             redmy.isChannelOnline(initialJSON.redis, inputJSON.channelId).then(function(isOnline) {
                 // Prepare Param
-                param.dm(initialJSON, inputJSON, settings, isOnline).then(function(params) {
+                param.dm(initialJSON, inputJSON, settings, isOnline, true).then(function(params) {
                     // Save Model                
                     model.save(initialJSON.mongoConnection, params).then(function(insertedId) {
                         // Update Conversation

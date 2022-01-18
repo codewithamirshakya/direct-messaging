@@ -98,6 +98,41 @@ async function conversation(channelId, userChannelId) {
     });
 }
 
+/*
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+async function request(channelId, userChannelId) {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            c: parseInt(channelId),
+            u: parseInt(userChannelId)
+        };
+
+        resolve(params);
+    });
+}
+
+/*
+ * @param {*} channelId 
+ * @param {*} userChannelId 
+ */
+async function directMessage(channelId, userChannelId) {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            $or: [{
+                c: parseInt(channelId),
+                u: parseInt(userChannelId)
+            }, {
+                c: parseInt(userChannelId),
+                u: parseInt(channelId)
+            }]
+        };
+
+        resolve(params);
+    });
+}
+
 /**
  * 
  * @param {*} channelId 
@@ -199,6 +234,8 @@ module.exports = {
     deliveredStatus,
     seenStatus,
     conversation,
+    request,
+    directMessage,
     messageList,
     remove,
     deleteById,
