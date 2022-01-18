@@ -90,8 +90,8 @@ async function seenStatus(channelId, userChannelId) {
 async function conversation(channelId, userChannelId) {
     return new Promise(function (resolve, reject) {
         var params = {
-            c: channelId,
-            u: userChannelId
+            c: parseInt(channelId),
+            u: parseInt(userChannelId)
         };
 
         resolve(params);
