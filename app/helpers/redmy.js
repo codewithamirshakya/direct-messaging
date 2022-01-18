@@ -239,30 +239,6 @@ async function getAllowStatus(client, channelId, userChannelId) {
  * @param {*} channelId 
  * @param {*} userChannelId 
  */
-async function isDMAllowed(client, channelId, userChannelId) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            getConStatus(client, channelId, userChannelId).then(function(status) {
-                if(status == "true") {
-                    resolve();
-                } else {
-                    reject();
-                }
-            }).catch(function(e) {
-                reject();
-            })
-        } catch(e) {
-            reject();
-        }
-    });
-}
-
-/**
- * 
- * @param {*} client 
- * @param {*} channelId 
- * @param {*} userChannelId 
- */
  async function conActive(client, channelId, userChannelId) {
     return new Promise(async function (resolve, reject) {
         try {
@@ -362,7 +338,6 @@ module.exports = {
     lastOnlineChannels,
     conStatus,
     getAllowStatus,
-    isDMAllowed,
     conActive,
     conInactive,
     getConStatus,
