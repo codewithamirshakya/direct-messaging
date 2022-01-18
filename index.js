@@ -5,6 +5,7 @@ const app       = require('./app/route.js');
 const config    = require('./app/config/default.js');
 const mongo     = require('./app/config/mongo.js');
 const mysql     = require('./app/config/mysql.js');
+const redmy     = require('./app/helpers/redmy.js');
 
 const numCPUs           = os.cpus().length;
 const dbConnection      = mysql.connect();
@@ -22,6 +23,9 @@ redisSub.on("message", function(channel, message) {
  */
  if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
+
+    redmy.deleteOnlineChannels(client);
+    redmy.deleteActiveChannels(client);
 
     // Fork workers.
     for (let i = 0; i < numCPUs; i++) {

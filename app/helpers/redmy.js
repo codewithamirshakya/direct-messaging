@@ -326,6 +326,37 @@ async function isChannelOnline(client, channelId) {
     });
 }
 
+/**
+ * 
+ * @param {*} client 
+ */
+async function deleteOnlineChannels(client) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            client.del(config.rkeys.online);
+            resolve();
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
+/**
+ * 
+ * @param {*} client 
+ * @returns 
+ */
+async function deleteActiveChannels(client) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            client.del(config.rkeys.active);
+            resolve();
+        } catch(e) {
+            resolve();
+        }
+    });
+}
+
 module.exports = {
     getChannelSetting,
     getEmojis,
@@ -341,5 +372,7 @@ module.exports = {
     conActive,
     conInactive,
     getConStatus,
-    isChannelOnline
+    isChannelOnline,
+    deleteOnlineChannels,
+    deleteActiveChannels
 }
