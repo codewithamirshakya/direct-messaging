@@ -33,6 +33,7 @@ const DMSTATUS      = {
             }).catch(function(e) {
                 // Check for Previous Direct Messages
                 haveDirectMessages(initialJSON, inputJSON).then(function() {
+                    console.log("hdm resolved");
                     resolve(DMSTATUS.allowed);
                 }).catch(function(e) {
                     // Check for Settings
@@ -100,8 +101,10 @@ async function haveDirectMessages(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Direct Message Param
         mongo.directMessage(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
+            console.log(params);
             // Latest Message
             model.latest(initialJSON.mongoConnection, params).then(function(result) {
+                console.log("hdm", result);
                 if(typeof result.c !== "undefined" && typeof result.u !== "undefined" && result.u == initialJSON.userChannelId) {
                     // update my conversation
                     updateMyConversation(initialJSON.mongoConnection, result);
