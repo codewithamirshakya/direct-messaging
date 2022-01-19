@@ -6,18 +6,14 @@ stages:
 cache:
   key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
 
-install-dependencies:
+
+.preparation: &preparation-definition
   stage: install-dependencies
   image: node:16-stretch
   script:
     - npm install
   tags:
     - ptvdm-node
-  only:
-    refs:
-      - develop
-      - staging
-
   artifacts:
     paths:
       - node_modules
@@ -26,31 +22,61 @@ install-dependencies:
   cache:
     paths:
       - node_modules
-deploy)stage:
+
+.deploy: &deploy-definition
   stage: deploy
   dependencies:
     - install-dependencies
-  script:
-    - docker-compose -f docker-compose.stg.yml down && docker-compose -f docker-compose.stg.yml up -d
-  environment:
-    name: staging
-    url: ${STG_PROJECT_URL}
   tags:
-    - ptvdm-deploy
-  only:
-   refs:
-      - staging
-deploy:
-  stage: deploy
-  dependencies:
-    - install-dependencies
-  script:
-    - docker-compose -f docker-compose.dev.yml down && docker-compose -f docker-compose.dev.yml up -d
+    - ${RUNNER_TAG}
   environment:
-    name: development
+    name: ${CI_COMMIT_BRANCH}
     url: ${PROJECT_URL}
-  tags:
-    - ptvdm-deploy
+  script:
+      - |
+          if [[ "$CI_COMMIT_BRANCH" != "releases" ]];then
+            docker-compose -f ${COMPOSE_FILE} down && docker-compose -f ${COMPOSE_FILE} up -d
+          fi
+
+.build-and-push-template: &build-and-push-definition
+    stage: build
+    image: docker:17
+    before_script:
+      - docker login $CI_REGISTRY -u gitlab-ci-token -p $CI_JOB_TOKEN
+    script:
+      - docker build -t $IMAGE_NAME .
+      - docker push $IMAGE_NAME
+    after_script:
+      - docker image rm -f $IMAGE_NAME   
+    tags:
+      - ptvdm-node
+
+install-dependencies:
+  <<: *preparation-definition
   only:
-   refs:
-      - develop
+      refs: ['develop','staging','master','prerelease']
+
+buildimage:
+  <<: *build-and-push-definition
+  only:
+      refs: ['master','prerelease']
+
+deploy:
+   <<: *deploy-definition
+   variables:
+     RUNNER_TAG: ptvdm-deploy
+     COMPOSE_FILE: docker-compose.dev.yml
+     PROJECT_URL: $DEV_URL
+   only:
+    refs: ["develop"]
+   
+deploy-stage:
+   <<: *deploy-definition
+   variables:
+     RUNNER_TAG: ptvdm-deploy
+     COMPOSE_FILE: docker-compose.stg.yml
+     PROJECT_URL: $STAGE_URL
+
+   only:
+    refs: ["staging"]
+   
