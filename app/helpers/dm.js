@@ -33,7 +33,6 @@ const DMSTATUS      = {
             }).catch(function(e) {
                 // Check for Previous Direct Messages
                 haveDirectMessages(initialJSON, inputJSON).then(function() {
-                    console.log("hdm resolved");
                     resolve(DMSTATUS.allowed);
                 }).catch(function(e) {
                     // Check for Settings
@@ -42,7 +41,7 @@ const DMSTATUS      = {
                     }).catch(function() {
                         resolve(DMSTATUS.forbidden);
                     });
-                })
+                });
             });
         });
     });
@@ -57,7 +56,7 @@ const DMSTATUS      = {
  async function haveConversation(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Conversation Param
-        mongo.conversation(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
+        mongo.conversation(initialJSON.userChannelId, inputJSON.channelId).then(function(params) {
             // Find Conversation
             conversation.findOne(initialJSON.mongoConnection, params).then(function(result) {
                 resolve();
@@ -78,7 +77,7 @@ const DMSTATUS      = {
 async function haveRequest(initialJSON, inputJSON) {
     return new Promise(async function (resolve, reject) {
         // Request Param
-        mongo.request(inputJSON.channelId, initialJSON.userChannelId).then(function(params) {
+        mongo.request(initialJSON.userChannelId, inputJSON.channelId).then(function(params) {
             // Find Request
             mrequest.findOne(initialJSON.mongoConnection, params).then(function(result) {
                 resolve();
@@ -104,7 +103,6 @@ async function haveDirectMessages(initialJSON, inputJSON) {
             console.log(params);
             // Latest Message
             model.latest(initialJSON.mongoConnection, params).then(function(result) {
-                console.log("hdm", result);
                 if(typeof result.c !== "undefined" && typeof result.u !== "undefined" && result.u == initialJSON.userChannelId) {
                     // update my conversation
                     updateMyConversation(initialJSON.mongoConnection, result);
