@@ -458,6 +458,13 @@ async function updateSocketInactive(ws, channelId) {
         }).catch(function(e) {
             reject(e);
         });
+
+        // Unset Unread Count
+        mrequest.update(initialJSON.mongoConnection, myClause, { $unset: { uc: 1 } }, { upsert: false }).then(function() {
+            resolve();
+        }).catch(function(e) {
+            reject(e);
+        });
     });
 }
 
