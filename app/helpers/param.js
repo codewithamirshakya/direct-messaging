@@ -55,7 +55,7 @@ const redmy         = require('../helpers/redmy.js');
         }
 
         // Get Emoji Url
-        fetchEmojiUrl(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.channelId, inputJSON.message).then(function(url) {
+        fetchEmojiUrl(initialJSON.mysqlConnection, initialJSON.userChannelId, inputJSON.message).then(function(url) {
             if(typeof url !== "undefined" && url.length > 0) {
                 param.e = url;
             }
@@ -87,7 +87,7 @@ const redmy         = require('../helpers/redmy.js');
  * @param {*} message 
  * @returns 
  */
- async function fetchEmojiUrl(connection, channelId, messageChannelId, message) {
+ async function fetchEmojiUrl(connection, channelId, message) {
     return new Promise(async function (resolve, reject) {
         var emojiUrls       = [];
 
@@ -107,7 +107,7 @@ const redmy         = require('../helpers/redmy.js');
                         var emojiCode       = code.substring(code.indexOf('-') + 1);
                         var channelName     = codeSplit[0].slice(1);
 
-                        await getEmojiUrl(connection, channelId, messageChannelId, channelName, emojiCode, code).then(function(param) {
+                        await getEmojiUrl(connection, channelId, channelName, emojiCode, code).then(function(param) {
                             emojiUrls.push(param);
                         });
                     }
@@ -129,7 +129,7 @@ const redmy         = require('../helpers/redmy.js');
  * @param {*} channelName 
  * @param {*} emojiCode 
  */
- async function getEmojiUrl(connection, myChannelId, messageChannelId, channelName, emojiCode, code) {
+ async function getEmojiUrl(connection, myChannelId, channelName, emojiCode, code) {
     return new Promise(async function (resolve, reject) {
         em.getEmojiByCode(connection, channelName, emojiCode).then(function(emoji) {
             if(typeof emoji !== "undefined") {
@@ -146,7 +146,7 @@ const redmy         = require('../helpers/redmy.js');
                     };
     
                     resolve(emojiUrlObj);
-                } else if(aliasChannelId == messageChannelId) {
+                } else {
                     em.isSubscriber(connection, aliasChannelId, myChannelId).then(function() {
                         var channelId   = aliasChannelId.toString();
                         var emojiPath   = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.emojiAlias;
@@ -161,8 +161,6 @@ const redmy         = require('../helpers/redmy.js');
                     }).catch(function(e) {
                         resolve();
                     });
-                } else {
-                    resolve();
                 }
             } else {
                 resolve();
