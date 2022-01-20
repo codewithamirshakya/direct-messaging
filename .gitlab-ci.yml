@@ -60,6 +60,8 @@ install-dependencies:
 
 buildimage:
   <<: *build-and-push-definition
+  dependencies:
+    - install-dependencies
   only:
       refs: ['master','prerelease']
 
