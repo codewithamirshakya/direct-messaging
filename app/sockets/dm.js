@@ -141,14 +141,16 @@ var socket = {
   * @param {*} message 
   */
  function _close(ws, code, message) {
-    // Store Channel Online
-    setting.updateOnlineDmSetting(mysqlConnection, parseInt(ws['u']), false);
+    if(typeof ws !== "undefined" && typeof ws['u'] !== "undefined") {
+        // Store Channel Online
+        setting.updateOnlineDmSetting(mysqlConnection, parseInt(ws['u']), false);
 
-    // Store Channel Online [Redis]
-    redmy.channelOffline(redisClient, ws['u']);
+        // Store Channel Online [Redis]
+        redmy.channelOffline(redisClient, ws['u']);
 
-    // Cleanup Socket Inactive
-    cleanupSocketInactive(ws);
+        // Cleanup Socket Inactive
+        cleanupSocketInactive(ws);
+    }
  }
 
  /**
