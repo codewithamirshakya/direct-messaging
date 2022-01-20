@@ -21,10 +21,12 @@ const redmy         = require('../helpers/redmy.js');
         }
         
         var ri = "";
-        if(typeof settings.i !== "undefined" && typeof settings.c !== "undefined") {
+        if(typeof settings.i !== "undefined" && typeof settings.c !== "undefined" && settings.i !== null) {
             var channelId   = settings.c.toString();
             var avatarPath  = channelId.substring(0, 1) + "/" + channelId.substring(0, 2) + "/" + channelId + "/" + config.minio.avatarAlias;
             ri              = config.minio.bucket + "/" + avatarPath + "/" + settings.i;
+        } else {
+            ri              = config.minio.bucket + "/avatar.jpg";
         }
         
         var param 	  	= { 
