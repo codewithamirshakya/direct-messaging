@@ -337,18 +337,20 @@ async function active(initialJSON, inputJSON, ws) {
 
                 // Check if Chat is Already Allowed
                 redmy.getAllowStatus(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId).then(function(status) {
-                    resolve(response.success(m.successCode.dma.success));
+                    
                 }).catch(function(e) {
                     // Check if Chat is Allowed
                     dmh.allowChat(initialJSON, inputJSON).then(function(status) {
                         // Update Active Conversation
                         redmy.conStatus(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId, status).then(function() {
-                            resolve(response.success(m.successCode.dma.success));
+                           
                         }).catch(function() {
-                            resolve(response.success(m.errorCode.dma.error));
+                            
                         });
                     });
                 });
+
+                resolve();
             } else {
                 // InActive Conversation
                 redmy.conInactive(initialJSON.redis, inputJSON.channelId, initialJSON.userChannelId);
@@ -356,7 +358,7 @@ async function active(initialJSON, inputJSON, ws) {
                 // Update Socket for Inactive Channel
                 dmh.updateSocketInactive(ws, inputJSON.channelId);
 
-                resolve(response.success(m.successCode.dma.success));
+                resolve();
             }
         }).catch(function(e) {
             reject(response.error(m.errorCode.dma.validation));
