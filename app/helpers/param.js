@@ -92,30 +92,27 @@ const redmy         = require('../helpers/redmy.js');
         var emojiUrls       = [];
 
         try {
-            var replaceColon    = message.replace(/::/g, ": :");
-            var splitString     = replaceColon.split(/\s+/);
+            var emojiCodeRegEx  = /:([^ :]+):/g;
+            var emojiCodes      = [];
+            while ( regexMatch = emojiCodeRegEx.exec(message) ) {
+                emojiCodes.push(regexMatch[1]);
+            }
 
-            for(i in splitString) {
-                var msg             = splitString[i];
-                var firstChar       = msg.charAt(0);
-                var lastChar        = msg.charAt(msg.length - 1);
-
-                if(firstChar == ":" && lastChar == ":") {
-                    try {
-                        var code        = msg.slice(1,-1);
-                        var codeSplit   = code.split("-");
-                        
-                        if(typeof codeSplit[0] !== "undefined" && typeof codeSplit[1] !== "undefined" && codeSplit[0] != 'ptv') {
-                            var emojiCode       = code.substring(code.indexOf('-') + 1);
-                            var channelName     = codeSplit[0].slice(1);
-
-                            await getEmojiUrl(connection, channelId, messageChannelId, channelName, emojiCode).then(function(param) {
-                                emojiUrls.push(param);
-                            });
-                        }
-                    } catch(e) {
+            for(i in emojiCodes) {
+                try {
+                    var code        = emojiCodes[i];
+                    var codeSplit   = code.split("-");
                     
+                    if(typeof codeSplit[0] !== "undefined" && typeof codeSplit[1] !== "undefined" && codeSplit[0] != 'ptv') {
+                        var emojiCode       = code.substring(code.indexOf('-') + 1);
+                        var channelName     = codeSplit[0].slice(1);
+
+                        await getEmojiUrl(connection, channelId, messageChannelId, channelName, emojiCode, code).then(function(param) {
+                            emojiUrls.push(param);
+                        });
                     }
+                } catch(e) {
+                    
                 }
             }
 
@@ -132,7 +129,7 @@ const redmy         = require('../helpers/redmy.js');
  * @param {*} channelName 
  * @param {*} emojiCode 
  */
- async function getEmojiUrl(connection, myChannelId, messageChannelId, channelName, emojiCode) {
+ async function getEmojiUrl(connection, myChannelId, messageChannelId, channelName, emojiCode, code) {
     return new Promise(async function (resolve, reject) {
         em.getEmojiByCode(connection, channelName, emojiCode).then(function(emoji) {
             if(typeof emoji !== "undefined") {
@@ -144,7 +141,7 @@ const redmy         = require('../helpers/redmy.js');
                     var url         = config.minio.bucket + "/" + emojiPath + "/" + emojiCode + ".gif";
                     
                     var emojiUrlObj = {
-                        a: emojiCode,
+                        a: code,
                         u: url
                     };
     
@@ -156,7 +153,7 @@ const redmy         = require('../helpers/redmy.js');
                         var url         = config.minio.bucket + "/" + emojiPath + "/" + emojiCode + ".gif";
                         
                         var emojiUrlObj = {
-                            a: emojiCode,
+                            a: code,
                             u: url
                         };
         
