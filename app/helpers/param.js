@@ -190,6 +190,10 @@ async function myConvo(params) {
             d:      params.d
         };
 
+        if(typeof params.e !== 'undefined') {
+            param.e = params.e;
+        }
+
         resolve(param);
     });
 }
@@ -210,6 +214,10 @@ async function myConvo(params) {
             m:      params.m,
             d:      params.d
         };
+
+        if(typeof params.e !== 'undefined') {
+            param.e = params.e;
+        }
 
         resolve(param);
     });
